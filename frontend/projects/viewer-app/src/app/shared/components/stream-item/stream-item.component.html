@@ -1,0 +1,23 @@
+<ngx-t3-stream [name]="stream && stream.name">
+  <ngx-t3-icon
+    *ngIf="stream && (stream.uiType | exportedAndDefined)"
+    streamIcon
+    iconClass="opal-s-4 opal-text-blue-600"
+    [icon]="stream.uiType | apply : getStreamTypeIcon"
+    [attr.aria-label]="stream.uiType"></ngx-t3-icon>
+
+  <ngx-t3-stream-value-renderer
+    *ngIf="stream"
+    streamValue
+    [multiline]="false"
+    [value]="stream.value"
+    [type]="stream.type"
+    [configuration]="stream.configuration"
+    [labels]="{
+      noValueLabel: 'i18n.Common.noValue' | translate,
+      truthyCheckboxLabel: 'i18n.Project.StreamValueRenderer.checkedValueLabel' | translate,
+      falsyCheckboxLabel: 'i18n.Project.Stream.uncheckedValueLabel' | translate,
+      linkClickTooltipLabel: 'i18n.Project.StreamValueRenderer.linkClickTooltipLabel' | translate
+    }">
+  </ngx-t3-stream-value-renderer>
+</ngx-t3-stream>

@@ -1,0 +1,70 @@
+<div *ngIf="{
+  documentTags: documentTags$ | async,
+  participant: participant$ | async
+} as resolved">
+  <span class="opal-h4 opal-py-2 opal-px-4 opal-d-block opal-text-500 opal-mb-3">{{ 'Dettagli documento' | translate }}</span>
+
+  <ngx-t3-descriptions class="opal-body-2">
+    <ng-container *ngIf="data.document">
+      <ng-template #redacted>
+        <div class="redacted">Redacted</div>
+      </ng-template>
+
+      <ngx-t3-description-item
+        [label]="'Nome' | translate"
+        [multiline]="true">
+        <ng-container *ngIf="data.document.name | exported; else redacted">
+          {{ data.document.name | noValueLabel }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Creato' | translate">
+        <ng-container *ngIf="data.document.createdAt !== undefined; else redacted">
+          {{ data.document.createdAt | date : 'd LLL y, HH:mm' }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Modificato' | translate">
+        <ng-container *ngIf="data.document.updatedAt !== undefined; else redacted">
+          {{ data.document.updatedAt | date : 'd LLL y, HH:mm' }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Tag' | translate">
+        <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+          <app-redactable-tag
+            *ngFor="let tag of resolved.documentTags"
+            innerClasses="bg-grey-100"
+            class="t3-tag-like opal-mb-1"
+            [tagName]="tag?.name">
+          </app-redactable-tag>
+        </ngx-t3-tag-group>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Tipo' | translate">
+        <ngx-t3-tag class="opal-bg-accent-200 opal-mr-2">{{ data.document.extension }}</ngx-t3-tag>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Dimensione' | translate">
+        <ng-container *ngIf="data.document.length | exported; else redacted">
+          {{ data.document.length !== undefined ? (data.document.length | apply : formatBytesSize) : '-' }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Ultimo editor' | translate">
+        <app-participant-identity [participant]="resolved.participant"></app-participant-identity>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Ultimo hash' | translate">
+        <ng-container *ngIf="data.document.updatedInBlock.linkHash as linkHash; else redacted">
+          <ngx-t3-copy-to-clipboard
+            class="opal-d-block opal-ellipsed"
+            position="left"
+            [textToCopy]="linkHash | uint8">
+            <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">{{ linkHash | uint8 }}</div>
+          </ngx-t3-copy-to-clipboard>
+        </ng-container>
+      </ngx-t3-description-item>
+    </ng-container>
+  </ngx-t3-descriptions>
+</div>

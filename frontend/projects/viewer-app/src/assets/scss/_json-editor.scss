@@ -1,0 +1,12 @@
+json-editor {
+  &.border-none .jsoneditor {
+    border: none;
+  }
+
+  &.content-fit {
+    display: block;
+    > div {
+      height: 100%;
+    }
+  }
+}

@@ -1,0 +1,66 @@
+<ng-container *ngIf="{
+    creator: creator$ | async,
+    acksInfo: acksInfo$ | async,
+    replyTo: replyTo$ | async,
+    threadMessage: threadMessage$ | async
+  } as resolved">
+  <ngx-t3-thread-message
+    *ngIf="resolved.threadMessage && (resolved.threadMessage.message | exportedAndDefined)"
+    class="opal-d-block opal-max-w-full"
+    [createdAt]="(resolved.threadMessage.createdAt || '') | ago | titlecase"
+    [message]="resolved.threadMessage.message"
+    [mode]="mode"
+    [status]="ThreadMessageStatus.Delivered">
+    <ng-container
+      *appIfPersonParticipant="resolved.creator; else workflowParticipant"
+      author>
+      <ngx-t3-thread-message-author-info
+        *ngIf="{
+          member: resolved.creator && resolved.creator.member$ | async,
+          organization: resolved.creator && resolved.creator.organization$ | async
+        } as creatorDetails"
+        author
+        class="opal-d-block"
+        [class.opal-mb-2]="mode === 'complete'"
+        [avatarSize]="mode === 'complete' ? 'xs' : 'xxs'"
+        [authorName]="creatorDetails.member && creatorDetails.member.fullName"
+        [authorAvatar]="creatorDetails.member && creatorDetails.member.avatar"
+        [authorOrganizationLogo]="creatorDetails.organization && creatorDetails.organization.logo">
+      </ngx-t3-thread-message-author-info>
+    </ng-container>
+    <ng-template #workflowParticipant>
+      <ngx-t3-thread-message-workflow-author-info
+        class="opal-d-block"
+        [class.opal-mb-2]="mode === 'complete'"
+        [avatarSize]="mode === 'complete' ? 'xs' : 'xxs'"></ngx-t3-thread-message-workflow-author-info>
+    </ng-template>
+
+    <ng-container additionalMessageInfo>
+      <app-acks-icon
+        class="opal-ml-1 opal-mt-2"
+        [status]="resolved.acksInfo && resolved.acksInfo.status"
+        (click)="resolved.threadMessage && openAcknowledgementsDialog(resolved.threadMessage.updatedInBlock)">
+      </app-acks-icon>
+    </ng-container>
+
+    <ng-template
+      *ngIf="resolved.threadMessage.id"
+      #rendererTemplate>
+      <ng-container *ngIf="mode === 'complete' && (resolved.replyTo | exportedAndDefined)">
+        <app-thread-message
+          class="opal-fx-g-1 opal-fx-b-0 opal-d-block"
+          mode="reduced"
+          [threadMessage]="resolved.replyTo">
+        </app-thread-message>
+      </ng-container>
+
+      <ng-container *ngIf="{ fragments: fragments$ | async } as messageContent">
+        <ngx-t3-thread-message-render-fragments
+          [fragments]="messageContent.fragments || []"
+          (fragmentSelect)="selectFragmentHandler($event)">
+        </ngx-t3-thread-message-render-fragments>
+      </ng-container>
+    </ng-template>
+  </ngx-t3-thread-message>
+
+</ng-container>

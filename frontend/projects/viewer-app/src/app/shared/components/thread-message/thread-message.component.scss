@@ -1,0 +1,17 @@
+
+:host {
+  &.reduced ngx-t3-thread-message {
+    --ngx-t3-thread-message-bg-color: rgba(255, 255, 255, 0.6);
+    --ngx-t3-thread-message-min-height: none;
+    padding-bottom: 8px;
+  }
+}
+
+ngx-t3-thread-message {
+  --ngx-t3-thread-message-code-block-bg-color: rgba(var(--opal-black-500-rgb), 0.1) !important;
+  --ngx-t3-thread-message-bg-color: theme("colors.grey.100");
+
+  width: 100%;
+  margin-bottom: 10px;
+  display: table;
+}

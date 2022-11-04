@@ -1,0 +1,20 @@
+<div
+  *ngIf="references; else skeleton"
+  class="opal-overflow-y-auto opal-fx-g-1">
+
+  <div class="opal-fx-row opal-mx-4 opal-mb-3 opal-body-2">
+    {{ 'i18n.Common.streamReferenced' | translate }}
+  </div>
+
+  <app-resource-reference
+    *ngFor="let documentReferences of references || []; let first = first"
+    [name]="(documentReferences.document$ | async)?.name"
+    [references]="documentReferences.refs"
+    [expandable]="true"
+    [hasTopDivider]="first"></app-resource-reference>
+
+</div>
+
+<ng-template #skeleton>
+  <ngx-t3-skeleton class="opal-h-4 opal-w-full opal-mx-n-4 opal-py-3 opal-mx-n-4"></ngx-t3-skeleton>
+</ng-template>

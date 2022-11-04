@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  font-family: 'DM Sans';
+}
+
+.workflow-label {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}

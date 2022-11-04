@@ -1,0 +1,167 @@
+<ng-container *ngIf="{ documents: documents$ | async } as resolved">
+  <ngx-t3-table-container
+    *ngIf="{
+        dataSource: resolved.documents?.items || [],
+        isEmpty: (resolved.documents?.items || []).length === 0
+      } as tableProps"
+    class="opal-h-full"
+    [isLoading]="isLoading">
+    <mat-table
+      matSort
+      [dataSource]="tableProps.dataSource"
+      (matSortChange)="sortEvent$.next($event)">
+
+      <ng-template #redacted>
+        <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
+      </ng-template>
+
+      <mat-col matColumnDef="name">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by name">
+          {{ 'i18n.Common.name' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <div class="opal-fx-row opal-fx-align-center opal-overflow-hidden opal-w-full">
+            <div class="opal-mr-2 opal-ellipsed opal-d-inline-flex">
+              <ngx-t3-tag class="opal-bg-blue-200 opal-mr-3 opal-fx-s-0">
+                {{ item.data.extension }}
+              </ngx-t3-tag>
+              <span *ngIf="item.data.name | exported; else redacted" class="opal-ellipsed">
+                {{ item.data.name | noValueLabel }}
+              </span>
+            </div>
+          </div>
+        </mat-cell>
+      </mat-col>
+
+      <mat-col matColumnDef="tags">
+        <mat-header-cell *matHeaderCellDef>{{ 'i18n.Common.tags' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <ng-container *ngIf="{
+            tags: $any(item.tags$ | async) || []
+          } as resolved">
+            <ngx-t3-tag-group
+              class="opal-text-nowrap opal-fx-row opal-fx-g-0"
+              [count]="resolved.tags && resolved.tags.length"
+              [limit]="1">
+              <app-redactable-tag
+                *ngFor="let tag of $any(resolved.tags | slice : 0 : 1)"
+                innerClasses="bg-grey-100 opal-body-2"
+                class="t3-tag-like"
+                [tagName]="tag?.name"></app-redactable-tag>
+              <div
+                *ngIf="resolved.tags.length === 0"
+                class="redacted">
+                {{ 'i18n.Common.none' | translate }}
+              </div>
+            </ngx-t3-tag-group>
+          </ng-container>
+        </mat-cell>
+      </mat-col>
+
+      <mat-col matColumnDef="size">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by size">
+          {{ 'i18n.Common.size' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <div
+            *ngIf="item.data.length | exported; else redacted"
+            class="opal-text-grey-400">
+            {{ (item.data.length !== undefined) ? (item.data.length | apply : formatByteSize) : '-' }}
+          </div>
+        </mat-cell>
+      </mat-col>
+
+      <mat-col matColumnDef="last-edit">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by last edit">
+          {{ 'i18n.Common.lastEdit' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <div class="opal-fx-row opal-fx-align-center opal-w-full">
+            <div
+              *ngIf="item.data.updatedAt !== undefined; else redacted"
+              class="opal-text-grey-400 opal-mr-3">
+              {{ item.data.updatedAt | date : 'd LLL y, HH:mm' }}
+            </div>
+            <app-acks-icon
+              *ngIf="{
+                ackInfo: $any(item.ackInfo$ | async)
+              } as resolved"
+              class="opal-mt-1"
+              [status]="resolved.ackInfo && resolved.ackInfo.status"
+              (click)="resolved.ackInfo && openAcknowledgementsDialog(item.data.updatedInBlock)">
+            </app-acks-icon>
+            <button
+              *ngIf="item.data.isContentReadable"
+              mat-icon-button
+              class="opal-s-8 opal-ml-auto opal-mr-n-2"
+              aria-label="document actions"
+              [matMenuTriggerFor]="menu">
+              <mat-icon class="opal-s-5 opal-text-grey-400">more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button
+                mat-menu-item
+                [routerLink]="item.data.id
+                    ? ['/project/documents/', { outlets: { primary: [item.data.id, 'content'], aside: null } }]
+                    : null">
+                <mat-icon>open_in_browser</mat-icon>
+                <span>{{ 'i18n.Common.open' | translate }}</span>
+              </button>
+              <button
+                mat-menu-item
+                (click)="item && downloadDocument(item.data)">
+                <mat-icon>cloud_download</mat-icon>
+                <span>{{ 'i18n.Common.download' | translate }}</span>
+              </button>
+              <button
+                mat-menu-item
+                [routerLink]="['/project/documents/', { outlets: { primary: [item.data.id, 'versions'], aside: null } }]">
+                  <mat-icon>history</mat-icon>
+                  <span>{{ 'i18n.Project.DocumentContent.history' | translate }}</span>
+                </button>
+            </mat-menu>
+          </div>
+        </mat-cell>
+      </mat-col>
+
+      <mat-header-row
+        *matHeaderRowDef="columns; sticky: true"
+        class="opal-w-full"></mat-header-row>
+      <mat-row
+        *matRowDef="let item; columns: columns;"
+        class="opal-pointer opal-w-full"
+        routerLinkActive="bg-accent-100"
+        [routerLink]="['/project', 'documents', {
+            outlets: { primary: [item.data.id], aside: [item.data.id] }
+          }]"
+        (click)="rightSidebarManagerService.setShowSidebarPreference(true)">
+      </mat-row>
+    </mat-table>
+
+    <ngx-t3-empty-state
+      *ngIf="!isLoading && tableProps.isEmpty"
+      ngx-t3-table-empty
+      [description]="'i18n.Project.ProjectsPage.ProjectItem.noDocs' | translate">
+    </ngx-t3-empty-state>
+
+    <ngx-t3-table-paginator
+      [pageSizeValues]="[10, 25, 50]"
+      [pageSize]="pageEvent$.value.pageSize"
+      [length]="resolved?.documents?.items?.length || 0"
+      [total]="resolved?.documents?.total"
+      [ofLabel]="'i18n.TablePaginator.of' | translate"
+      [pageLabel]="'i18n.TablePaginator.page' | translate"
+      [totalPageLabel]="'i18n.TablePaginator.perPage' | translate"
+      (pageChange)="pageEvent$.next($event)">
+    </ngx-t3-table-paginator>
+  </ngx-t3-table-container>
+</ng-container>

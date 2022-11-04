@@ -1,0 +1,106 @@
+<ng-container *ngIf="{
+  blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
+  document: document$ | async,
+  documentTags: documentTags$ | async,
+  participant: participant$ | async
+} as resolved">
+  <ngx-t3-sidebar-header
+    class="opal-sidebar-header-container"
+    [label]="'Dettaglio documento' | translate"
+    [backToLabel]="'Tutti i documenti' | translate"
+    (backTo)="backToListHandler()">
+    <ng-container context-menu>
+      <button
+        *ngIf="resolved.document?.isContentReadable"
+        mat-icon-button
+        [mat-menu-trigger-for]="menuDocument">
+        <mat-icon class="opal-text-grey-400">more_vert</mat-icon>
+      </button>
+      <mat-menu #menuDocument="matMenu">
+        <button
+          *ngIf="resolved.document"
+          mat-menu-item
+          (click)="downloadDocumentHandler(resolved.document)">
+          <mat-icon class="opal-s-4">cloud_download</mat-icon>
+          <span>{{ 'Scarica documento' | translate }}</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </ngx-t3-sidebar-header>
+
+  <div class="opal-overflow-y-auto opal-h-full">
+    <ngx-t3-descriptions class="opal-body-2">
+      <ng-container *ngIf="resolved.document">
+        <ng-template #redacted>
+          <div class="redacted">Redacted</div>
+        </ng-template>
+
+        <ngx-t3-description-item
+          [label]="'Nome' | translate"
+          [multiline]="true">
+          <ng-container *ngIf="resolved.document.name | exported; else redacted">
+            {{ resolved.document.name | noValueLabel }}
+          </ng-container>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Creato' | translate">
+          <ng-container *ngIf="resolved.document.createdAt !== undefined; else redacted">
+            {{ resolved.document.createdAt | date : 'd LLL y, HH:mm' }}
+          </ng-container>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Modificato' | translate">
+          <ng-container *ngIf="resolved.document.updatedAt !== undefined; else redacted">
+            {{ resolved.document.updatedAt | date : 'd LLL y, HH:mm' }}
+          </ng-container>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Tag' | translate">
+          <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+            <app-redactable-tag
+              *ngFor="let tag of resolved.documentTags"
+              class="t3-tag-like opal-mb-1"
+              [tagName]="tag?.name"
+              [color]="tag?.color">
+            </app-redactable-tag>
+          </ngx-t3-tag-group>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Tipo' | translate">
+          <ngx-t3-tag class="opal-bg-accent-200 opal-mr-2">{{ resolved.document.extension }}</ngx-t3-tag>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Dimensione' | translate">
+          <ng-container *ngIf="resolved.document.length | exported; else redacted">
+            {{ resolved.document.length !== undefined ? (resolved.document.length | apply : formatBytesSize) : '-' }}
+          </ng-container>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Ultimo editor' | translate">
+          <app-participant-identity [participant]="resolved.participant"></app-participant-identity>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item [label]="'Ultimo hash' | translate">
+          <ng-container *ngIf="resolved.document.updatedInBlock.linkHash as linkHash; else redacted">
+            <ngx-t3-copy-to-clipboard
+              class="opal-d-block opal-ellipsed"
+              position="left"
+              [textToCopy]="linkHash | uint8">
+              <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">{{ linkHash | uint8 }}</div>
+            </ngx-t3-copy-to-clipboard>
+          </ng-container>
+        </ngx-t3-description-item>
+
+        <ngx-t3-description-item label="Acks">
+          <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+            <app-acks-status
+              [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
+              (click)="openAcknowledgementsDialog(resolved.document.updatedInBlock)">
+            </app-acks-status>
+          </span>
+        </ngx-t3-description-item>
+
+      </ng-container>
+    </ngx-t3-descriptions>
+  </div>
+</ng-container>

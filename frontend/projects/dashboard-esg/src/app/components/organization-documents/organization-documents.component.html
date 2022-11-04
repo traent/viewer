@@ -1,0 +1,33 @@
+<div
+  *ngIf="{
+    pledge: pledge$ | async,
+    report: report$ | async,
+    productPresentation: productPresentation$ | async
+  } as resolved"
+  class="xl:flex">
+  <div class="grow basis-0 mb-12 xl:mb-0 xl:mr-5">
+    <h2 class="mb-1.5">ESG Pledge</h2>
+
+    <app-document-card
+      class="block h-[370px]"
+      [document]="resolved.pledge"></app-document-card>
+  </div>
+
+  <div class="grow basis-0 mb-12 xl:mb-0 xl:mr-5">
+    <h2 class="mb-1.5">ESG Report</h2>
+
+    <app-document-card
+      class="block h-[370px] "
+      [document]="resolved.report"></app-document-card>
+  </div>
+
+  <div class="grow basis-0">
+    <h2 class="mb-1.5">Product Presentation</h2>
+
+    <app-document-card
+      class="block h-[370px]"
+      [document]="resolved.productPresentation"></app-document-card>
+  </div>
+</div>
+
+

@@ -1,0 +1,26 @@
+<ng-container *ngIf="{
+  threadSelected: threadSelected$ | async,
+  threadMessages: threadMessages$ | async
+} as resolved">
+
+  <ngx-t3-sidebar-header
+    *ngIf="resolved.threadSelected"
+    class="opal-sidebar-header-container"
+    [backToLabel]="'i18n.Common.allThreads' | translate"
+    [label]="(resolved.threadSelected.name | exportedAndDefined) ? resolved.threadSelected.name : 'Redacted'"
+    [ellipsed]="false"
+    (backTo)="router.navigate(['../..'],  { relativeTo: route })">
+    <ng-container context-menu>
+      <button
+        mat-icon-button
+        [matTooltip]="'i18n.Common.threadInfo' | translate"
+        [routerLink]="['../']">
+        <mat-icon class="opal-s-5 opal-text-grey-400 material-icons-outlined">info</mat-icon>
+      </button>
+    </ng-container>
+  </ngx-t3-sidebar-header>
+
+  <app-thread-messages [paginator]="resolved.threadMessages">
+  </app-thread-messages>
+
+</ng-container>

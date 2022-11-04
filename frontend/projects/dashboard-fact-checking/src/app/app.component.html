@@ -1,0 +1,95 @@
+<app-header-news-status
+  *ngIf="uiLastState$ | async as uiLastState"
+  [style.--header-news-status-bg-color]="uiLastState.ui.bgHeader"
+  [label]="uiLastState.description"
+  [icon]="uiLastState.ui.icon">
+</app-header-news-status>
+
+<div
+  *ngIf="{
+    mainArticleUpdateAt: mainArticleUpdateAt$ | async,
+    mainDocCreatedAt: mainDocCreatedAt$ | async,
+    project: project$ | async
+  } as resolved"
+  class="opal-content-container opal-fx-row opal-overflow-auto">
+  <div class="share-button-container opal-mt-6">
+    <app-share-buttons [url]="mainArticleUrl$ | async"></app-share-buttons>
+  </div>
+
+  <div class="opal-container opal-fx-row opal-fx-g-1 opal-pb-12">
+    <aside class="opal-fx-col opal-fx-s-0 opal-pt-6 hide-scrollbar">
+      <app-project-participants-list [paginator]="participantPaginator"></app-project-participants-list>
+      <app-workflow-states
+        [states]="uiWorkflowStates$ | async"
+        (showState)="showStateHandler($event)">
+      </app-workflow-states>
+      <app-company-info class="opal-mb-3 opal-d-block"></app-company-info>
+      <div class="navigate-btn-viewer opal-p-2 opal-mt-3">
+        <a
+          class="opal-text-grey-400 opal-body-3 opal-pointer opal-text-underline"
+          (click)="navigateToViewerHandler()">
+          {{ 'Blockchain Info' }}
+        </a>
+      </div>
+    </aside>
+
+    <main class="opal-pt-6 hide-scrollbar">
+      <app-project-info [project]="resolved.project || undefined">
+        <div
+          class="date-info-container"
+          date>
+          <div>
+            <span class="opal-text-700 opal-text-grey-400 opal-text-uppercase opal-body-3 opal-mr-2">{{ 'Pubblicata' | translate }}</span>
+            <span class="opal-body-2 font-luiss-bold">{{ resolved.mainDocCreatedAt | date : 'dd/MM/yyyy' }}</span>
+          </div>
+          <div>
+            <span class="opal-text-700 opal-text-grey-400 opal-text-uppercase opal-body-3 opal-mr-2">{{ 'Ultima modifica' | translate }}</span>
+            <span class="opal-body-2 font-luiss-bold">{{ resolved.mainArticleUpdateAt | date : 'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <button
+          class="share-mobile-btn opal-border-1 opal-border-grey-200"
+          mat-icon-button
+          (click)="showShareLinkHandler()">
+          <mat-icon>share</mat-icon>
+        </button>
+      </app-project-info>
+
+      <div class="authors-container">
+        <div class="opal-fx-row opal-mb-4 opal-fx-wrap">
+          <app-participant-identity
+            *ngFor="let author of authors$ | async"
+            size="xxs"
+            class="opal-mr-5"
+            [participant]="author">
+          </app-participant-identity>
+        </div>
+
+        <a
+          mat-stroked-button
+          class="opal-bg-grey-100 opal-fx-s-0 opal-w-40"
+          target="_blank"
+          [href]="mainArticleUrl$ | async">
+          <span class="opal-mr-2">{{ 'Leggi su' | translate }}</span>
+          <img src="/assets/images/zeta-luiss-logo.svg">
+        </a>
+      </div>
+
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <ngx-t3-right-sidebar
+    class="opal-fx-s-0"
+    *ngIf="{ documentDetails: documentDetails$ | async } as sidebarResolved"
+    [open]="isSidebarOpen"
+    (openChange)="isSidebarOpen = !isSidebarOpen">
+    <app-document-list
+      [hidden]="sidebarResolved.documentDetails"
+      (clickDocument)="changeDocumentContentHandler($event)">
+    </app-document-list>
+    <app-document-details [hidden]="!sidebarResolved.documentDetails"></app-document-details>
+  </ngx-t3-right-sidebar>
+
+</div>

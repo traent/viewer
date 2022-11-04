@@ -1,0 +1,46 @@
+<div
+  #viewport
+  class="pdf-viewer-container">
+
+  <div
+    *ngIf="data"
+    id="pdf-viewer-content"
+    class="pdf-viewer-content">
+    <ng-container *ngFor="let page of data | apply : getPages | async; let last = last">
+      <div
+        #pageElement
+        #rectVisible="ngxT3Visible"
+        ngxT3Visible
+        intersectionRootMargin="300% 300%"
+        id="page-{{page.pageNumber}}"
+        class="pdf-viewer-page"
+        [intersectionRoot]="viewport"
+        [attr.data-number]="page.pageNumber"
+        [class.opal-mb-5]="!last"
+        [style.width.px]="getPageViewport(page).width"
+        [style.height.px]="getPageViewport(page).height">
+
+        <ng-container *ngIf="rectVisible.visibleChange | async">
+          <app-pdf-page-canvas
+            [pdfPageProxy]="page"
+            [zoom]="zoom">
+          </app-pdf-page-canvas>
+
+          <app-pdf-text-content
+            *ngIf="textRendering"
+            style.transform="scale({{zoom}})"
+            [textContent]="page | apply : getTextContent | async"
+            [pageNumber]="page.pageNumber">
+          </app-pdf-text-content>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Anchors -->
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<div class="toolbar-container">
+  <ng-content select="[toolbar]"></ng-content>
+</div>

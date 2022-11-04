@@ -1,0 +1,54 @@
+<div *ngIf="item; else skeleton">
+  <div
+    class="opal-h-9 opal-pointer opal-fx-row opal-fx-justify-between opal-fx-align-center opal-px-3"
+    [attr.aria-label]="item.name | translate">
+    <ng-container [ngTemplateOutlet]="customIconTemplate || defaultIconTemplate"></ng-container>
+    <ng-template #defaultIconTemplate>
+      <div
+        *ngIf="item.icon"
+        class="icon opal-radius-2 opal-mr-2">
+        <ngx-t3-icon
+          [icon]="item.icon"
+          [iconClass]="'opal-s-4 opal-p-1'"></ngx-t3-icon>
+      </div>
+    </ng-template>
+    <div class="opal-fx-g-1 opal-body-2 opal-ellipsed">{{ item.name | translate }}</div>
+    <div
+      class="opal-ml-auto"
+      data-test="value-container">
+      <ng-container
+        [ngTemplateOutlet]="selectionIcon"
+        [ngTemplateOutletContext]="{ value: item.value }">
+      </ng-container>
+    </div>
+  </div>
+  <div
+    *ngIf="item.description"
+    class="opal-body-2 opal-ml-11 opal-mt-n-1 opal-pb-2 opal-text-grey-400">
+    {{ item.description | translate }}
+  </div>
+</div>
+
+<ng-template
+  #selectionIcon
+  let-value='value'>
+  <div
+    class="opal-pos-rel"
+    [attr.aria-label]="value"
+    [ngSwitch]="value">
+    <ng-container *ngSwitchCase="'unchecked'"></ng-container>
+    <ng-container *ngSwitchCase="'checked'">
+      <mat-icon class="icon-selected opal-s-6 opal-text-accent-500">check</mat-icon>
+    </ng-container>
+    <ng-container *ngSwitchCase="'indeterminate'">
+      <mat-icon class="icon-indeterminate opal-s-6 opal-text-grey-400">minimize</mat-icon>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #skeleton>
+  <div class="opal-h-9 opal-fx-row">
+    <ngx-t3-skeleton class="opal-s-6 opal-mr-3"></ngx-t3-skeleton>
+    <ngx-t3-skeleton class="opal-h-6 opal-w-full"></ngx-t3-skeleton>
+  </div>
+</ng-template>

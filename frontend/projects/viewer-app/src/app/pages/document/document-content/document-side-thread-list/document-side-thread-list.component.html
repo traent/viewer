@@ -1,0 +1,13 @@
+<div
+  *ngIf="{
+    threads: threads$ | async
+  } as resolved"
+  class="opal-h-full opal-fx-col">
+  <app-thread-list
+    labelContext="document"
+    [tab]="categorySelection"
+    [paginator]="resolved.threads"
+    (tabClick)="categorySelection$.next($event)"
+    (itemClick)="selectThread($event)">
+  </app-thread-list>
+</div>

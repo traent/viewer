@@ -1,0 +1,35 @@
+<ngx-t3-paginator-list
+  *ngIf="paginator"
+  class="opal-overflow-y-auto opal-w-full opal-p-4 opal-border-box opal-mt-auto opal-h-full opal-fx-r-col"
+  [paginator]="paginator">
+  <ng-container *ngIf="paginator?.total?.value || paginator?.loading?.value; else noMessages">
+    <ng-container *ngFor="let threadMessage of paginator.items.value">
+      <app-thread-message [threadMessage]="threadMessage"></app-thread-message>
+    </ng-container>
+  </ng-container>
+
+  <ng-template
+    #loadMoreButton
+    let-loadMore>
+    <button
+      mat-mini-fab
+      class="opal-mb-2 opal-mx-auto opal-bg-white opal-text-grey-400"
+      (click)="loadMore()">
+      <mat-icon class="opal-s-full opal-fx-row opal-fx-center">
+        expand_less
+      </mat-icon>
+    </button>
+  </ng-template>
+</ngx-t3-paginator-list>
+
+<ng-template #noMessages>
+  <div class="opal-fx-col opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-h-full">
+    <img
+      src="/assets/images/no-messages.svg"
+      alt="upload file"
+      class="opal-mb-3">
+    <div class="opal-body-1 opal-text-grey-400">
+      {{ 'i18n.Common.noMessages' | translate }}
+    </div>
+  </div>
+</ng-template>

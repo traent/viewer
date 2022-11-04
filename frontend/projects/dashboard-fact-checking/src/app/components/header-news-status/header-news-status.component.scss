@@ -1,0 +1,21 @@
+@use "utilities/breakpoints" as breakpoints;
+
+:host {
+  --header-news-status-bg-color: theme("colors.grey.100");
+
+  align-items: center;
+  background-color: var(--header-news-status-bg-color);
+  box-sizing: border-box;
+  display: flex;
+  height: 40px;
+  padding: 12px;
+  width: 100%;
+
+  @include breakpoints.respond-above(md) {
+    justify-content: center;
+  }
+
+  @include breakpoints.respond-above(lg) {
+    padding: 4px 12px;
+  }
+}

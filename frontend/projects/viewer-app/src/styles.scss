@@ -1,0 +1,111 @@
+/* You can add global styles to this file, and also import other style files */
+// TODO: Import compiled and minified libs
+@import "../../../../../apps/projects/opal-material/theme.scss";
+
+@import "../../../node_modules/@traent/ngx-dialog/assets/styles.scss";
+
+@import "./assets/scss/json-editor";
+@import "./assets/scss/log-item";
+@import "./assets/scss/sidebar";
+@import "./assets/scss/snapshot";
+@import "./assets/scss/thread-content";
+
+ngx-t3-descriptions {
+  --ngx-t3-label-width: 114px;
+}
+
+$topbar-height: 60px;
+ngx-t3-topbar {
+  --topbar-height: $topbar-height;
+}
+.layout-content {
+  display: block;
+  height: calc(100vh - $topbar-height);
+}
+
+ngx-t3-tag {
+  --ngx-t3-tag-color: black !important;
+  max-width: 75px;
+
+  &.no-ellipse {
+    max-width: unset;
+  }
+}
+
+ngx-t3-table-container {
+  border: 1px solid theme("colors.grey.200");
+}
+
+.policy {
+  background: theme("colors.purple.300");
+}
+
+.author-signature {
+  background: theme("colors.green.500");
+}
+
+.in-context {
+  background: theme("colors.lime.500");
+}
+
+.data {
+  background: theme("colors.red.500");
+}
+
+.ack {
+  background: theme("colors.violet.300");
+}
+
+.add-authors {
+  background: theme("colors.green.500");
+}
+
+.reference {
+  background: theme("colors.grey.300");
+}
+
+.update-context {
+  background: theme("colors.ottanio.400");
+}
+
+.previous-block {
+  background: theme("colors.orange.300");
+}
+
+.redacted {
+  color: theme("colors.grey.400");
+  font-style: italic;
+  padding-right: 2px;
+  cursor: default;
+  text-decoration: none;
+}
+
+.table-header {
+  display: flex;
+  flex-direction: row;
+  background-color: theme("colors.white.500");
+  border-radius: 8px 8px 0px 0px;
+  padding-block: 12px;
+
+  font-family: 'DM Sans';
+  font-size: 10.7px;
+  font-weight: bold;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+
+  border-bottom: solid 1px theme("colors.grey.200");
+
+  > * {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+/**
+  Temporary fix for AE-6626 Snapshots links in the viewer are broken.
+  ngxT3PointerInnerClick currently requires a MARKER_CLASS named `pointer` to work.
+ */
+.pointer {
+  cursor: pointer;
+}

@@ -1,0 +1,172 @@
+@use 'sass:math';
+ngx-t3-with-sidebar {
+  --with-sidebar-bgColor: white;
+  --with-sidebar-content-padding-left: 0;
+  --with-sidebar-content-padding-right: 0;
+  --with-sidebar-content-padding-bottom: 0;
+  --with-sidebar-width: 320px;
+}
+
+.bottom-line {
+  border-bottom: 1px solid theme("colors.grey.200");
+}
+
+.right-line {
+  border-right: 4px solid theme("colors.grey.300");
+}
+
+ngx-t3-avatar-group {
+  &.border-grey {
+    --ngx-t3-avatar-border-color: theme("colors.coolgrey.100");
+  }
+}
+
+/*
+* Version Slider Style
+*/
+
+.version-item {
+  height: 48px;
+  padding-left: 8px;
+
+  .version-action {
+    width: 44px;
+    height: 100%;
+    position: relative;
+    flex-shrink: 0;
+
+    mat-radio-button {
+      position: relative;
+      top: 50%;
+      margin-left: 10px;
+      transform: translate(0, -50%);
+      .mat-radio-outer-circle {
+        border-color: black;
+      }
+    }
+  }
+}
+
+.versions {
+  user-select: none;
+
+  &.moving {
+    .circle-toggle:after,
+    > * {
+      cursor: grabbing !important;
+    }
+  }
+
+  .version-action.is-toggle {
+    position: relative;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      margin-left: -1px;
+      background: theme("colors.grey.100");
+      height: 100%;
+      width: 2px !important;
+    }
+    &.first:before {
+      top: 50%;
+      height: 50%;
+    }
+    &.last:before {
+      bottom: 50%;
+      height: 50%;
+    }
+
+    &.between:before {
+      width: 2px;
+      margin-left: -1px;
+      background: theme("colors.accent.500");
+    }
+
+    .circle-toggle {
+      height: 36px;
+      width: 36px;
+      margin-top: 6px;
+      margin-left: 3px;
+      position: relative;
+    }
+
+    &.beyond > .circle-toggle {
+      $emptyToggleSize: 24px;
+      box-sizing: border-box;
+      background-color: white;
+      width: $emptyToggleSize;
+      height: $emptyToggleSize;
+      border: 2px solid theme("colors.grey.100");
+      border-radius: $emptyToggleSize;
+      left: 50%;
+      top: 50%;
+      margin: -(math.div($emptyToggleSize, 2));
+    }
+
+    &.mainDoc > .circle-toggle,
+    &.compareDoc > .circle-toggle {
+      &:before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        margin-left: 0px;
+        background: theme("colors.accent.500");
+        height: calc(50% + 8px);
+        width: 2px !important;
+      }
+      &:after {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        padding-left: 2px;
+        content: '';
+        cursor: grab;
+        background-image: url('/assets/opal/images/toggle.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+    }
+    &.mainDoc > .circle-toggle:before {
+      top: 50%;
+    }
+    &.compareDoc > .circle-toggle:before {
+      bottom: 50%;
+    }
+  }
+}
+
+.topbar {
+  width: 100%;
+  height: 60px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  box-sizing: border-box;
+
+  > .name-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    > .version-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      background-color: theme("colors.grey.200");
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+    }
+  }
+
+  app-acks-icon {
+    --acks-height: 24px;
+    --acks-width: 24px;
+  }
+}

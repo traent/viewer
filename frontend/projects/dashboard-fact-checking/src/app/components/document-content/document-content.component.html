@@ -1,0 +1,108 @@
+<ng-container *ngIf="{
+  ackInfo: ackInfo$ | async,
+  document: document$ | async
+} as resolved">
+  <ng-template #redacted>
+    <div class="redacted">Redacted</div>
+  </ng-template>
+
+  <div class="opal-fx-row opal-fx-align-start opal-fx-justify-between opal-mt-8">
+
+    <div class="opal-fx-row opal-fx-align-start">
+      <button
+        class="mobile-btn opal-mr-3"
+        mat-icon-button
+        (click)="toggleDocumentsMobileHandler()">
+        <mat-icon
+          *ngIf="isDocumentListMobileShown"
+          class="opal-text-grey-400">
+          close
+        </mat-icon>
+        <mat-icon
+          *ngIf="!isDocumentListMobileShown"
+          class="opal-text-grey-400">
+          menu
+        </mat-icon>
+      </button>
+
+      <h4
+        *ngIf="resolved.document?.name | exported; else redacted"
+        class="document-name opal-h2 opal-mt-0 opal-mb-4 opal-pt-2">
+        {{ resolved.document?.name || '-' }}
+      </h4>
+    </div>
+
+    <div class="opal-fx-row opal-fx-align-start">
+      <button
+        *ngIf="resolved.ackInfo && resolved.document"
+        mat-icon-button
+        class="opal-mr-2 opal-border-grey-100 opal-border-1 opal-radius-20 desktop-btn"
+        (click)="openAcknowledgementsDialogHandler(resolved.document.updatedInBlock)">
+        <app-acks-icon [status]="resolved.ackInfo.status"></app-acks-icon>
+      </button>
+
+      <button
+        *ngIf="resolved.document"
+        class="mobile-btn opal-ml-3"
+        mat-icon-button
+        (click)="showDocumentActionsHandler(resolved.document)">
+        <mat-icon class="opal-text-grey-400">more_vert</mat-icon>
+      </button>
+
+      <button
+        class="desktop-btn opal-ml-3"
+        mat-icon-button
+        [mat-menu-trigger-for]="menuDocument">
+        <mat-icon class="opal-text-grey-400">more_vert</mat-icon>
+      </button>
+      <mat-menu #menuDocument="matMenu">
+        <ng-container *ngIf="resolved.document">
+          <button
+            mat-menu-item
+            queryParamsHandling="merge"
+            [routerLink]="[]"
+            [queryParams]="{ docDetails: resolved.document.id }">
+            <mat-icon class="opal-s-4">info</mat-icon>
+            {{ 'Dettagli documento' | translate }}
+          </button>
+          <button
+            mat-menu-item
+            (click)="downloadDocumentHandler(resolved.document)">
+            <mat-icon class="opal-s-4">cloud_download</mat-icon>
+            <span>{{ 'Scarica documento' | translate }}</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+  </div>
+
+  <div
+    class="opal-mb-6"
+    [hidden]="!isDocumentListMobileShown">
+    <app-document-list (clickDocument)="changeDocumentContentHandler($event)"></app-document-list>
+  </div>
+
+  <ng-container *ngIf="resolved.document && resolved.document.uiType === DocumentContentType.PDF">
+    <app-pdf-viewer
+      *ngIf="documentDocumentProxy$ | async as pdfDocumentProxy"
+      #viewer
+      class="pdf-viewer opal-h-full opal-border-1 opal-border-grey-200 opal-radius-4"
+      [textRendering]="false"
+      [data]="pdfDocumentProxy"
+      [zoom]="documentZoom || 1"
+      (contentLoad)="isDocumentContentLoad = true"
+      (layoutChange)="pageRects = $event">
+
+      <!-- <app-viewer-toolbar
+        toolbar
+        class="opal-mx-auto"
+        [data]="pdfDocumentProxy"
+        [zoom]="documentZoom"
+        [page]="viewer.getCurrentPage() | async"
+        [showAnchors]="false"
+        (zoomChange)="documentZoom = $event"
+        (selectPage)="viewer.scrollToPage($event)">
+      </app-viewer-toolbar> -->
+    </app-pdf-viewer>
+  </ng-container>
+</ng-container>

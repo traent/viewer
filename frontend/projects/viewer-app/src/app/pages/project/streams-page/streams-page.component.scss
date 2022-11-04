@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-height: 100%;
+}
+
+ngx-t3-tabs {
+  --ngx-t3-tabs-color: theme("colors.grey.600");
+}
+
+ngx-t3-stream-value-renderer {
+  --ngx-t3-stream-value-renderer-font-size: 14px;
+}
+
+.stream-icon-container {
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty {
+  position: absolute;
+  top: 128px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 2;
+  > * {
+    max-width: 500px;
+  }
+}

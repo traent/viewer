@@ -1,0 +1,510 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "viewer-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/viewer-app",
+      "sourceRoot": "projects/viewer-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/viewer-app",
+            "index": "projects/viewer-app/src/index.html",
+            "main": "projects/viewer-app/src/main.ts",
+            "polyfills": "projects/viewer-app/src/polyfills.ts",
+            "tsConfig": "projects/viewer-app/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/viewer-app/src/sw.js",
+              "projects/viewer-app/src/favicon.svg",
+              "projects/viewer-app/src/assets",
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/icons",
+                "output": "assets/opal/icons"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/images",
+                "output": "assets/opal/images"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/fonts",
+                "output": "assets/opal/fonts"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@traent/ngx-components/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "pdf.worker.min.js",
+                "input": "./node_modules/pdfjs-dist/build/",
+                "output": "/pdfjs-dist/"
+              }
+            ],
+            "styles": [
+              "./node_modules/@traent/ngx-components/assets/scss/styles.scss",
+              "./node_modules/jsoneditor/dist/jsoneditor.min.css",
+              "./node_modules/opal/dist/css/index.min.css",
+              "projects/viewer-app/src/styles.scss"
+            ],
+            "scripts": [],
+            "preserveSymlinks": true
+          },
+          "configurations": {
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            },
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/viewer-app/src/environments/environment.ts",
+                  "with": "projects/viewer-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "sourceMap": {
+                "hidden": false,
+                "scripts": true,
+                "styles": true
+              },
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
+              "buildOptimizer": true,
+              "vendorChunk": false,
+              "namedChunks": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "40kb"
+                }
+              ]
+            },
+            "ci": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "40kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/viewer-app/src/environments/environment.ts",
+                  "with": "projects/viewer-app/src/environments/environment.ci.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "deploy": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "40kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/viewer-app/src/environments/environment.ts",
+                  "with": "projects/viewer-app/src/environments/environment.deploy.ts"
+                }
+              ],
+              "outputHashing": "all"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "port": 4600,
+            "disableHostCheck": true,
+            "sslKey": "../../tests/dev/certs/star-e4s1-net.key",
+            "sslCert": "../../tests/dev/certs/star-e4s1-net.crt",
+            "ssl": true
+          },
+          "configurations": {
+            "development": {
+              "browserTarget": "viewer-app:build:development"
+            },
+            "production": {
+              "browserTarget": "viewer-app:build:production"
+            },
+            "ci": {
+              "browserTarget": "viewer-app:build:ci"
+            },
+            "deploy": {
+              "browserTarget": "viewer-app:build:deploy"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "viewer-app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/viewer-app/src/test.ts",
+            "polyfills": "projects/viewer-app/src/polyfills.ts",
+            "tsConfig": "projects/viewer-app/tsconfig.spec.json",
+            "karmaConfig": "projects/viewer-app/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/viewer-app/src/favicon.svg",
+              "projects/viewer-app/src/assets"
+            ],
+            "styles": [
+              "projects/viewer-app/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/viewer-app/**/*.ts",
+              "projects/viewer-app/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "dashboard-fact-checking": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/dashboard-fact-checking",
+      "sourceRoot": "projects/dashboard-fact-checking/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/dashboard-fact-checking",
+            "index": "projects/dashboard-fact-checking/src/index.html",
+            "main": "projects/dashboard-fact-checking/src/main.ts",
+            "polyfills": "projects/dashboard-fact-checking/src/polyfills.ts",
+            "tsConfig": "projects/dashboard-fact-checking/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/dashboard-fact-checking/src/favicon.ico",
+              "projects/dashboard-fact-checking/src/assets",
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/icons",
+                "output": "assets/opal/icons"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/fonts",
+                "output": "assets/opal/fonts"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/images",
+                "output": "assets/opal/images"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@traent/ngx-components/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "pdf.worker.min.js",
+                "input": "./node_modules/pdfjs-dist/build/",
+                "output": "/pdfjs-dist/"
+              }
+            ],
+            "styles": [
+              "./node_modules/@traent/ngx-components/assets/scss/styles.scss",
+              "projects/dashboard-fact-checking/src/styles.scss"
+            ],
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./node_modules/opal/src/scss",
+                "./node_modules/opal-material",
+                "projects/dashboard-fact-checking/src"
+              ]
+            },
+            "preserveSymlinks": true
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/dashboard-fact-checking/src/environments/environment.ts",
+                  "with": "projects/dashboard-fact-checking/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "dashboard-fact-checking:build:production"
+            },
+            "development": {
+              "browserTarget": "dashboard-fact-checking:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/dashboard-fact-checking/**/*.ts",
+              "projects/dashboard-fact-checking/**/*.html"
+            ]
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "dashboard-fact-checking:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/dashboard-fact-checking/src/test.ts",
+            "polyfills": "projects/dashboard-fact-checking/src/polyfills.ts",
+            "tsConfig": "projects/dashboard-fact-checking/tsconfig.spec.json",
+            "karmaConfig": "projects/dashboard-fact-checking/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/dashboard-fact-checking/src/favicon.ico",
+              "projects/dashboard-fact-checking/src/assets"
+            ],
+            "styles": [
+              "projects/dashboard-fact-checking/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "dashboard-esg": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/dashboard-esg",
+      "sourceRoot": "projects/dashboard-esg/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/dashboard-esg",
+            "index": "projects/dashboard-esg/src/index.html",
+            "main": "projects/dashboard-esg/src/main.ts",
+            "polyfills": "projects/dashboard-esg/src/polyfills.ts",
+            "tsConfig": "projects/dashboard-esg/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/dashboard-esg/src/favicon.ico",
+              "projects/dashboard-esg/src/assets",
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/icons",
+                "output": "assets/opal/icons"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/fonts",
+                "output": "assets/opal/fonts"
+              },
+              {
+                "glob": "*",
+                "input": "./node_modules/opal/images",
+                "output": "assets/opal/images"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@traent/ngx-components/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "pdf.worker.min.js",
+                "input": "./node_modules/pdfjs-dist/build/",
+                "output": "/pdfjs-dist/"
+              }
+            ],
+            "styles": [
+              "./node_modules/@traent/ngx-components/assets/scss/styles.scss",
+              "projects/dashboard-esg/src/styles.scss"
+            ],
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/dashboard-esg/src"
+              ]
+            },
+            "preserveSymlinks": true
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/dashboard-esg/src/environments/environment.ts",
+                  "with": "projects/dashboard-esg/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "dashboard-esg:build:production"
+            },
+            "development": {
+              "browserTarget": "dashboard-esg:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "dashboard-esg:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/dashboard-esg/src/test.ts",
+            "polyfills": "projects/dashboard-esg/src/polyfills.ts",
+            "tsConfig": "projects/dashboard-esg/tsconfig.spec.json",
+            "karmaConfig": "projects/dashboard-esg/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/dashboard-esg/src/favicon.ico",
+              "projects/dashboard-esg/src/assets"
+            ],
+            "styles": [
+              "projects/dashboard-esg/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/dashboard-esg/**/*.ts",
+              "projects/dashboard-esg/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "analytics": false
+  }
+}

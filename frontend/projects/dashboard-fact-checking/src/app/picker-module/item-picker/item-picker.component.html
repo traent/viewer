@@ -1,0 +1,10 @@
+<ngx-t3-list
+  *ngIf="itemsPickable$ | async as itemsPickable"
+  (selectItem)="selectItem($event)">
+  <app-ngx-t3-pickable-item
+    *ngFor="let pickableItem of itemsPickable; trackBy: trackById"
+    ngxT3ListItem
+    [id]="pickableItem.id"
+    [item]="pickableItem">
+  </app-ngx-t3-pickable-item>
+</ngx-t3-list>

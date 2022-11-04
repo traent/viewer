@@ -1,0 +1,21 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [backToLabel]="'i18n.Common.thread' | translate"
+  [label]="'i18n.Common.threadDetails' | translate"
+  (backTo)="router.navigate(['messages'],  { relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<div class="opal-overflow-y-auto opal-pb-3">
+  <app-thread-overview
+    *ngIf="{
+      thread: thread$ | async,
+      referencesCount: referencesCount$ | async,
+      participantsCount: participantsCount$ | async
+    } as resolved"
+    [thread]="resolved.thread"
+    [referencesCount]="resolved.referencesCount"
+    [participantsCount]="resolved.participantsCount"
+    (participantsClick)="openParticipants(resolved.participantsCount)"
+    (referencesClick)="openReferences(resolved.referencesCount)">
+  </app-thread-overview>
+</div>

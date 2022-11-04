@@ -1,0 +1,27 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [label]="'i18n.Common.organizations' | translate"
+  [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
+  (backTo)="router.navigate(['..'],  { relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<ngx-t3-paginator-list
+  class="opal-overflow-y-auto opal-fx-g-1"
+  [paginator]="organizations">
+  <div
+    *ngFor="let organization$ of organizations.items.value; let last = last"
+    class="opal-py-2"
+    [ngClass]="{ 'opal-border-b-1 opal-border-grey-200': !last }">
+    <ngx-t3-organization-identity
+      *ngIf="{ value: organization$ | async } as organization"
+      size="sm"
+      class="opal-mx-4"
+      [firstLine]="organization.value && organization.value.businessName"
+      [secondLine]="organization.value && organization.value.legalName"
+      [src]="organization.value && organization.value.logo"
+      [squared]="true">
+      <ngx-t3-identity-validation [orgValidation]="organization.value?.validationState | identityValidation : 'organization'">
+      </ngx-t3-identity-validation>
+    </ngx-t3-organization-identity>
+  </div>
+</ngx-t3-paginator-list>

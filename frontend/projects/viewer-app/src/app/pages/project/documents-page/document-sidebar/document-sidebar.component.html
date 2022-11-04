@@ -1,0 +1,36 @@
+<div class="opal-fx-row align-center opal-mx-4">
+  <ngx-t3-tabs
+    class="opal-fx-g-1"
+    justify="space-between">
+    <ngx-t3-tab-item
+      value="info"
+      width="fill"
+      routerLinkActive="active"
+      routerLink="info">
+      <mat-icon class="opal-s-4 opal-mr-1">info</mat-icon>
+      {{ 'i18n.Common.info' | translate }}
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="log"
+      width="fill"
+      routerLinkActive="active"
+      routerLink="log">
+      <mat-icon class="opal-s-4 opal-mr-1">list</mat-icon>
+      {{ 'i18n.Common.log' | translate }}
+    </ngx-t3-tab-item>
+
+  </ngx-t3-tabs>
+
+  <!-- FIXME: re-enable while sidebar collapse logic is in place -->
+  <!-- <button
+    mat-icon-button
+    class="opal-ml-1 opal-s-9 opal-text-grey-400">
+    <mat-icon class="opal-s-4 opal-rotate-90">unfold_less</mat-icon>
+  </button> -->
+</div>
+
+<div class="opal-mt-3 opal-border-b-1 opal-border-grey-200"></div>
+
+<div class="opal-fx-g-1 opal-overflow-hidden">
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,68 @@
+<div
+  *ngIf="blockItem"
+  class="opal-fx-row opal-fx-align-center opal-py-3 opal-body-2 opal-pos-rel"
+  matRipple>
+  <mat-icon
+    class="opal-pos-abs opal-my-auto opal-inset-l-4 opal-s-4 opal-text-grey-400"
+    [class.opal-rotate-90]="isOpen">
+    chevron_right
+  </mat-icon>
+  <div class="opal-w-20 opal-fx-center opal-px-4 opal-border-box">
+    {{ blockItem.index }}
+  </div>
+  <div
+    *ngIf="blockItem.linkHash | uint8 as linkHash"
+    class="opal-px-3 opal-border-box opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed opal-text-mono">
+    <ngx-t3-copy-to-clipboard
+      class="opal-w-full"
+      position="left"
+      [textToCopy]="linkHash"
+      (click)="$event.stopImmediatePropagation()">
+      <div
+        class="opal-body-2 opal-ellipsed opal-mr-1">
+        {{ linkHash }}
+      </div>
+    </ngx-t3-copy-to-clipboard>
+  </div>
+  <div class="opal-px-3 opal-border-box opal-w-35 opal-fx-row opal-fx-justify-start">
+    <ng-container *ngIf="blockItem.encapsulations">
+      <ngx-t3-tag
+        *ngFor="let encapsulationType of blockItem.encapsulations; let last = last"
+        [class]="[encapsulationType | apply : fromPascalCaseToKebabCase, 'opal-ml-1']"
+        [class.opal-mr-3]="last"
+        [matTooltip]="blockEncapsulation[encapsulationType].fullName | translate">
+        {{ blockEncapsulation[encapsulationType].shortName }}
+      </ngx-t3-tag>
+    </ng-container>
+  </div>
+  <div class="opal-px-3 opal-border-box opal-w-20 opal-fx-row opal-fx-justify-start">
+    <ngx-t3-tag
+      *ngIf="blockItem.blockType"
+      [class]="blockItem.blockType | apply : fromPascalCaseToKebabCase"
+      [matTooltip]="blockEncapsulation[blockItem.blockType].fullName | translate">
+      {{ blockEncapsulation[blockItem.blockType].shortName }}
+    </ngx-t3-tag>
+  </div>
+  <div class="opal-w-20 opal-px-3 opal-border-box opal-ellipsed">
+    <div class="opal-ellipsed">
+      {{ blockItem.size | apply : formatBytesSize : 2 }}
+    </div>
+  </div>
+  <div
+    *ngIf="blockItem.merkleTreeRoot | uint8 as merkleTreeRoot"
+    class="opal-px-3 opal-border-box opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed opal-text-mono">
+    <ngx-t3-copy-to-clipboard
+      class="opal-w-full"
+      position="left"
+      [textToCopy]="merkleTreeRoot"
+      (click)="$event.stopImmediatePropagation()">
+      <div
+        class="opal-body-2 opal-ellipsed opal-mr-1">
+        {{ merkleTreeRoot }}
+      </div>
+    </ngx-t3-copy-to-clipboard>
+  </div>
+  <div class="opal-fx-g-1 opal-fx-b-0 opal-px-3 opal-border-box opal-max-w-50">
+    {{ blockItem.createdAt | date : 'dd LLL yyyy, hh:mm:ss a' }}
+  </div>
+</div>

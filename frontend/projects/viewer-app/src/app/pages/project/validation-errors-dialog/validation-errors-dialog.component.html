@@ -1,0 +1,26 @@
+<h1 class="opal-h2 opal-m-0 opal-text-500">
+  {{ 'i18n.Project.LedgerValidationDialog.title' | translate }}
+</h1>
+
+<mat-dialog-content>
+  <p>
+    {{ 'i18n.Project.LedgerValidationDialog.subtitle' | translate }}
+  </p>
+  <div class="opal-body-2 opal-text-code errors-box">
+    <span
+      *ngFor="let error of data.errors; let last = last"
+      class="opal-d-block"
+      [class.opal-mb-1]="!last">
+      {{ error }}
+    </span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    color="accent"
+    mat-flat-button
+    mat-dialog-close>
+    {{ 'i18n.Common.close' | translate }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,31 @@
+<ng-container *appIfPersonParticipant="participant; else workflowAvatarGroup">
+  <ngx-t3-avatar-group
+    *ngIf="{
+      member: member$ | async,
+      organization: organization$ | async
+    } as resolved"
+    [matTooltip]="showTooltip && resolved.member?.fullName || ''">
+    <ngx-t3-avatar
+      [placeholder]="AvatarPlaceholder.Person"
+      [size]="avatarSize"
+      [src]="resolved.member && resolved.member.avatar">
+    </ngx-t3-avatar>
+    <ngx-t3-avatar
+      [placeholder]="AvatarPlaceholder.Organization"
+      [size]="avatarSize"
+      [src]="resolved.organization && resolved.organization.logo">
+    </ngx-t3-avatar>
+  </ngx-t3-avatar-group>
+</ng-container>
+<ng-template #workflowAvatarGroup>
+  <ngx-t3-avatar-group [matTooltip]="showTooltip && workflowTooltip || ''">
+    <ngx-t3-avatar
+      [size]="avatarSize"
+      [src]="WorkflowAvatar.Bot">
+    </ngx-t3-avatar>
+    <ngx-t3-avatar
+      [size]="avatarSize"
+      [src]="WorkflowAvatar.Organization">
+    </ngx-t3-avatar>
+  </ngx-t3-avatar-group>
+</ng-template>

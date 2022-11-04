@@ -1,0 +1,90 @@
+/* You can add global styles to this file, and also import other style files */
+@import "../../../../../apps/projects/opal-material/theme.scss";
+
+$font-luiss-regular: 'LUISS Serif Regular';
+$font-luiss-sans-bold: 'LUISS Sans Bold';
+$font-luiss-sans-regular: 'LUISS Sans Regular';
+
+@font-face {
+  font-family: $font-luiss-regular;
+  src:
+    url("/assets/fonts/Luiss-Serif-Regular.woff2") format("woff2"),
+    url("/assets/fonts/Luiss-Serif-Regular.woff") format("woff"),
+    url("/assets/fonts/Luiss Serif Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: $font-luiss-sans-bold;
+  src:
+    url("/assets/fonts/LuissSans-Bold.woff2") format("woff2"),
+    url("/assets/fonts/LuissSans-Bold.woff") format("woff"),
+    url("/assets/fonts/LuissSans-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: $font-luiss-sans-regular;
+  src:
+    url("/assets/fonts/LuissSans-Regular.woff2") format("woff2"),
+    url("/assets/fonts/LuissSans-Regular.woff") format("woff"),
+    url("/assets/fonts/LuissSans-Regular.otf") format("opentype");
+}
+
+body {
+  font-family: $font-luiss-sans-regular, sans-serif !important;
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: 40px !important; // override Opal style
+  font-family: $font-luiss-regular  !important;
+  line-height: 1;
+}
+
+h2,
+h4 {
+  font-family: $font-luiss-sans-bold, sans-serif !important;
+}
+
+.font-luiss-bold {
+  font-family: $font-luiss-sans-bold, sans-serif !important;
+}
+
+.font-luiss-regular {
+  font-family: $font-luiss-sans-regular, sans-serif !important;
+}
+
+// Override custom style added in opal-material lib
+.mat-bottom-sheet-container {
+  border-radius: 0 !important;
+}
+
+:root {
+  --ngx-t3-right-sidebar-width: 400px;
+}
+
+.no-bottom-sheet-padding {
+  .mat-bottom-sheet-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+.text-none {
+  text-decoration: none !important;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+
+  /* Firefox */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tag {
+  font-family: 'DM Sans';
+}

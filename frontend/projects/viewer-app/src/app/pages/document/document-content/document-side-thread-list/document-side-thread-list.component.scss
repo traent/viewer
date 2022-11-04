@@ -1,0 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  --thread-list-tabs-margin-x: 16px;
+  --thread-list-tabs-margin-y: 12px;
+  --thread-list-item-padding-x: 12px;
+}

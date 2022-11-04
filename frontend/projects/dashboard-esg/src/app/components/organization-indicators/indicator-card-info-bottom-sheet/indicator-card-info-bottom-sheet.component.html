@@ -1,0 +1,27 @@
+<div class="h-full overflow-hidden flex flex-col">
+
+  <div class="pt-5 pb-3 mx-5 flex items-center border-1 border-b illuminem-border-grey-400">
+    <div
+      class="flex items-center"
+      [class.illuminem-text-green-600]="data.indicatorModel.type === 'env'"
+      [class.illuminem-text-blue-500]="data.indicatorModel.type === 'soc'"
+      [class.illuminem-text-violet-500]="data.indicatorModel.type === 'gov'">
+      <mat-icon
+        *ngIf="data.indicatorModel.icon"
+        class="icon-24 lg:icon-32"
+        [svgIcon]=data.indicatorModel.icon></mat-icon>
+      <h5 class="inline-block illuminem-tag ml-2.5">{{ data.indicatorModel.title }}</h5>
+    </div>
+
+    <mat-icon
+      class="ml-auto"
+      (click)="close()">close</mat-icon>
+  </div>
+
+  <app-indicator-card-info-content
+    class="grow overflow-auto"
+    [indicatorModel]="data.indicatorModel"
+    [company]="data.company"
+    [industry]="data.industry"></app-indicator-card-info-content>
+
+</div>

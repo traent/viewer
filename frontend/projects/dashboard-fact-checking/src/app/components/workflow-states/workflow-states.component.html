@@ -1,0 +1,30 @@
+<div class="opal-p-2">
+  <h2 class="opal-h3 opal-text-500">
+    {{ 'Workflow del fact-checking' | translate }}
+  </h2>
+  <div
+    *ngFor="let state of states; let index = index"
+    class="opal-fx-row opal-fx-align-center opal-mb-2"
+    (click)="toggleStateHandler(state)">
+    <mat-icon
+      *ngIf="state.isActive"
+      color="accent"
+      class="opal-mr-2">
+      arrow_forward
+    </mat-icon>
+
+    <div
+      *ngIf="!state.isActive"
+      class="opal-body-3 opal-s-5 opal-mr-2 opal-text-grey-300 opal-border-1 opal-radius-20 opal-fx-col fg-g-0 opal-fx-s-0 opal-fx-justify-center opal-fx-self-align-center opal-fx-align-center opal-text-600">
+      <span>{{ index }}</span>
+    </div>
+
+    <div
+      class="workflow-label opal-body-3 opal-radius-4 opal-w-full opal-text-uppercase opal-p-2 opal-text-center opal-text-600"
+      [style.background-color]="state.ui.bgBadge"
+      [class.opal-bg-grey-100]="!state.isActive"
+      [ngClass]="{ 'opal-border-1 opal-border-accent': state.isSelected }">
+      {{ state.label }}
+    </div>
+  </div>
+</div>

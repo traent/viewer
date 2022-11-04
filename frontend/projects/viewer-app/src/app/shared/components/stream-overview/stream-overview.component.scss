@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+ngx-t3-stream-value-renderer {
+  --ngx-t3-stream-value-renderer-font-size: 14px;
+}

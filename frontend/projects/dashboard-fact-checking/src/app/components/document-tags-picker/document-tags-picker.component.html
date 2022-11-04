@@ -1,0 +1,33 @@
+<ng-container *ngIf="{
+  tagsPickable: tagsPickable$ | async,
+  selectedTagId: selectedTagId$ | async
+} as resolved">
+  <div>
+    <ngx-t3-list (selectItem)="selectTagHandler($event)">
+      <app-ngx-t3-pickable-item
+        *ngFor="let pickableItem of resolved.tagsPickable"
+        ngxT3ListItem
+        [id]="pickableItem.id"
+        [item]="pickableItem">
+      </app-ngx-t3-pickable-item>
+    </ngx-t3-list>
+  </div>
+
+  <div class="opal-fx-row opal-fx-align-center opal-pointer">
+    <button
+      class="opal-h-6 small opal-ml-3 opal-mt-2 opal-mb-2 opal-mr-2"
+      mat-flat-button
+      color="accent"
+      [disabled]="(resolved.selectedTagId && !internalSelectedTagId$.value) || resolved.selectedTagId === internalSelectedTagId$.value"
+      (click)="applySelection.emit(internalSelectedTagId$.value)">
+      {{ 'Applica' | translate }}
+    </button>
+    <button
+      mat-stroked-button
+      class="opal-h-6 small opal-text-grey-400  opal-mt-2 opal-mb-2 opal-mr-2"
+      [disabled]="!resolved.selectedTagId"
+      (click)="resetHandler()">
+      {{ 'Reset' | translate }}
+    </button>
+  </div>
+</ng-container>

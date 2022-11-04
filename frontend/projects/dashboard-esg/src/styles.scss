@@ -1,0 +1,341 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Material icon fonts
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined);
+
+// Fonts
+@import url(https://fonts.googleapis.com/css2?family=DM+Sans:wght@400%3B500%3B700&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300%3B400%3B600%3B700&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400&display=swap);
+
+$my-primary: mat.define-palette(mat.$indigo-palette, 500);
+$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+  )
+));
+
+@include mat.all-component-themes($my-theme);
+
+:root {
+  --illuminem-color-black: #121212;
+  --illuminem-color-light-black: #202020;
+  --illuminem-color-blue: #0E80C0;
+  --illiminem-color-green-600: #41A368;
+  --illuminem-color-blue-500: #64A5F5;
+  --illuminem-color-violet-400: #865FDA;
+  --illuminem-color-grey-100: #EDEDED;
+  --illuminem-color-grey-200: #CCCCCC;
+  --illuminem-color-grey-300: #999999;
+  --illuminem-color-grey-400: #828282;
+  --illuminem-color-grey-500: #4F4F4F;
+  --illuminem-color-yellow-600: #F6B100;
+  --illuminem-color-accent-500: #039FCE;
+  --traent-blue-600: #0031B6;
+}
+
+html, body {
+  background-color: var(--illuminem-color-black);
+  color: var(--illuminem-color-grey-100);
+}
+
+.traent {
+  &-bg-600 {
+    background-color: var(--traent-blue-600);
+  }
+}
+
+@layer utilities {
+  .illuminem {
+    &-bg {
+      background-color: var(--illuminem-color-black);
+    }
+
+    &-bg-light {
+      background-color: var(--illuminem-color-light-black);
+    }
+
+    &-bg-light-translucent {
+      background: rgba(32, 32, 32, 0.7);
+    }
+
+    &-bg-grey-400 {
+      background-color: var(--illuminem-color-grey-400);
+    }
+
+    &-bg-blue {
+      background-color: var(--illuminem-color-blue);
+    }
+
+    &-bg-green-600 {
+      background-color: var(--illiminem-color-green-600);
+    }
+
+    &-border-light-black {
+      border-color: var(--illuminem-color-light-black);
+    }
+
+    &-border-grey-400 {
+      border-color: var(--illuminem-color-grey-400);
+    }
+
+    // environmental
+    &-text-green-600 {
+      color: var(--illiminem-color-green-600);
+    }
+
+    // sustainability
+    &-text-blue-500 {
+      color: var(--illuminem-color-blue-500);
+    }
+
+    // governance
+    &-text-violet-500 {
+      color: var(--illuminem-color-violet-400);
+    }
+
+    &-text-blue {
+      color: var(--illuminem-color-blue);
+    }
+
+    &-text-accent-500 {
+      color: var(--illuminem-color-accent-500);
+    }
+
+    &-text-yellow-600 {
+      color: var(--illuminem-color-yellow-600);
+    }
+
+    &-text-grey-100 {
+      color: var(--illuminem-color-grey-100);
+    }
+
+    &-text-grey-200 {
+      color: var(--illuminem-color-grey-200);
+    }
+
+    &-text-grey-300 {
+      color: var(--illuminem-color-grey-300);
+    }
+
+    &-text-grey-400 {
+      color: var(--illuminem-color-grey-300);
+    }
+
+    &-text-grey-500 {
+      color: var(--illuminem-color-grey-500);
+    }
+
+    &-capital {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 200px;
+      line-height: 110%;
+    }
+  }
+}
+
+// Typography
+
+h1 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 110%;
+}
+
+h2 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 120%;
+}
+
+h4 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 120%;
+}
+
+h5 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+}
+
+.body-1 {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.body-1-mono {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.body-2 {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.text-overline {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.title {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 110%;
+}
+
+.icon-button-24 {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+
+  .mat-icon {
+    width: 16px !important;
+    height: 16px !important;
+    line-height: 16px !important;
+  }
+  .material-icons {
+    font-size: 16px !important;
+  }
+}
+
+.icon-16 {
+  height: 16px !important;
+  width: 16px !important;
+  font-size: 16px !important;
+}
+
+.icon-32 {
+  height: 32px !important;
+  width: 32px !important;
+  font-size: 32px !important;
+}
+
+.button-cta3 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 10px;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+}
+
+.button-cta1 {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 12px;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+}
+
+.ellipsed {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ellipsed-2-lines {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  @supports (-webkit-line-clamp: 2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: initial;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+ngx-t3-skeleton {
+
+  background: transparent !important;
+
+  @keyframes progress {
+    0% {
+      transform: translate3d(-200px, 0, 0);
+    }
+    100% {
+      transform: translate3d(calc(200px + 100vw), 0, 0);
+    }
+  }
+
+  &.animated.progress {
+    &:before {
+      background-image: linear-gradient(
+          90deg,
+          rgba(0, 49, 182, 0.2),
+          rgba(0, 49, 182, 0.6),
+          rgba(0, 49, 182, 0.2)
+      ) !important;
+    }
+  }
+}
+
+a > .mat-button-wrapper {
+  flex-grow: 1;
+}
+
+.document-card-buttons {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+}
+
+mat-bottom-sheet-container {
+  min-height: 95vh !important;
+}
+
+.mat-bottom-sheet-container, .mat-dialog-container {
+  background-color: var(--illuminem-color-light-black);
+  color: white;
+  padding: 0 !important;
+}

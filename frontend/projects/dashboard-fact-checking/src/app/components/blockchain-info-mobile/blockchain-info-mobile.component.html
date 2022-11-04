@@ -1,0 +1,79 @@
+<div>
+  <span class="opal-h4 opal-py-2 opal-px-4 opal-d-block opal-text-500 opal-mb-3">
+    {{ 'Informazioni blockchain' | translate }}
+  </span>
+
+  <ngx-t3-descriptions class="opal-body-2">
+    <ng-container *ngIf="data.block">
+      <ng-template #redacted>
+        <div class="redacted">Redacted</div>
+      </ng-template>
+
+      <ngx-t3-description-item [label]="'Indice' | translate">
+        <ngx-t3-copy-to-clipboard
+          position="right"
+          [textToCopy]="data.block.index + ''">
+          <div class="opal-mr-1">{{ data.block.index }}</div>
+        </ngx-t3-copy-to-clipboard>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        class="opal-py-2"
+        [label]="'Hash' | translate">
+        <ngx-t3-copy-to-clipboard
+          position="left"
+          [textToCopy]="data.block.linkHash | uint8">
+          <div class="opal-text-left opal-text-code opal-break-all opal-mr-1">{{ data.block.linkHash | uint8 }}</div>
+        </ngx-t3-copy-to-clipboard>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'Creato' | translate">
+        {{ data.block.createdAt | date : 'd MMM YYYY, HH:mm' }}
+      </ngx-t3-description-item>
+    </ng-container>
+  </ngx-t3-descriptions>
+
+  <span class="opal-h4 opal-py-2 opal-px-4 opal-d-block opal-text-500 opal-my-3">{{ 'Acknowledgements' | translate }}</span>
+
+  <div
+    *ngFor="let record of acks$ | async; let last = last"
+    class="opal-fx-col opal-p-3"
+    [ngClass]="{ 'opal-border-b-1 opal-border-grey-100': last}">
+    <ngx-t3-organization-identity
+      *ngIf="{ profile: record.organization$ | async } as resolved"
+      size="sm"
+      class="opal-mb-2"
+      [src]="resolved.profile && resolved.profile.logo"
+      [firstLine]="resolved.profile && resolved.profile.businessName || 'Anonimo' | translate">
+    </ngx-t3-organization-identity>
+
+    <ng-container *ngIf="record.ack else pending">
+      <ng-container *ngIf="record.block$ | async as recordBlock">
+        <div class="opal-fx-g-1 opal-fx-s-0 opal-mb-2">
+          <div
+            *ngIf="recordBlock; else pending"
+            class="opal-fx-g-1 opal-fx-row opal-fx-align-center">
+            <ngx-t3-copy-to-clipboard
+              class="opal-w-full"
+              position="left"
+              [textToCopy]="$any(recordBlock).linkHash | uint8">
+              <div class="opal-text-underline opal-ellipsed opal-mr-1">
+                {{ $any(recordBlock).linkHash | uint8 }}
+              </div>
+            </ngx-t3-copy-to-clipboard>
+          </div>
+        </div>
+
+        <div class="opal-fx-s-0 opal-text-grey-400">
+          <span *ngIf="recordBlock; else pending">
+            {{ $any(recordBlock).createdAt | date : 'd MMM YYYY, HH:mm' }}
+          </span>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #pending>
+  <div class="hash-col opal-mr-2 opal-fx-g-1 opal-fx-s-0 opal-text-grey-400">{{ 'In attesa' | translate }}</div>
+</ng-template>
