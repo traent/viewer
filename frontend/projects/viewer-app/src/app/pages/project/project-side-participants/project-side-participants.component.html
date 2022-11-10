@@ -1,0 +1,21 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [label]="'i18n.Common.collaborators' | translate"
+  [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
+  (backTo)="router.navigate(['..'],  { relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<ngx-t3-paginator-list
+  class="opal-overflow-y-auto opal-fx-g-1"
+  [paginator]="participants">
+  <div
+    *ngFor="let participant of participants.items.value; let last = last"
+    class="opal-py-2"
+    [ngClass]="{ 'opal-border-b-1 opal-border-grey-200': !last }">
+    <app-participant-identity
+      class="opal-mx-4"
+      size="sm"
+      validationSize="xs"
+      [participant]="participant"></app-participant-identity>
+  </div>
+</ngx-t3-paginator-list>

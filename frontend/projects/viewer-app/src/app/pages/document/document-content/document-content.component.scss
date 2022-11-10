@@ -1,0 +1,28 @@
+ngx-t3-with-sidebar {
+  --with-sidebar-bgColor: white;
+  --with-sidebar-content-padding-left: 0;
+  --with-sidebar-content-padding-right: 0;
+  --with-sidebar-content-padding-bottom: 0;
+  --with-sidebar-width: 320px;
+}
+
+.versions-chip {
+  margin-right: 12px;
+  height: 24px;
+  width: 24px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: theme("colors.grey.200");
+  border-radius: 12px;
+  letter-spacing: 0;
+  padding-top: 1px;
+}
+
+app-acks-icon {
+  --acks-height: 24px;
+  --acks-width: 24px;
+}

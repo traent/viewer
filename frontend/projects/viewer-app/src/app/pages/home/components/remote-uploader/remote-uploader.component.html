@@ -1,0 +1,24 @@
+<form
+  [formGroup]="form"
+  (submit)="urlOpen.emit(form.controls['url'].value)">
+  <div class="url-input-container">
+    <button
+      mat-icon-button
+      type="button"
+      (click)="inputClose.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <input
+      type="url"
+      formControlName="url"
+      [ngxT3Autofocus]="true"
+      (keyup.escape)="inputClose.emit()">
+    <button
+      matRipple
+      class="submit-btn"
+      type="submit"
+      [disabled]="form.invalid">
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  </div>
+</form>

@@ -1,0 +1,27 @@
+<ng-container *ngIf="paginator">
+  <div *ngIf="!paginator.loading.value; else loadingParticipants">
+    <ngx-t3-paginator-list
+      class="opal-overflow-y-auto opal-fx-g-1"
+      [paginator]="paginator">
+      <div
+        *ngFor="let participant of paginator.items.value; let last = last"
+        class="opal-py-2"
+        [ngClass]="{ 'opal-border-b-1 opal-border-grey-200': !last }">
+        <app-participant-identity
+          size="sm"
+          class="opal-mx-4"
+          [participant]="participant"></app-participant-identity>
+      </div>
+    </ngx-t3-paginator-list>
+  </div>
+
+  <ng-template #loadingParticipants>
+    <div class="opal-fx-col opal-fx-justify-center opal-ml-3 opal-fx-g-1">
+      <ngx-t3-skeleton class="opal-h-8 opal-mb-7 opal-w-9p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+    </div>
+  </ng-template>
+
+</ng-container>

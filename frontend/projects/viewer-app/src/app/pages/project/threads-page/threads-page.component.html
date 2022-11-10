@@ -1,0 +1,45 @@
+<div *ngIf="{
+    threads: threads$ | async,
+    threadSelected: threadIdSelected$ | async
+  } as resolved"
+  class="opal-s-full opal-fx-row">
+  <div class="opal-max-w-80 opal-min-w-80 opal-mr-6 opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-fx-col">
+    <app-thread-list
+      [tab]="categorySelection"
+      [paginator]="resolved.threads"
+      [activeThreadId]="resolved.threadSelected"
+      [hideSearch]="true"
+      (tabClick)="categorySelection$.next($event)"
+      (itemClick)="selectThread($event)">
+    </app-thread-list>
+  </div>
+  <div
+    *ngIf="resolved.threadSelected; else missingThreadsOrThreadSelection"
+    class="opal-w-full opal-fx-col opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-overflow-hidden">
+    <router-outlet></router-outlet>
+  </div>
+
+  <ng-template #missingThreadsOrThreadSelection>
+    <div class="opal-fx-col opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-border-1 opal-border-grey-200 opal-radius-8">
+      <img
+        src="/assets/images/no-messages.svg"
+        alt="there are no messages"
+        class="opal-mb-3">
+      <div class="opal-body-1 opal-text-grey-400 opal-text-center">
+        <ng-container *ngIf="resolved.threads?.total?.value === 0 && !resolved.threads?.loading?.value; else missingSelection">
+          <ng-container *ngIf="categorySelection === 'all'; else missingSomeThreadCategories">
+            No threads in this project
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #missingSomeThreadCategories>
+  No {{ categorySelection }} threads in this project
+</ng-template>
+
+<ng-template #missingSelection>
+  Select a thread in the sidebar to show the conversation
+</ng-template>

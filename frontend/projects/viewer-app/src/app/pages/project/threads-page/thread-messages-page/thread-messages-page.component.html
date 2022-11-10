@@ -1,0 +1,19 @@
+<ng-container *ngIf="{
+    threadSelected: threadSelected$ | async,
+    threadMessages: threadMessages$ | async
+  } as resolved">
+  <div class="opal-h-12 opal-fx-row opal-w-full opal-px-6 opal-py-3 opal-border-box opal-fx-justify-between opal-border-b-1 opal-border-grey-200 opal-fx-align-center">
+    <div
+      *ngIf="resolved.threadSelected && (resolved.threadSelected.name | exported); else redacted"
+      class="opal-h5 opal-ellipsed">
+      {{ resolved.threadSelected.name | noValueLabel }}
+    </div>
+    <ng-template #redacted>
+      <div class="opal-h5 opal-ellipsed redacted">
+        {{ 'i18n.Common.redacted' | translate }}
+      </div>
+    </ng-template>
+  </div>
+
+  <app-thread-messages [paginator]="resolved.threadMessages"></app-thread-messages>
+</ng-container>

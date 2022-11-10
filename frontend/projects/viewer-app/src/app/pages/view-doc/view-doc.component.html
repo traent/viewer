@@ -1,0 +1,28 @@
+<ng-container *ngIf="url$ | async as src">
+  <iframe
+    [class.opal-d-none]="!loaded"
+    [src]="src"
+    (load)="loadHandler($event)">
+  </iframe>
+</ng-container>
+
+<div
+  *ngIf="!loaded"
+  class="app-loading">
+  <svg
+    class="spinner"
+    viewBox="25 25 50 50">
+    <circle
+      class="path"
+      cx="50"
+      cy="50"
+      r="20"
+      fill="none"
+      stroke-width="3"
+      stroke-miterlimit="10">
+    </circle>
+  </svg>
+
+  <span class="wait">{{ 'Please wait' }}</span>
+  <span class="text">{{ 'We\'re loading the content...' }}</span>
+</div>

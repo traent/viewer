@@ -1,0 +1,127 @@
+<div
+  *ngIf="{ params: params$ | async }"
+  class="opal-s-full opal-overflow-y-auto"
+  (ngxT3FileDrop)="!process && startLocalFileLoad($event)">
+  <app-topbar
+    *ngIf="showHeader"
+    logoColor="white"
+    [whiteStroked]="true">
+  </app-topbar>
+
+  <ng-container *ngIf="!process">
+    <div class="landing">
+      <div class="form-column">
+        <div class="form-container">
+          <div class="title">{{ 'i18n.Home.title' | translate }}</div>
+          <p
+            class="subtitle"
+            [innerHtml]="'i18n.Home.subtitle' | translate | safeHtml">
+          </p>
+          <a
+            class="subtitle"
+            href="https://www.traent.com">
+            {{ 'i18n.Home.link' | translate }}
+          </a>
+          <div class="interaction-box">
+            <div
+              *ngIf="!showUrlInput"
+              @buttons
+              class="buttons-container">
+              <button
+                matRipple
+                class="custom-btn upload"
+                (click)="fileInput.click()">
+                {{ 'i18n.Home.upload' | translate }}
+              </button>
+              <input
+                #fileInput
+                hidden
+                type="file"
+                (change)="startLocalFileLoad($any($event.target))">
+              <button
+                matRipple
+                class="custom-btn url"
+                (click)="showUrlInput = true">
+                {{ 'i18n.Home.enterURL' | translate }}
+              </button>
+            </div>
+            <app-remote-uploader
+              *ngIf="showUrlInput"
+              @urlInput
+              (urlOpen)="loadData($event)"
+              (inputClose)="showUrlInput = false"></app-remote-uploader>
+          </div>
+
+          <div class="tip">
+            {{ 'i18n.Home.chooseLedger' | translate }}
+          </div>
+        </div>
+      </div>
+      <app-carousel></app-carousel>
+    </div>
+    <div class="dropzone">
+      <div class="box">
+        {{ 'i18n.Home.dropLedger' | translate }}
+      </div>
+    </div>
+  </ng-container>
+  <div
+    *ngIf="process"
+    class="upload">
+    <div class="central-column">
+      <ng-container *ngIf="!error">
+        <div class="opal-h3 opal-mb-4">{{ 'i18n.Home.wait' | translate }}</div>
+        <div
+          *ngIf="fancyMessages$ | async as fancyMessages"
+          class="main-content">
+          {{ fancyMessages | translate }}
+        </div>
+        <button
+          *ngIf="showCancelUpload"
+          mat-flat-button
+          class="opal-mt-8 light-button"
+          (click)="abortController && abortController.abort()">
+          {{ 'i18n.Common.cancel' |  translate }}
+        </button>
+        <div
+          *ngIf="loadingMessage"
+          class="details-box">
+          <div class="opal-h3 opal-mb-4">{{ loadingMessage.message | translate }}</div>
+          <small>{{ fileName }}</small>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="error">
+        <div class="title opal-mb-4">{{ 'i18n.Home.damn' | translate}}!</div>
+        <div class="opal-text-600">'{{ fileName }}'</div>
+        <div
+          *ngIf="error === 'generic'"
+          class="opal-text-light">
+          {{ 'i18n.Home.errorFileGeneric' | translate }}
+        </div>
+        <div
+          *ngIf="error === 'validation'"
+          class="opal-text-light">
+          {{ 'i18n.Home.errorFileValidation' | translate }}
+        </div>
+        <button
+          mat-flat-button
+          class="opal-mt-8 light-button"
+          (click)="reset()">
+          {{ 'i18n.Common.goBack' | translate }}
+        </button>
+        <div
+          *ngIf="error === 'validation'"
+          class="details-box">
+          <span
+            class="opal-text-underline opal-text-light opal-pointer"
+            (click)="invalidLedgerNavigation()">
+            {{ 'i18n.Home.warningFileValidation' | translate }}
+          </span>
+        </div>
+      </ng-container>
+    </div>
+    <div
+      class="loading-bar"
+      [style.width.%]="loadingMessage?.index | apply : loadingPercentage : loadingMessage?.total"></div>
+  </div>
+</div>

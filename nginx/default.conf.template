@@ -1,0 +1,28 @@
+server {
+    gzip on;
+    gzip_buffers 32 32k;
+    gzip_comp_level 3;
+    gzip_disable "msie6";
+    gzip_min_length 1000;
+    gzip_proxied any;
+    gzip_types *;
+    gzip_vary on;
+
+    listen       ${PORT};
+    listen  [::]:${PORT};
+    server_name  localhost;
+    root /usr/share/nginx/app;
+
+    location = / {
+        index /${TARGET_PROJECT}/index.html;
+    }
+
+    location /assets/ {
+        try_files $uri $uri$args/ /${TARGET_PROJECT}/$uri /${TARGET_PROJECT}/$uri$args/ /${TARGET_PROJECT}/index.html;
+    }
+
+    location / {
+        try_files $uri$args $uri$args/ /${TARGET_PROJECT}/$uri$args /${TARGET_PROJECT}/$uri$args/ /${TARGET_PROJECT}/index.html;
+    }
+}
+

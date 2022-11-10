@@ -1,0 +1,13 @@
+:host {
+  mat-icon,
+  ngx-t3-skeleton {
+    height: var(--acks-height, 16px) !important;
+    width: var(--acks-width, 16px) !important;
+  }
+
+  mat-icon {
+    font-size: var(--acks-height, 16px);
+    line-height: var(--acks-height, 16px);
+    margin-bottom: 2px;
+  }
+}

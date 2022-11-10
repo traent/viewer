@@ -1,0 +1,207 @@
+:host {
+  color: theme("colors.white.500");
+
+  >div {
+    background-color: var(--viewer-home-bg-color, theme("colors.traentblue.500"));
+  }
+}
+
+app-topbar {
+  --topbar-border-width: 0px;
+  --topbar-font-color: theme("colors.white.500");
+  position: absolute;
+  width: 100%;
+  z-index: 3;
+}
+
+.light-button {
+  background-color: #627aed;
+  color: theme("colors.white.500");
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+// DropZone
+
+.fileover {
+  >.dropzone {
+    opacity: 1;
+  }
+}
+
+.dropzone {
+  background-color: theme("colors.iris.600");
+  top: 0;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 125px 200px;
+  box-sizing: border-box;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 2;
+
+  .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed theme("colors.white.500");
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 120%;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+// Landing
+
+.landing {
+  width: 100%;
+  height: 100%;
+  min-height: 780px;
+  display: flex;
+  user-select: none;
+}
+
+.form-column {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1em;
+
+  .form-container {
+    width: 480px;
+    margin-bottom: -90px;
+    overflow: hidden;
+    z-index: 2;
+
+    .title {
+      line-height: 90%;
+      font-size: 80px;
+      font-weight: 400;
+      font-family: var(--font-family-brand);
+      margin-bottom: 40px;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 120%;
+    }
+
+    .interaction-box {
+      position: relative;
+      width: 100%;
+      margin-top: 50px;
+      height: 50px;
+
+      >app-remote-uploader,
+      >.buttons-container {
+        position: absolute;
+      }
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .custom-btn {
+        width: 236px;
+        height: 50px;
+        font-size: 22px;
+        font-weight: 500;
+        font-family: var(--font-family-brand);
+        line-height: 120%;
+        align-items: center;
+        cursor: pointer;
+
+        &.upload {
+          background-color: theme("colors.white.500");
+          color: theme("colors.iris.600");
+          border: 1px solid theme("colors.iris.600");
+        }
+
+        &.url {
+          background-color: transparent;
+          color: theme("colors.white.500");
+          border: 1px solid theme("colors.white.500");
+        }
+      }
+    }
+
+    .tip {
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--font-family-brand);
+      margin-top: 12px;
+      font-size: 15px;
+      text-align: center;
+    }
+  }
+}
+
+// Carousel
+@media only screen and (min-width: 1000px) {
+  .carousel-column {
+    display: flex !important;
+  }
+}
+
+app-carousel {
+  flex: 1;
+}
+
+// Upload / Error
+
+.upload {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+
+  .central-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 600px;
+    z-index: 1;
+
+    .main-content {
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 120%;
+      min-height: 80px;
+    }
+
+    .title {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 120%;
+    }
+
+    .details-box {
+      position: absolute;
+      bottom: 55px;
+    }
+  }
+
+  .loading-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.30s;
+    background: var(--viewer-loading-bar-bg, rgba(0, 0, 0, 0.15));
+  }
+}

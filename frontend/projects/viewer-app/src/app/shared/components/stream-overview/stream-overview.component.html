@@ -1,0 +1,135 @@
+<div
+  *ngIf="{
+    blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
+    participant: participant$ | async,
+    streamClasses: streamClasses$ | async
+  } as resolved"
+  class="opal-overflow-y-auto opal-fx-g-1">
+  <ng-container *ngIf="stream; else skeletonTemplate">
+    <ngx-t3-descriptions class="opal-body-2">
+      <ngx-t3-description-item
+        [label]="'i18n.Common.name' | translate"
+        [multiline]="true">
+        <span *ngIf="stream.name | exported; else redacted">{{ stream.name | noValueLabel }}</span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.type' | translate">
+        <div
+          *ngIf="stream.uiType | exported; else redacted"
+          class="opal-fx-row opal-fx-align-center">
+          <ngx-t3-icon
+            class="opal-mr-2"
+            iconClass="opal-s-4"
+            [icon]="stream.uiType | apply : getStreamTypeIcon">
+          </ngx-t3-icon>
+          {{
+            stream.uiType === 'boolean'
+              ? 'Checkbox'
+              : stream.uiType | titlecase | noValueLabel
+          }}
+        </div>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        [label]="'i18n.Common.value' | translate"
+        [multiline]="true">
+        <ngx-t3-stream-value-renderer
+          [value]="stream.value"
+          [type]="stream.type"
+          [configuration]="stream.configuration">
+        </ngx-t3-stream-value-renderer>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        [label]="'i18n.Common.description' | translate"
+        [multiline]="true">
+        <span *ngIf="stream.description | exported; else redacted">{{ stream.description | noValueLabel }}</span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        [label]="'i18n.Common.machineName' | translate"
+        [multiline]="true">
+        <span *ngIf="stream.machineName | exported; else redacted">{{ stream.machineName | noValueLabel }}</span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="resolved.streamClasses && resolved.streamClasses.length > 0"
+        [label]="'i18n.Common.classes' | translate"
+        [multiline]="true">
+        <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+          <app-redactable-tag
+            *ngFor="let class of resolved.streamClasses"
+            innerClasses="bg-grey-100"
+            class="t3-tag-like opal-mb-1"
+            [tagName]="class?.name"></app-redactable-tag>
+        </ngx-t3-tag-group>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="referencesCount !== undefined"
+        [label]="'i18n.Common.refd' | translate">
+        <span
+          class="opal-body-2"
+          (click)="referencesClick.emit()"
+          [ngClass]="{ 'opal-text-underline opal-pointer': referencesCount }">
+          {{ referencesCount }} {{ referencesCount === 1 ? 'time' : 'times' }}
+        </span>
+        <mat-icon
+          *ngIf="referencesCount"
+          end
+          class="opal-text-grey-400 opal-s-4 opal-pointer"
+          (click)="referencesClick.emit()">
+          arrow_forward
+        </mat-icon>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastEditor' | translate">
+        <app-participant-identity [participant]="resolved.participant"></app-participant-identity>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastEdit' | translate">
+        <span
+          class="opal-body-2"
+          *ngIf="stream.updatedAt; else redacted">
+          {{ stream.updatedAt | date: 'dd LLL yyyy, h:mm a' }}
+        </span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastLinkHash' | translate">
+        <ngx-t3-copy-to-clipboard
+          class="opal-d-block opal-ellipsed"
+          position="left"
+          [textToCopy]="stream.updatedInBlock.linkHash | uint8">
+          <div class="opal-body-2 opal-ellipsed opal-text-code opal-mr-1">
+            {{ stream.updatedInBlock.linkHash | uint8 }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.acks' | translate">
+        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-underline">
+          <app-acks-status
+            [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
+            (click)="openAcknowledgementsDialog(stream.updatedInBlock)">
+          </app-acks-status>
+        </span>
+      </ngx-t3-description-item>
+
+    </ngx-t3-descriptions>
+  </ng-container>
+
+  <ng-template #skeletonTemplate>
+    <div class="opal-fx-col opal-fx-justify-center opal-ml-3 opal-fx-g-1">
+      <ngx-t3-skeleton class="opal-h-8 opal-mb-7 opal-w-9p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+    </div>
+  </ng-template>
+
+  <ng-template #redacted>
+    <div class="redacted opal-body-2">
+      {{ 'i18n.Common.redacted' | translate }}
+    </div>
+  </ng-template>
+</div>

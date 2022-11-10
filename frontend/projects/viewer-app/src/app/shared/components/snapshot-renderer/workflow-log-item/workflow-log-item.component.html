@@ -1,0 +1,40 @@
+<div class="opal-fx-row">
+  <app-image-icon [image]="itemImage"></app-image-icon>
+
+  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+    <ng-container *ngIf="props$ | async as props; else skeleton">
+      <div
+        *ngIf="{
+          workflowName: props.workflowName,
+          workflowClass: props.workflowNameClass,
+          fromState: props.fromState,
+          fromStateClass: props.fromStateStyle,
+          toState: props.toState,
+          toStateClass: props.toStateStyle
+        } as translateParams"
+        class="snapshot-content"
+        [ngSwitch]="props.operation">
+        <ng-container *ngSwitchCase="'creation'">
+          <span [innerHtml]="'i18n.SnapshotItem.OperationLabel.Workflow.creation' | translate : translateParams | safeHtml"></span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'update'">
+          <ng-container *ngIf="props.isWorkflowStateTransition">
+            <span [innerHtml]="'i18n.SnapshotItem.OperationLabel.Workflow.transition' | translate : translateParams | safeHtml"></span>
+          </ng-container>
+          <ng-container *ngIf="!props.isWorkflowStateTransition">
+            {{ 'i18n.SnapshotItem.OperationLabel.Workflow.update' | translate }}
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'deletion'">
+          {{ 'i18n.SnapshotItem.OperationLabel.Workflow.removal' | translate }}
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+
+  <ng-template #skeleton>
+    <div class="opal-fx-g-1">
+      <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+    </div>
+  </ng-template>
+</div>

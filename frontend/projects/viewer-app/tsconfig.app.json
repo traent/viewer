@@ -1,0 +1,26 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/app",
+    "types": [],
+    "baseUrl": "./",
+    "paths": {
+      "@api/*": ["src/app/connector/*"],
+      "@ledger-objects": ["src/app/ledger-objects/models"],
+      "@viewer/models": ["src/app/core/models"],
+      "@viewer/services": ["src/app/core/services"],
+      "@viewer/shared": ["src/app/shared"],
+      "@viewer/utils": ["src/app/core/utils"],
+      "crypto": ["../../node_modules/crypto-browserify"],
+      "stream": ["../../node_modules/stream-browserify"],
+    }
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}

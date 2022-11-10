@@ -1,0 +1,39 @@
+server {
+    gzip on;
+    gzip_buffers 32 32k;
+    gzip_comp_level 3;
+    gzip_disable "msie6";
+    gzip_min_length 1000;
+    gzip_proxied any;
+    gzip_types *;
+    gzip_vary on;
+
+    listen       ${PORT} ssl;
+    listen  [::]:${PORT} ssl;
+    ssl_certificate     /crt/app.crt;
+    ssl_certificate_key /crt/app.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    server_name  localhost;
+    root /usr/share/nginx/app;
+
+    location = / {
+        index /${TARGET_PROJECT}/index.html;
+    }
+
+    set $cacheControl "max-age=0, must-revalidate";
+
+    if ($uri  ~* "\.[a-f0-9]{16}\..*$") {
+        set $cacheControl "max-age=31536000";
+    }
+
+    add_header Cache-Control $cacheControl;
+
+    location /assets/ {
+        try_files $uri $uri$args/ /${TARGET_PROJECT}/$uri /${TARGET_PROJECT}/$uri$args/ /${TARGET_PROJECT}/index.html;
+    }
+
+    location / {
+        try_files $uri$args $uri$args/ /${TARGET_PROJECT}/$uri$args /${TARGET_PROJECT}/$uri$args/ /${TARGET_PROJECT}/index.html;
+    }
+}

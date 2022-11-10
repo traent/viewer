@@ -1,0 +1,39 @@
+<svg width="163" height="123" viewBox="0 0 163 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="6.5" y="1" width="150" height="33" rx="3.5" fill="#E0F6F8"/>
+<rect x="42" y="7.5" width="102" height="9" fill="#B9EFF2"/>
+<rect x="42" y="21.5" width="82" height="7" fill="#B9EFF2"/>
+<circle cx="23" cy="17.5" r="10.5" fill="#B9EFF2" stroke="#B9EFF2"/>
+<circle cx="23" cy="16.5" r="4" fill="#8FDFEA"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.8105 25.8256C17.2259 23.318 19.9153 21.625 23 21.625C26.0848 21.625 28.7741 23.318 30.1895 25.8256C28.2614 27.492 25.7485 28.5 23 28.5C20.2516 28.5 17.7386 27.492 15.8105 25.8256Z" fill="#8FDFEA"/>
+<rect x="6.5" y="1" width="150" height="33" rx="3.5" stroke="#B9EFF2"/>
+<g opacity="0.6" filter="url(#filter0_f_16906_49437)">
+<rect x="6" y="41.5" width="151" height="34" rx="4" fill="#E0F6F8"/>
+<rect x="43" y="48.5" width="102" height="9" fill="#B9EFF2"/>
+<rect x="43" y="62.5" width="82" height="7" fill="#B9EFF2"/>
+<circle cx="23" cy="58.5" r="10.5" fill="#B9EFF2" stroke="#B9EFF2"/>
+<circle cx="23" cy="57.5" r="4" fill="#8FDFEA"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.8105 66.8256C17.2259 64.318 19.9153 62.625 23 62.625C26.0848 62.625 28.7741 64.318 30.1895 66.8256C28.2614 68.492 25.7485 69.5 23 69.5C20.2516 69.5 17.7386 68.492 15.8105 66.8256Z" fill="#8FDFEA"/>
+<rect x="6.5" y="42" width="150" height="33" rx="3.5" stroke="#B9EFF2"/>
+</g>
+<g opacity="0.3" filter="url(#filter1_f_16906_49437)">
+<rect x="6" y="82.5" width="151" height="34" rx="4" fill="#E0F6F8"/>
+<rect x="44" y="89.5" width="101" height="9" fill="#B9EFF2"/>
+<rect x="44" y="103.5" width="81" height="7" fill="#B9EFF2"/>
+<circle cx="23" cy="99.5" r="10.5" fill="#B9EFF2" stroke="#B9EFF2"/>
+<circle cx="23" cy="98.5" r="4" fill="#8FDFEA"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.8105 107.826C17.2259 105.318 19.9153 103.625 23 103.625C26.0848 103.625 28.7741 105.318 30.1895 107.826C28.2614 109.492 25.7485 110.5 23 110.5C20.2516 110.5 17.7386 109.492 15.8105 107.826Z" fill="#8FDFEA"/>
+<rect x="6.5" y="83" width="150" height="33" rx="3.5" stroke="#B9EFF2"/>
+</g>
+<defs>
+<filter id="filter0_f_16906_49437" x="3" y="38.5" width="157" height="40" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1.5" result="effect1_foregroundBlur_16906_49437"/>
+</filter>
+<filter id="filter1_f_16906_49437" x="0" y="76.5" width="163" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="3" result="effect1_foregroundBlur_16906_49437"/>
+</filter>
+</defs>
+</svg>

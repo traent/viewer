@@ -1,0 +1,121 @@
+<ng-container *ngIf="{
+  blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
+  editor: editor$ | async,
+  assignee: assignee$ | async
+} as resolved">
+
+  <ng-container *ngIf="thread; else skeleton">
+    <ngx-t3-descriptions class="opal-d-block">
+      <ngx-t3-description-item
+        label="topic"
+        [multiline]="true">
+        <span
+          *ngIf="thread.name | exportedAndDefined; else redacted"
+          class="opal-text-break-word opal-body-2">
+          {{ thread.name }}
+        </span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastEditor' | translate">
+        <app-participant-identity [participant]="resolved.editor"></app-participant-identity>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.created' | translate">
+        <span
+          *ngIf="thread.createdAt; else redacted"
+          class="opal-body-2">
+          {{ thread.createdAt | date: 'dd LLL yyyy, h:mm a' }}
+        </span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="referencesCount"
+        [label]="'i18n.Common.refs' | translate">
+        <span
+          class="opal-body-2"
+          [ngClass]="{ 'opal-text-underline opal-pointer': referencesCount }"
+          (click)="referencesClick.next()">
+          {{ referencesCount }} {{ referencesCount === 1 ? 'time' : 'times' }}
+        </span>
+        <mat-icon
+          *ngIf="referencesCount"
+          end
+          class="opal-text-grey-400 opal-s-4 opal-pointer"
+          (click)="referencesClick.next()">
+          arrow_forward
+        </mat-icon>
+    </ngx-t3-description-item>
+
+      <ngx-t3-description-item label="status">
+        <span
+          *ngIf="thread.isResolved | exported; else redacted"
+          class="opal-body-2">
+          {{ thread.isResolved ? 'Resolved' : 'Open' }}
+        </span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="thread.assigneeId | exportedAndDefined"
+        [label]="'i18n.Common.assignee' | translate">
+        <app-participant-identity [participant]="resolved.assignee"></app-participant-identity>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastEdit' | translate">
+        <span
+          *ngIf="thread.updatedAt !== undefined; else redacted"
+          class="opal-body-2">
+          {{ thread.updatedAt | date: 'dd LLL yyyy, h:mm a' }}
+        </span>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="participantsCount"
+        [label]="'i18n.Common.participants' | translate">
+        <span
+          class="opal-body-2"
+          [ngClass]="{ 'opal-text-underline opal-pointer': participantsCount }"
+          (click)="participantsClick.next()">
+          {{ participantsCount || 0 }} {{ (participantsCount === 1 ? 'i18n.Project.ThreadInfo.participant' : 'i18n.Common.participants') | translate }}
+        </span>
+        <mat-icon
+          end
+          class="opal-text-grey-400 opal-s-4 opal-pointer"
+          (click)="participantsClick.next()">
+          arrow_forward
+        </mat-icon>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.lastLinkHash' | translate">
+        <ngx-t3-copy-to-clipboard
+          class="opal-d-block opal-ellipsed"
+          position="left"
+          [textToCopy]="thread.updatedInBlock.linkHash | uint8">
+          <div class="opal-body-2 opal-text-code opal-ellipsed opal-text-underline opal-mr-1">
+            {{ thread.updatedInBlock.linkHash | uint8 }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.acks' | translate">
+        <span class="opal-body-2">
+          <app-acks-status
+            [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
+            (click)="openAcknowledgementsDialog(thread.updatedInBlock)">
+          </app-acks-status>
+        </span>
+      </ngx-t3-description-item>
+    </ngx-t3-descriptions>
+  </ng-container>
+</ng-container>
+
+<ng-template #redacted>
+  <div class="redacted opal-body-2">{{ 'i18n.Common.redacted' | translate }}</div>
+</ng-template>
+
+<ng-template #skeleton>
+  <div class="opal-fx-col opal-fx-justify-center opal-ml-3 opal-fx-g-1">
+    <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+    <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+    <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+  </div>
+</ng-template>

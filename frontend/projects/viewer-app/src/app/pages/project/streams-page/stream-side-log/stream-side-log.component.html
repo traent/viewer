@@ -1,0 +1,22 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [backToLabel]="'i18n.Project.ProjectPage.backProjectLog' | translate"
+  (backTo)="router.navigate(['../../log'],  { relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<ng-container *ngIf="paginator$ | async as paginator">
+  <ngx-t3-paginator-list
+    *ngIf="{
+      total: paginator.total.value$ | async,
+      loading: paginator.loading.value$ | async,
+      items: paginator.items.value$ | async
+    } as resolved"
+    class="opal-overflow-auto opal-h-full opal-pb-4"
+    [paginator]="paginator">
+    <ng-container *ngFor="let snapshot of resolved.items">
+      <app-stream-snapshot-detail
+        *ngIf="snapshot && snapshot.type === STREAM_LABEL"
+        [streamSnapshot]="snapshot"></app-stream-snapshot-detail>
+    </ng-container>
+  </ngx-t3-paginator-list>
+</ng-container>

@@ -1,0 +1,114 @@
+<ng-container *ngIf="{
+  blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
+  editor: editor$ | async,
+  workflow: workflow$ | async,
+  organizations: organizations$ | async,
+  participants: participants$ | async
+} as resolved">
+  <h2
+    mat-dialog-title
+    class="opal-mb-0">
+    {{ 'i18n.Common.projectDetails' | translate }}
+  </h2>
+
+  <div
+    class="opal-my-6"
+    mat-dialog-content>
+    <ngx-t3-descriptions class="opal-border-1 opal-radius-4 opal-border-grey-200">
+      <ng-template #redacted>
+        <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
+      </ng-template>
+
+      <ngx-t3-description-item label="project name">
+        <ng-container *ngIf="project.name | exported; else redacted">
+          {{ project.name | noValueLabel }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        [label]="'i18n.Common.description' | translate"
+        [multiline]="true">
+        <ng-container *ngIf="project.description | exported; else redacted">
+          {{ project.description | noValueLabel }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.edit' | translate">
+        <app-participant-identity [participant]="resolved.editor"></app-participant-identity>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="resolved.organizations && resolved.organizations.length > 0"
+        [label]="'i18n.Common.organizations' | translate"
+        [multiline]="true">
+        <div class="opal-fx-col">
+          <ng-container *ngFor="let organization$ of resolved.organizations">
+            <ngx-t3-organization-identity
+              *ngIf="{ value: organization$ | async } as organization"
+              size="xxs"
+              [firstLine]="organization.value && organization.value.businessName"
+              [src]="organization.value && organization.value.logo"
+              [squared]="true">
+              <ngx-t3-identity-validation [orgValidation]="organization.value?.validationState | identityValidation : 'organization'"></ngx-t3-identity-validation>
+            </ngx-t3-organization-identity>
+          </ng-container>
+        </div>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="resolved.participants && resolved.participants.length > 0"
+        [label]="'i18n.Common.participants' | translate"
+        [multiline]="true">
+        <div class="opal-fx-col">
+          <app-participant-identity
+            *ngFor="let participant of resolved.participants"
+            [participant]="participant"></app-participant-identity>
+        </div>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.workflow' | translate">
+        <ng-container *ngIf="resolved.workflow?.dsl?.definition?.name !== undefined; else redacted">
+          {{ resolved.workflow?.dsl?.definition?.name }}
+        </ng-container>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        *ngIf="resolved.workflow"
+        [label]="'i18n.Common.state' | translate">
+        <div *ngIf="resolved.workflow.lastState | exported; else redacted">
+          {{ resolved.workflow.lastState | noValueLabel }}
+        </div>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item [label]="'i18n.Common.linkHash' | translate">
+        <ngx-t3-copy-to-clipboard
+          class="opal-d-block opal-ellipsed"
+          position="left"
+          [textToCopy]="project.updatedInBlock.linkHash | uint8">
+          <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+            {{ project.updatedInBlock.linkHash | uint8 }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </ngx-t3-description-item>
+
+      <ngx-t3-description-item
+        [label]="'i18n.Common.acks' | translate"
+        [hasDivider]="false">
+        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+          <app-acks-status
+            [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
+            (click)="openAcknowledgementsDialog(project.updatedInBlock)"></app-acks-status>
+        </span>
+      </ngx-t3-description-item>
+    </ngx-t3-descriptions>
+  </div>
+
+  <mat-dialog-actions>
+    <button
+      mat-flat-button
+      mat-dialog-close
+      color="accent">
+      {{ 'i18n.Common.close' | translate }}
+    </button>
+  </mat-dialog-actions>
+</ng-container>

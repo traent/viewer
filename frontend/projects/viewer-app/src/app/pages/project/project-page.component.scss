@@ -1,0 +1,9 @@
+main {
+  min-width: 950px;
+}
+
+ngx-t3-right-sidebar {
+  // Note: this strange padding is needed to align the sidebar first column
+  // with the project page horizontal row.
+  padding-top: 17px;
+}

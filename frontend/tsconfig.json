@@ -1,0 +1,44 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2020",
+    "module": "es2020",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    // We need to have aliases on root `tsconfig.json` because specific `tsconfig.app.json` does not allow VSCode to resolve them correctly
+    // `tsconfig.app.json` working fine on `ng` commands
+    "paths":{
+      "@api/*": ["projects/viewer-app/src/app/connector/*"],
+      "@ledger-objects": ["projects/viewer-app/src/app/ledger-objects/models"],
+      "@viewer/models": ["projects/viewer-app/src/app/core/models"],
+      "@viewer/services": ["projects/viewer-app/src/app/core/services"],
+      "@viewer/shared": ["projects/viewer-app/src/app/shared"],
+      "@viewer/utils": ["projects/viewer-app/src/app/core/utils"],
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true,
+    "preserveSymlinks": true
+  }
+}
