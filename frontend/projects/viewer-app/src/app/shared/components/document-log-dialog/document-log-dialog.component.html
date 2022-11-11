@@ -93,6 +93,7 @@
       mat-stroked-button
       mat-dialog-close
       class="opal-mr-2"
+      queryParamsHandling="merge"
       [routerLink]="['/project/documents/', { outlets: { primary: [document.id, 'versions'], aside: null } }]"
       [queryParams]="(document.version | exported) ? { vMain: document.version } : null">
       {{ 'i18n.Project.DocumentLog.viewDocument' | translate }}

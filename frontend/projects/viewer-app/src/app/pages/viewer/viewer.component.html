@@ -1,7 +1,4 @@
-<app-topbar
-  *ngIf="showHeader"
-  [invalidLedgerBadge]="!!ledgerService.problems.length">
-</app-topbar>
+<app-topbar *ngIf="showHeader"></app-topbar>
 
 <div class="layout-content">
   <router-outlet></router-outlet>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { blockEncapsulation, BlockItem } from '@viewer/models';
-import { isEncapsulation, StorageService } from '@viewer/services';
-import { fromPascalCaseToKebabCase } from '@viewer/utils';
+import { StorageService } from '@viewer/services';
+import { fromPascalCaseToKebabCase, isEncapsulation } from '@viewer/utils';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { shareReplay, switchMap } from 'rxjs/operators';
 import { TablePaginatorData, tableOffset } from '@traent/ngx-components';
@@ -28,8 +28,8 @@ const expandBlocks = async (blockItem: BlockItem) => {
 })
 export class BlockTabContentComponent {
 
-  readonly totalBlockItems$ = this.storageService.getCompleteBlocksCount();
-  readonly keyPair$ = this.storageService.getKeyPair();
+  readonly totalBlockItems$ = this.storageService.getLedger().getCompleteBlocksCount();
+  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
 
   readonly pageEvent$ = new BehaviorSubject<TablePaginatorData>({
     pageIndex: 0,
@@ -43,7 +43,7 @@ export class BlockTabContentComponent {
     switchMap(([pageEvent, totalBlockItems]) => {
       const offset = tableOffset(pageEvent);
       const limit = Math.min(pageEvent.pageSize, totalBlockItems - offset);
-      return this.storageService.getBlocks(offset, limit);
+      return this.storageService.getLedger().getBlocks(offset, limit);
     }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );

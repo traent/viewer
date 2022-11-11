@@ -2,7 +2,7 @@
   class="opal-sidebar-header-container"
   [backToLabel]="'i18n.Common.threadInfo' | translate"
   [label]="'i18n.Common.refs' | translate"
-  (backTo)="router.navigate(['..'],  { relativeTo: route })">
+  (backTo)="router.navigate(['..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
 
 <app-thread-references [paginator]="references$ | async">

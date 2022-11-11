@@ -12,8 +12,8 @@ import { tableOffset, TablePaginatorData } from '@traent/ngx-components';
 })
 export class OffChainTabContentComponent {
 
-  readonly totalOffChainItems = this.storageService.getOffchainsCount();
-  readonly keyPair$ = this.storageService.getKeyPair();
+  readonly totalOffChainItems = this.storageService.getLedger().getOffchainsCount();
+  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
 
   readonly pageEvent$ = new BehaviorSubject<TablePaginatorData>({
     pageIndex: 0,
@@ -21,7 +21,7 @@ export class OffChainTabContentComponent {
   });
 
   readonly offChainItems$ = this.pageEvent$.pipe(
-    switchMap((pageEvent) => this.storageService.getOffchains(tableOffset(pageEvent), pageEvent.pageSize)),
+    switchMap((pageEvent) => this.storageService.getLedger().getOffchains(tableOffset(pageEvent), pageEvent.pageSize)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

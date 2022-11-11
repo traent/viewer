@@ -9,10 +9,11 @@
     [backToLabel]="'i18n.Common.allThreads' | translate"
     [label]="(resolved.threadSelected.name | exportedAndDefined) ? resolved.threadSelected.name : 'Redacted'"
     [ellipsed]="false"
-    (backTo)="router.navigate(['../..'],  { relativeTo: route })">
+    (backTo)="router.navigate(['../..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
     <ng-container context-menu>
       <button
         mat-icon-button
+        queryParamsHandling="merge"
         [matTooltip]="'i18n.Common.threadInfo' | translate"
         [routerLink]="['../']">
         <mat-icon class="opal-s-5 opal-text-grey-400 material-icons-outlined">info</mat-icon>

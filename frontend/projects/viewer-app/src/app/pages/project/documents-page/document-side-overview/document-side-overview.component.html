@@ -10,7 +10,7 @@
     class="opal-sidebar-header-container"
     [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
     [label]="'i18n.Common.documentDetails' | translate"
-    (backTo)="router.navigate(['/project', 'documents'],  { relativeTo: route })">
+    (backTo)="router.navigate(['/project', 'documents'],  { relativeTo: route, queryParamsHandling: 'merge' })">
     <ng-container context-menu>
       <button
         *ngIf="resolved.document?.isContentReadable"
@@ -22,7 +22,8 @@
         <ng-container *ngIf="resolved.document as document">
           <button
             mat-menu-item
-            [routerLink]="['/project/documents/', { outlets: { primary: [resolved.document.id, 'content'], aside: null } }]">
+            queryParamsHandling="merge"
+            [routerLink]="['/project/documents/', { outlets: { primary: [resolved.document.id, 'content'], aside: null }}]">
             <mat-icon class="opal-s-4">open_in_browser</mat-icon>
             {{ 'i18n.Project.DocumentDashboard.openDocument' | translate }}
           </button>
@@ -79,7 +80,8 @@
 
         <ngx-t3-description-item [label]="'i18n.Common.type' | translate">
           <ngx-t3-tag
-            class="opal-bg-accent-200 opal-mr-2">
+            class="opal-bg-accent-200 opal-mr-2 no-ellipse"
+            [ellipsed]="false">
             {{ resolved.document.extension }}
           </ngx-t3-tag>
         </ngx-t3-description-item>
@@ -124,6 +126,7 @@
       <button
         mat-flat-button
         class="opal-fx-row opal-fx-align-center opal-border-1 opal-border-grey-200"
+        queryParamsHandling="merge"
         [routerLink]="['/project/documents/', { outlets: { primary: [resolved.document.id, 'content'], aside: null } }]">
         <span>{{ 'i18n.Project.DocumentDashboard.openDocument' | translate }}</span>
       </button>

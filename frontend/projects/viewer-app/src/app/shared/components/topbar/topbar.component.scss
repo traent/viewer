@@ -6,7 +6,8 @@ $default-topbar-font-color: theme("colors.black.500");
 
 .topbar {
   height: var(--topbar-height, $default-topbar-height);
-  border-width: var(--topbar-border-width, $default-topbar-border-width);
+  border-width: 0;
+  border-bottom-width: var(--topbar-border-width, $default-topbar-border-width);
   border-color: var(--topbar-border-color, $default-topbar-border-color);
   border-style: solid;
   color: var(--topbar-font-color, $default-topbar-font-color);

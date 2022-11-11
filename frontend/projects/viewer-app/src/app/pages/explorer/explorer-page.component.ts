@@ -12,7 +12,7 @@ type TagLabel = 'block' | 'off chain data' | 'proofs' | 'in chain keys' | 'off c
 })
 export class ExplorerPageComponent {
 
-  readonly ledgerInfo$ = this.storageService.getLedgerInfo();
+  readonly ledgerInfo$ = this.storageService.getLedger().getLedgerInfo();
 
   readonly tagLabel$ = new BehaviorSubject<TagLabel>('block');
   get tagLabel(): TagLabel {

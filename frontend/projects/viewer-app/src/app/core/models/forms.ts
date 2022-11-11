@@ -25,7 +25,6 @@ export type FormItemType = {
   id: AbstractControl<string | null>;
   value: AbstractControl<any>;
   configuration?: AbstractControl<any>;
-  otherValue?: AbstractControl<any>;
 };
 
 export interface ViewDocumentForm {

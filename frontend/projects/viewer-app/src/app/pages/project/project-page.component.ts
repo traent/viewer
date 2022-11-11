@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProjectService, StorageService, RightSidebarManagerService } from '@viewer/services';
+import { extractNavigationValuesFromDefaultPage } from '@viewer/utils';
 import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -14,13 +15,13 @@ export class ProjectPageComponent {
   readonly title$ = from(this.projectService.getLedgerProject()).pipe(
     switchMap((project) => project?.name
       ? of(project.name)
-      : this.storageService.getExportRequest().then((request) => request?.name),
+      : this.storageService.getLedger().getExportRequest().then((request) => request?.name),
     ),
   );
 
   readonly showSidebar$ = this.rightSidebarManagerService.showSidebarPreference$;
 
-  readonly defaultPage$ = this.storageService.getExportRequest().then((request) => request?.defaultPage);
+  readonly defaultPage$ = this.storageService.getLedger().getExportRequest().then((request) => request?.defaultPage);
 
   constructor(
     private readonly projectService: ProjectService,
@@ -32,6 +33,10 @@ export class ProjectPageComponent {
   }
 
   navigateToDefaultPage(defaultPage: string) {
-    return this.router.navigateByUrl(defaultPage);
+    const options = extractNavigationValuesFromDefaultPage(defaultPage);
+    if (options?.baseUrlWithoutQueryParams) {
+      return this.router.navigate([options.baseUrlWithoutQueryParams], { queryParams: options.queryParams, queryParamsHandling: 'merge' });
+    }
+    return;
   }
 }

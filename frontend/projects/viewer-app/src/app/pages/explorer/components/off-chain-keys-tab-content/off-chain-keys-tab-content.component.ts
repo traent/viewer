@@ -22,7 +22,7 @@ export class OffChainKeysTabContentComponent {
   }
 
   readonly offchainKeys$ = this.offchainKeysPageEvent$.pipe(
-    switchMap((pageEvent) => this.storageService.getOffchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
+    switchMap((pageEvent) => this.storageService.getLedger().getOffchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
