@@ -1,0 +1,33 @@
+<div
+  *ngIf="!paginator?.loading?.value; else skeleton"
+  class="opal-overflow-y-auto opal-h-full">
+
+  <div class="opal-fx-row opal-mx-4 opal-body-2">
+    {{ 'i18n.Project.ThreadReferences.subTitle' | translate }}
+  </div>
+
+  <ngx-t3-paginator-list
+    *ngIf="paginator"
+    class="opal-mt-7 opal-d-block"
+    [paginator]="paginator">
+
+    <ng-container *ngFor="let reference of paginator?.items?.value; let first = first">
+      <ng-container *ngIf="reference && (reference.documentId | exported)">
+        <app-resource-reference
+          *ngIf="{
+            document: reference.document$ | async
+          } as resolved"
+          [hasTopDivider]="first"
+          [name]="resolved.document && resolved.document.name"
+          [references]="[reference]"
+          [expandable]="false">
+        </app-resource-reference>
+      </ng-container>
+    </ng-container>
+
+  </ngx-t3-paginator-list>
+</div>
+
+<ng-template #skeleton>
+  <ngx-t3-skeleton class="opal-h-4 opal-w-full opal-mx-n-4 opal-py-3 opal-mx-n-4"></ngx-t3-skeleton>
+</ng-template>

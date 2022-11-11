@@ -1,0 +1,262 @@
+<ngx-t3-with-sidebar *ngIf="{
+  author: author$ | async,
+  blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
+  defaultZoom:  (defaultZoom$ | async) || 1,
+  document: document$ | async,
+  documentContent: documentContent$ | async,
+  project: project$ | async,
+  references: references$ | async
+} as resolved">
+  <ng-container
+    *ngIf="resolved.document"
+    sidebar>
+    <div class="opal-px-4">
+      <div
+        class="back-to opal-h5"
+        [routerLink]=" resolved.project  ? ['/project'] : null">
+        <span
+          class="opal-ellipsed opal-text-grey-400"
+          [matTooltip]="resolved.project && (resolved.project.name | exportedAndDefined)
+            ? resolved.project.name
+            : ''">
+          {{ resolved.project?.name || 'Back' }}
+        </span>
+      </div>
+
+      <h1 class="opal-h3 opal-my-3 opal-text-break-word">{{ resolved.document.name }}</h1>
+    </div>
+
+    <hr>
+
+    <div class="opal-px-4 opal-py-3">
+      <div class="menu-item">
+        <button
+          mat-button
+          (click)="downloadDocument(resolved.document)">
+          <mat-icon svgIcon="download"></mat-icon>
+          {{ 'i18n.Common.download' | translate }}
+        </button>
+      </div>
+
+      <div class="menu-item">
+        <button
+          mat-button
+          routerLink="../versions">
+          <div class="opal-fx-row opal-fx-align-center">
+            <div class="versions-chip">
+              {{ resolved.document.version || '0' }}
+            </div>
+            {{ 'i18n.Document.DocumentContent.versionHistory' | translate }}
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="opal-px-4 opal-pb-3">
+      <ng-template #redacted>
+        <div class="redacted opal-body-2 opal-ml-3">
+          {{ 'i18n.Common.redacted' | translate }}
+        </div>
+      </ng-template>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.author' | translate }}</label>
+        <app-participant-identity
+          size="xs"
+          [participant]="resolved.author"></app-participant-identity>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.created' | translate }}</label>
+        <span>
+          {{ resolved.document.createdAt | date : 'dd MMM YYYY, HH:mm' }}
+        </span>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">last edit</label>
+        <span>
+          {{ resolved.document.updatedAt | date : 'dd MMM YYYY, HH:mm' }}
+        </span>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.lastLinkHash' | translate }}</label>
+        <div class="opal-fx-row opal-fx-align-center">
+          <ngx-t3-copy-to-clipboard
+            class="opal-w-full"
+            position="left"
+            copiedTooltip="Copied"
+            tooltip="Click to copy"
+            [textToCopy]="resolved.document.updatedInBlock.linkHash | uint8">
+            <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+              {{ resolved.document.updatedInBlock.linkHash | uint8 }}
+            </div>
+          </ngx-t3-copy-to-clipboard>
+        </div>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.type' | translate }}</label>
+        <ngx-t3-tag class="opal-bg-blue-200 opal-w-fit">.{{ resolved.document.extension }}</ngx-t3-tag>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.size' | translate }}</label>
+        <span *ngIf="resolved.document.length | exported; else redacted">
+          {{  (resolved.document.length || 0) | apply : formatBytesSize }}
+        </span>
+      </div>
+
+      <div class="opal-fx-col opal-mt-5">
+        <label class="opal-fx-s-0 opal-overline opal-mb-1 opal-text-grey-400">{{ 'i18n.Common.acknowledgements' | translate }}</label>
+        <app-acks-status
+          class="opal-fx-self-align-start"
+          [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
+          (click)="openAcknowledgementsDialog(resolved.document.updatedInBlock)">
+        </app-acks-status>
+      </div>
+    </div>
+  </ng-container>
+
+  <div
+    class="opal-s-full opal-pos-rel opal-bg-grey-100"
+    [class.opal-overflow-hidden]="contentLoad === 'loading'">
+    <ngx-t3-spinner-context *ngIf="contentLoad === 'loading' && resolved.document && resolved.document.uiType !== DocumentContentType.Generic">
+      <p
+        class="opal-mt-8 opal-h4"
+        after>
+        {{ 'i18n.Document.DocumentContent.loadingContent' | translate }}
+      </p>
+    </ngx-t3-spinner-context>
+
+    <div
+      *ngIf="resolved.document && (resolved.document.uiType === DocumentContentType.Generic || contentLoad === 'error'); else specificViewers"
+      class="opal-s-full opal-p-5 opal-border-box">
+      <ngx-t3-generic-viewer
+        class="opal-s-full opal-radius-8 opal-bg-white opal-bg-opacity-60"
+        [name]="resolved.document.name"
+        [fileTypeExtension]="resolved.document.extension"
+        (contentLoad)="contentLoad = 'loaded'"
+        (download)="downloadDocument(resolved.document)">
+      </ngx-t3-generic-viewer>
+    </div>
+
+    <ng-template #specificViewers>
+      <ng-container *ngIf="resolved.document && resolved.document.uiType === DocumentContentType.PDF">
+        <ngx-t3-pdf-viewer
+          *ngIf="documentDocumentProxy$ | async as pdfDocumentProxy"
+          #viewer
+          class="opal-h-full"
+          [annotationsRendering]="false"
+          [data]="pdfDocumentProxy"
+          [zoom]="documentZoom || resolved.defaultZoom"
+          (contentLoad)="contentLoad = 'loaded'"
+          (layoutChange)="pageRects = $event">
+
+          <ng-container *ngIf="resolved.references">
+            <ng-container *ngFor="let reference of resolved.references | apply : orderReferences; trackBy: trackByIndex">
+              <ngx-t3-pdf-anchor
+                *ngIf="reference.anchor as anchor"
+                [pages]="pageRects"
+                [anchor]="anchor">
+                <ng-container *ngIf="reference | apply : deriveStreamEntry | async as uiStream">
+                  <ngx-t3-pdf-acrofield-control
+                    *ngIf="reference.anchor | apply : makeAcrofieldFromAnchor as acrofield"
+                    [zoom]="documentZoom || resolved.defaultZoom"
+                    [editable]="false"
+                    [type]="acrofield.fieldType"
+                    [allowedValues]="uiStream.configuration?.allowedValues"
+                    [value]="getPDFAcrofieldControlValue(acrofield, uiStream.value)">
+                  </ngx-t3-pdf-acrofield-control>
+                </ng-container>
+              </ngx-t3-pdf-anchor>
+            </ng-container>
+          </ng-container>
+
+          <ngx-t3-viewer-toolbar
+            toolbar
+            class="opal-mx-auto"
+            [data]="pdfDocumentProxy"
+            [zoom]="documentZoom || resolved.defaultZoom"
+            [page]="viewer.getCurrentPage() | async"
+            [showAnchors]="false"
+            (zoomChange)="documentZoom = $event"
+            (selectPage)="viewer.scrollToPage($event)">
+          </ngx-t3-viewer-toolbar>
+        </ngx-t3-pdf-viewer>
+      </ng-container>
+
+      <div
+        *ngIf="resolved.document && resolved.document.uiType === DocumentContentType.FORM"
+        class="tw-w-full tw-h-full tw-border-box">
+        <app-form-viewer
+          class="tw-w-full tw-h-full tw-rounded-lg tw-bg-white/60"
+          [documentId]="resolved.document.id"
+          [data]="resolved.documentContent | apply : u8ToBlob"
+          [name]="resolved.document.name"
+          (contentLoad)="contentLoad = 'loaded'">
+        </app-form-viewer>
+      </div>
+
+      <ngx-t3-image-viewer
+        *ngIf="resolved.document && resolved.document.uiType === DocumentContentType.Image"
+        class="opal-s-full"
+        [data]="resolved.documentContent | apply : u8ToBlob"
+        [zoom]="documentZoom || resolved.defaultZoom"
+        (contentLoad)="contentLoad = 'loaded'">
+        <ngx-t3-viewer-toolbar
+          *ngIf="contentLoad === 'loaded'"
+          toolbar
+          [zoom]="documentZoom || resolved.defaultZoom"
+          (zoomChange)="documentZoom = $event">
+        </ngx-t3-viewer-toolbar>
+      </ngx-t3-image-viewer>
+
+      <ngx-t3-video-viewer
+        *ngIf="resolved.document && resolved.document.uiType === DocumentContentType.Video"
+        [data]="resolved.documentContent | apply : u8ToBlob"
+        (contentLoad)="contentLoad = 'loaded'"
+        (contentError)="contentLoad = 'error'">
+        <div video-name>{{ resolved.document.name }}</div>
+        <div
+          video-info
+          *ngIf="resolved.blockAcknowledgementsInfo"
+          class="opal-fx-row opal-fx-s-0 opal-fx-align-center">
+          <app-participant-avatar-group
+            class="opal-border-grey"
+            size="xs"
+            [participant]="resolved.author"></app-participant-avatar-group>
+          <button
+            mat-icon-button
+            class="opal-ml-2"
+            (click)="openAcknowledgementsDialog(resolved.document.updatedInBlock)">
+            <app-acks-icon [status]="resolved.blockAcknowledgementsInfo.status"></app-acks-icon>
+          </button>
+          <button
+            ngxT3ClickToCopy="{{ resolved.document.updatedInBlock.linkHash | uint8 }}"
+            mat-icon-button
+            matTooltip="Copy hash">
+            <mat-icon class="opal-text-grey-400">fingerprint</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="downloadDocument(resolved.document)">
+            <mat-icon
+              class="opal-text-grey-400"
+              svgIcon="download"></mat-icon>
+          </button>
+        </div>
+      </ngx-t3-video-viewer>
+    </ng-template>
+  </div>
+
+  <ngx-t3-right-sidebar
+    rightbar
+    [showHandle]="false"
+    [open]="true">
+    <router-outlet></router-outlet>
+  </ngx-t3-right-sidebar>
+</ngx-t3-with-sidebar>

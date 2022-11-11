@@ -1,0 +1,39 @@
+<div class="opal-fx-row">
+  <app-image-icon [image]="itemImage$ | async"></app-image-icon>
+
+  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+    <ng-container *ngIf="props$ | async as props; else skeleton">
+      <div
+        *ngIf="{
+        member: props.member.name,
+        memberClass: props.member.class,
+        threadName: props.threadName | escapeHtml,
+        threadClass: props.threadStyle
+      } as translateParams"
+        #snapshotContainer
+        class="snapshot-content"
+        ngxT3PointerInnerClick
+        [ngSwitch]="props.operation"
+        (innerClick)="clickHandler($event, snapshot)">
+        <span
+          *ngSwitchCase="'creation'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.ThreadMessage.creation' | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'update'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.ThreadMessage.update' | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'deletion'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.ThreadMessage.removal' | translate : translateParams | safeHtml">
+        </span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #skeleton>
+  <div class="opal-fx-g-1">
+    <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+  </div>
+</ng-template>

@@ -1,0 +1,15 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [label]="'i18n.Common.streamDetails' | translate"
+  [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
+  (backTo)="router.navigate(['/project', 'streams'],  { queryParamsHandling: 'preserve', relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<app-stream-overview
+  *ngIf="{
+    stream: stream$ | async,
+    referencesCount: streamReferencesCount$ | async
+  } as resolved"
+  [stream]="resolved.stream"
+  [referencesCount]="resolved.referencesCount"
+  (referencesClick)="openReferences(resolved.referencesCount)"></app-stream-overview>

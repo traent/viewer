@@ -1,0 +1,6 @@
+@use '../../../../../../../apps/projects/opal/src/scss/utilities/text.scss' as *;
+
+.snapshot-content {
+  @include ellipse-at-line(3, 18px);
+  padding-right: 2px;
+}

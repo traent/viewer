@@ -1,0 +1,38 @@
+.url-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  input {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 16px;
+    height: 50px;
+    width: 374px;
+    border: 1px solid theme("colors.white.500");
+    border-right-style: none;
+    line-height: 120%;
+    font-style: italic;
+    outline-style: none;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  .submit-btn {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: theme("colors.white.500");
+    border: 1px solid theme("colors.white.500");
+    color: theme("colors.grey.400");
+    cursor: pointer;
+
+    &[disabled] {
+      background-color: theme("colors.grey.300");
+      border: 1px solid theme("colors.grey.300");
+    }
+  }
+}

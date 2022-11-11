@@ -1,0 +1,332 @@
+<div
+  *ngIf="block"
+  class="opal-fx-col opal-border-t-1 opal-ml-10 opal-border-grey-200 opal-body-2"
+  (click)="$event.stopPropagation()">
+
+  <div
+    *ngIf="block.type === 'InContext'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.inContext' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+        {{ 'i18n.Explorer.hash' | translate }}
+      </div>
+      <div
+        *ngIf="block.contextLinkHash | uint8 as contextLinkHash"
+        class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        <ngx-t3-copy-to-clipboard
+          class="opal-w-full"
+          position="left"
+          [textToCopy]="contextLinkHash"
+          (click)="$event.stopImmediatePropagation()">
+          <div
+            class="opal-body-2 opal-ellipsed opal-mr-1">
+            {{ contextLinkHash }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'PreviousBlock'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.previousBlock' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+        {{ 'i18n.Explorer.hash' | translate }}
+      </div>
+      <div
+        *ngIf="block.previousBlockHash | uint8 as previousBlockHash"
+        class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        <ngx-t3-copy-to-clipboard
+          class="opal-w-full"
+          position="left"
+          [textToCopy]="previousBlockHash"
+          (click)="$event.stopImmediatePropagation()">
+          <div
+            class="opal-body-2 opal-ellipsed opal-mr-1">
+            {{ previousBlockHash }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'AuthorSignature'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.signature' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+        {{ 'i18n.BlockTable.authorId' | translate }}
+      </div>
+      <div
+        *ngIf="block.authorId | uint8 as authorId"
+        class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        <ngx-t3-copy-to-clipboard
+          class="opal-w-full"
+          position="left"
+          [textToCopy]="authorId"
+          (click)="$event.stopImmediatePropagation()">
+          <div
+            class="opal-body-2 opal-ellipsed opal-mr-1">
+            {{ authorId }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+        {{ 'i18n.BlockTable.authorSignature' | translate }}
+      </div>
+      <div
+        *ngIf="block.authorSignature | uint8 as authorSignature"
+        class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        <ngx-t3-copy-to-clipboard
+          class="opal-w-full"
+          position="left"
+          [textToCopy]="authorSignature"
+          (click)="$event.stopImmediatePropagation()">
+          <div
+            class="opal-body-2 opal-ellipsed opal-mr-1">
+            {{ authorSignature }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'UpdateContext'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.updateContext' | translate }}
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'Ack'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.acknowledgeBlock' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+       {{ 'i18n.BlockTable.targetIndex' | translate }}
+      </div>
+      {{ block.targetIndex }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+       {{ 'i18n.BlockTable.targetHash' | translate }}
+      </div>
+      <div
+        *ngIf="block.targetLinkHash | uint8 as targetLinkHash"
+        class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        <ngx-t3-copy-to-clipboard
+          class="opal-w-full"
+          position="left"
+          [textToCopy]="targetLinkHash"
+          (click)="$event.stopImmediatePropagation()">
+          <div
+            class="opal-body-2 opal-ellipsed opal-mr-1">
+            {{ targetLinkHash }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'Reference'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.referenceBlock' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-pt-7px">
+        {{ 'i18n.Explorer.hashes' | translate }}
+      </div>
+      <div class="opal-fx-col opal-ellipsed">
+        <ng-container *ngFor="let hash of block.hashes">
+          <div
+            *ngIf="hash | uint8 as blockHash"
+            class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            <ngx-t3-copy-to-clipboard
+              class="opal-w-full"
+              position="left"
+              [textToCopy]="blockHash"
+              (click)="$event.stopImmediatePropagation()">
+              <div
+                class="opal-body-2 opal-ellipsed opal-mr-1">
+                {{ blockHash }}
+              </div>
+            </ngx-t3-copy-to-clipboard>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="block.type === 'Policy'"
+    class="opal-fx-col">
+    <ng-container *ngIf="block | apply : parsePolicyV1 as policy">
+      <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+        {{ 'i18n.BlockTable.policyBlock' | translate }}
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-pt-7px">
+          {{ 'i18n.BlockTable.allowedBlocks' | translate }}
+        </div>
+        <div class="opal-fx-col">
+          <ng-container *ngFor="let encodedSequenzeOfBlocks of policy.AllowedBlocks">
+            <div class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center">
+              <div
+                *ngFor="let blockTypeCode of (encodedSequenzeOfBlocks | apply : decode).split('')"
+                class="opal-mr-2">
+                <ngx-t3-tag
+                  *ngIf="blockTypeCode | apply : getBlockTypeDetailsFromBlockTypeCode as blockDetails"
+                  [class]="blockDetails.class"
+                  [matTooltip]="blockDetails.fullName">
+                  {{ blockTypeCode }}
+                </ngx-t3-tag>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center opal-border-t-1 opal-border-grey-200">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.serialization' | translate }}
+        </div>
+        <ngx-t3-copy-to-clipboard
+          [textToCopy]="policy.ApplicationData.Serialization"
+          (click)="$event.stopImmediatePropagation()">
+          <div class="opal-body-2 opal-mr-1">
+            {{ policy.ApplicationData.Serialization }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.encryption' | translate }}
+        </div>
+        <ngx-t3-copy-to-clipboard
+          [textToCopy]="policy.ApplicationData.Encryption"
+          (click)="$event.stopImmediatePropagation()">
+          <div class="opal-body-2 opal-mr-1">
+            {{ policy.ApplicationData.Encryption }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.version' | translate }}
+        </div>
+        {{ policy.ApplicationData.Version }}
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-border-t-1 opal-border-grey-200">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-pt-7px">
+          {{ 'i18n.BlockTable.authorKeys' | translate }}
+        </div>
+        <div class="opal-fx-col">
+          <ng-container *ngFor="let authorKey of policy.AuthorKeys">
+            <div
+              *ngIf="authorKey | uint8 as key"
+              class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center">
+              <ngx-t3-copy-to-clipboard
+                [textToCopy]="key"
+                (click)="$event.stopImmediatePropagation()">
+                <div class="opal-body-2 opal-mr-1">
+                  {{ key }}
+                </div>
+              </ngx-t3-copy-to-clipboard>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center opal-border-t-1 opal-border-grey-200">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.hashingAlgorithm' | translate }}
+        </div>
+        <ngx-t3-copy-to-clipboard
+          [textToCopy]="policy.HashingAlgorithm"
+          (click)="$event.stopImmediatePropagation()">
+          <div class="opal-body-2 opal-mr-1">
+            {{ policy.HashingAlgorithm }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.signingAlgorithm' | translate }}
+        </div>
+        <ngx-t3-copy-to-clipboard
+          [textToCopy]="policy.SigningAlgorithm"
+          (click)="$event.stopImmediatePropagation()">
+          <div class="opal-body-2 opal-mr-1">
+            {{ policy.SigningAlgorithm }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.maxBlockSize' | translate }}
+        </div>
+        {{ policy.MaxBlockSize | apply : formatBytesSize : 2 }}
+      </div>
+      <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row opal-fx-align-center">
+        <div class="opal-mr-5 opal-w-45 table-header-cell opal-ellipsed">
+          {{ 'i18n.BlockTable.ledgerPublicKey' | translate }}
+        </div>
+        <ngx-t3-copy-to-clipboard
+          [textToCopy]="policy.LedgerPublicKey"
+          (click)="$event.stopImmediatePropagation()">
+          <div class="opal-body-2 opal-mr-1">
+            {{ policy.LedgerPublicKey | uint8 }}
+          </div>
+        </ngx-t3-copy-to-clipboard>
+      </div>
+    </ng-container>
+  </div>
+
+  <div
+    *ngIf="block.type === 'AddAuthors'"
+    class="opal-fx-col">
+    <div class="opal-text-capitalize opal-py-3 opal-pl-10 opal-h5 opal-ellipsed">
+      {{ 'i18n.BlockTable.addAuthorsBlock' | translate }}
+    </div>
+    <div class="opal-ellipsed opal-py-1 opal-pl-10 opal-body-2 opal-ellipsed opal-fx-row">
+      <div class="opal-mr-5 opal-w-45 table-header-cell opal-pt-7px">
+        {{ 'i18n.BlockTable.authorKeys' | translate }}
+      </div>
+      <div class="opal-fx-col opal-ellipsed">
+        <ng-container *ngFor="let authorKey of block.authorKeys">
+          <div
+            *ngIf="authorKey | uint8 as authorKey"
+            class="opal-py-1 opal-fx-g-1 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            <ngx-t3-copy-to-clipboard
+              class="opal-w-full"
+              position="left"
+              [textToCopy]="authorKey"
+              (click)="$event.stopImmediatePropagation()">
+              <div
+                class="opal-body-2 opal-ellipsed opal-mr-1">
+                {{ authorKey }}
+              </div>
+            </ngx-t3-copy-to-clipboard>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,42 @@
+<img
+  class="back"
+  src="/assets/images/carousel/block_back.png">
+<div class="content">
+  <div
+    *ngFor="let v of [3, 5, 6, 1, 2, 4, 0]"
+    class="inner-block"
+    [ngClass]="'block-' + v">
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="-0.8660254037844386 -1 1.7320508075688772 2"
+      version="1.1"
+      id="svg5"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:svg="http://www.w3.org/2000/svg">
+      <defs id="defs2"></defs>
+      <path
+        d="M 0,1 L 0.8660254037844386,0.5 v -1 L 0,-1 L -0.8660254037844386,-0.5 v 1 z"
+        fill="currentColor"></path>
+      <path
+        d="M 0,0 v 1 L -0.8660254037844386,0.5 v -1 z"
+        fill="black"
+        fill-opacity="0.15"></path>
+      <path
+        d="M 0,0 v 1 L 0.8660254037844386,0.5 v -1 z"
+        fill="black"
+        fill-opacity="0.05"></path>
+    </svg>
+  </div>
+</div>
+<div class="avatars">
+  <img class="avatar-1" src="/assets/images/carousel/avatar1.png">
+  <img class="avatar-2" src="/assets/images/carousel/avatar2.png">
+  <img class="avatar-3" src="/assets/images/carousel/avatar3.png">
+</div>
+<img
+  class="front"
+  src="/assets/images/carousel/block_front.png">
+<img
+  class="lock"
+  src="/assets/images/carousel/block_front_lock.png">

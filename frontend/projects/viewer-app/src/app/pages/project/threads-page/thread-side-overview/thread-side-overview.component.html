@@ -1,0 +1,20 @@
+<ngx-t3-sidebar-header
+  class="opal-sidebar-header-container"
+  [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
+  [label]="'i18n.Common.threadDetails' | translate"
+  (backTo)="router.navigate(['/project', 'threads'],  { relativeTo: route })">
+</ngx-t3-sidebar-header>
+
+<app-thread-overview
+  *ngIf="{
+    thread: thread$ | async,
+    referencesCount: referencesCount$ | async,
+    participantsCount: participantsCount$ | async
+  } as resolved"
+  class="opal-overflow-auto opal-h-full"
+  [thread]="resolved.thread"
+  [referencesCount]="resolved.referencesCount"
+  [participantsCount]="resolved.participantsCount"
+  (participantsClick)="openParticipants(resolved.participantsCount)"
+  (referencesClick)="openReferences(resolved.referencesCount)">
+</app-thread-overview>

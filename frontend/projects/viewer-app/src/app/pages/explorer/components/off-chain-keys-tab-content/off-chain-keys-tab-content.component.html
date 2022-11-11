@@ -1,0 +1,74 @@
+<ng-container *ngIf="{
+  offchainKeys: offchainKeys$ | async,
+  offchainKeysCount: storageService.getOffchainKeysCount()
+} as resolved">
+  <div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+    <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
+      <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
+        <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-4">Off-chain (Hash)</div>
+        <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-5">Key</div>
+      </div>
+      <div
+        *ngFor="let item of resolved.offchainKeys"
+        class="opal-border-b-1 opal-border-grey-100 opal-fx-row opal-py-3 opal-body-2 opal-pos-rel opal-bg-white">
+        <div class="opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-ellipsed">
+          <mat-icon
+            *ngIf="!item.hasValidReference()"
+            class="opal-text-orange-500 opal-pos-abs opal-my-auto opal-inset-0"
+            matTooltip="Missing resource">
+            warning
+          </mat-icon>
+          <div
+            *ngIf="item.hash as hash"
+            class="opal-pl-5 opal-text-lowercase opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            <ngx-t3-copy-to-clipboard
+              class="opal-w-full"
+              position="left"
+              [textToCopy]="hash"
+              (click)="$event.stopImmediatePropagation()">
+              <div
+                class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">
+                {{ hash }}
+              </div>
+            </ngx-t3-copy-to-clipboard>
+          </div>
+        </div>
+        <div
+          *ngIf="item.key | uint8 as key"
+          class="opal-pl-5 opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+          <ngx-t3-copy-to-clipboard
+            class="opal-w-full"
+            position="left"
+            [textToCopy]="key"
+            (click)="$event.stopImmediatePropagation()">
+            <div
+              class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">
+              {{ key }}
+            </div>
+          </ngx-t3-copy-to-clipboard>
+        </div>
+      </div>
+      <div
+        *ngIf="!resolved.offchainKeys?.length"
+        class="opal-fx-col opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-border-b-1 opal-border-grey-200">
+        <img
+          src="/assets/images/search-items.svg"
+          alt="upload file"
+          class="opal-mb-3">
+        <div class="opal-h4">
+          {{ 'i18n.Explorer.noOffChainKeys' | translate }}
+        </div>
+      </div>
+    </div>
+    <ngx-t3-table-paginator
+      class="opal-radius-b-8"
+      [pageSize]="offchainKeysPageEvent.pageSize"
+      [length]="resolved.offchainKeys?.length || 0"
+      [total]="resolved.offchainKeysCount"
+      [ofLabel]="'i18n.TablePaginator.of' | translate"
+      [pageLabel]="'i18n.TablePaginator.page' | translate"
+      [totalPageLabel]="'i18n.TablePaginator.perPage' | translate"
+      (pageChange)="offchainKeysPageEvent = $event">
+    </ngx-t3-table-paginator>
+  </div>
+</ng-container>

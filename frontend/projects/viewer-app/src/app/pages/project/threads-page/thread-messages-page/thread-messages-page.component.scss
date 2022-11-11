@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+}
+
+ngx-t3-thread-message {
+  max-width: 100%;
+  margin-bottom: 10px;
+  display: table;
+}

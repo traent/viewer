@@ -1,0 +1,50 @@
+<div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+
+  <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
+    <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
+      <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-4 opal-border-box">
+        {{ 'i18n.Explorer.hash' | translate }}
+      </div>
+      <div class="sm-col-width opal-px-3 opal-border-box">
+        {{ 'i18n.Explorer.size' | translate }}
+      </div>
+      <div class="sm-col-width opal-px-3 opal-border-box">
+        {{ 'i18n.Explorer.key' | translate }}
+      </div>
+    </div>
+    <cdk-accordion-item
+      *ngFor="let offChainItem of offChainItems$ | async"
+      #accordionItem="cdkAccordionItem"
+      class="opal-border-b-1 opal-d-block opal-border-grey-200"
+      (click)="accordionItem.toggle()">
+      <app-off-chain-row-item
+        class="opal-inset-t-0 opal-pos-sticky opal-d-block opal-z-index-4 opal-pointer"
+        [ngClass]="{
+          'opal-bg-white': !accordionItem.expanded,
+          'opal-bg-grey-100': accordionItem.expanded
+        }"
+        [value]="offChainItem"
+        [isOpen]="accordionItem.expanded"
+        [hasKeyPair]="!!(keyPair$ | async)">
+      </app-off-chain-row-item>
+      <app-view-encrypted-data
+        *ngIf="accordionItem.expanded"
+        class="sticky-below-row"
+        [hasKeyPair]="!!(keyPair$ | async)"
+        [uiDataBlock]="offChainItem">
+      </app-view-encrypted-data>
+    </cdk-accordion-item>
+  </div>
+
+  <ngx-t3-table-paginator
+    *ngIf="totalOffChainItems"
+    class="opal-radius-b-8"
+    [pageSize]="pageEvent$.value.pageSize"
+    [length]="(offChainItems$ | async)?.length || 0"
+    [total]="totalOffChainItems"
+    [ofLabel]="'i18n.TablePaginator.of' | translate"
+    [pageLabel]="'i18n.TablePaginator.page' | translate"
+    [totalPageLabel]="'i18n.TablePaginator.perPage' | translate"
+    (pageChange)="pageEvent$.next($event)">
+  </ngx-t3-table-paginator>
+</div>

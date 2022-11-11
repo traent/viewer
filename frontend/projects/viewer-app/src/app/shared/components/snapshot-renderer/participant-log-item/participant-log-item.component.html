@@ -1,0 +1,38 @@
+<div class="opal-fx-row">
+  <app-image-icon [image]="itemImage$ | async"></app-image-icon>
+
+  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+    <ng-container *ngIf="props$ | async as props; else skeleton">
+      <div
+        *ngIf="{
+          role: props.role  | escapeHtml,
+          participantName: props.participant.name,
+          member: props.inviter.name,
+          memberClass: props.inviter.class,
+          participantClass: props.participant.class  | escapeHtml,
+          roleClasses: props.roleClass
+        } as translateParams"
+        #snapshotContainer
+        class="snapshot-content"
+        [ngSwitch]="props.operation">
+        <span
+          *ngSwitchCase="'creation'"
+          [innerHtml]="(snapshot?.id === snapshot?.delta?.creatorId
+            ? 'i18n.SnapshotItem.OperationLabel.Participant.selfCreation'
+            : 'i18n.SnapshotItem.OperationLabel.Participant.creation') | translate : translateParams | safeHtml"></span>
+        <span
+          *ngSwitchCase="'update'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.Participant.update' | translate : translateParams | safeHtml"></span>
+        <span
+          *ngSwitchCase="'deletion'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.Participant.removal' | translate : translateParams | safeHtml"></span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #skeleton>
+  <div class="opal-fx-g-1">
+    <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+  </div>
+</ng-template>

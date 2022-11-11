@@ -1,0 +1,115 @@
+@use "sass:math";
+
+$blocks: (2 * 4 + 5);
+$blockSize: 10vw;
+$xFactor: math.sqrt(3) * 0.5; // apothem of the hexagon (cube in isometric projection)
+$yFactor: 0.5; // half side of the hexagon
+
+:host {
+  position: relative;
+  overflow: hidden;
+  min-height: 780px;
+}
+
+.clipmask {
+  background: radial-gradient(closest-side, transparent 50%, var(--viewer-home-bg-color, theme("colors.traentblue.500")) 100%);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+.animation-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transform: translate(0, -5vw);
+  .blockchain {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: $blockSize * ($blocks - 1) * $xFactor;
+    height: $blockSize * ($blocks - 1) * $yFactor;
+    transition: all 0.75s ease-in-out;
+    @for $blockIndex from 1 through ($blocks + 3) {
+      app-carousel-block:nth-child(#{$blockIndex}) {
+        top: ($blocks - $blockIndex) * $blockSize * $yFactor;
+        left: ($blockIndex - 1) * $blockSize * $xFactor;
+        z-index: $blocks - $blockIndex;
+      }
+    }
+
+    @for $blockIndex from 0 through 3 {
+      &.anim-step-#{$blockIndex} {
+        transform: translate(-25% * ($blockIndex + 1), -(100% - (25% * ($blockIndex + 1))));
+      }
+    }
+
+    app-carousel-block {
+      position: absolute;
+      width: $blockSize;
+      height: $blockSize;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.carousel-switch {
+  position: absolute;
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  right: 16px;
+  z-index: 1;
+  top: 50%;
+  transform: translate(0, -50%);
+
+  .control {
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 4px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    &.selected {
+      height: 24px;
+      width: 24px;
+      background-color: theme("colors.white.500");
+    }
+    &:hover {
+      background-color: theme("colors.white.500");
+    }
+  }
+}
+
+.text-boxes {
+  position: absolute;
+  top: calc(50% + 5vw);
+  width: 100%;
+  text-align: center;
+  .text-box {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition-delay: 0.65s;
+    transition: all 0.25s;
+    &.selected {
+      opacity: 1;
+      transition-delay: 0;
+    }
+    h2 {
+      font-size: 40px !important;
+    }
+    p {
+      margin: 0 auto;
+      max-width: 390px;
+      font-size: 20px;
+    }
+  }
+}

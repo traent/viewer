@@ -1,0 +1,13 @@
+<ngx-t3-tag
+  class="opal-no-pointer"
+  [ngClass]="innerClasses || []"
+  [chip]="true"
+  [matTooltip]="tooltipLabel"
+  [matTooltipShowDelay]="600">
+  <ng-container *ngIf="tagName | exported; else redactedTag">
+    {{ tagName | noValueLabel }}
+  </ng-container>
+  <ng-template #redactedTag>
+    <small class="redacted">{{ 'i18n.Common.redacted' | translate }}</small>
+  </ng-template>
+</ngx-t3-tag>

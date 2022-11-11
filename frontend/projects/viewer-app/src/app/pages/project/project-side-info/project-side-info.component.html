@@ -1,0 +1,245 @@
+<div
+  *ngIf="{
+    project: project$ | async,
+    exportRequest: exportRequest$ | async,
+    projectParticipants: projectParticipants$ | async,
+    exportDateTime: exportDateTime$ | async,
+    organizations: organizations$ | async,
+    workflow: workflow$ | async,
+    totalDocuments: (totalDocuments$ | async) || 0,
+    availableDocuments: (availableDocuments$ | async) || 0,
+    totalStreams: (totalStreams$ | async) || 0,
+    availableStreams: (availableStreams$ | async) || 0,
+    totalThreads: (totalThreads$ | async) || 0,
+    availableThreads: (availableThreads$ | async) || 0
+  } as resolved"
+  class="opal-pb-4 opal-pt-3 opal-overflow-y-auto opal-h-full opal-border-box">
+  <ng-template #redacted>
+    <div class="redacted opal-body-2">
+      {{ 'i18n.Common.redacted' | translate }}
+    </div>
+  </ng-template>
+  <ng-template #noWorkflow>
+    <div class="opal-text-grey-400 opal-body-2 opal-px-4 opal-mt-3">
+      {{ 'i18n.Project.ProjectUpsertDialog.noProjectWorkflow' | translate }}
+    </div>
+  </ng-template>
+
+  <ngx-t3-descriptions>
+    <ngx-t3-description-item [label]="'i18n.Common.projectName' | translate">
+      <div
+        *ngIf="resolved.project && (resolved.project.name | exported); else redacted"
+        class="opal-ellipsed opal-body-2">
+        {{ resolved.project.name | noValueLabel }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      [label]="'i18n.Common.description' | translate"
+      [multiline]="true">
+      <div
+        *ngIf="resolved.project && (resolved.project.description | exported); else redacted"
+        class="opal-ellipsed opal-body-2">
+        {{ resolved.project.description | noValueLabel }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.exportDate' | translate">
+      <div class="opal-ellipsed opal-body-2">
+        {{ resolved.exportDateTime ? (resolved.exportDateTime | date: 'dd MMM YYYY, HH:mm') : '-' }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.size' | translate">
+      <div
+        *ngIf="storageService.archiveSize"
+        class="opal-ellipsed opal-body-2">
+        {{ storageService.archiveSize | apply : formatBytesSize }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.organizations' | translate">
+      <ngx-t3-avatar-group
+        size="xxs"
+        [count]="(resolved.organizations?.items || []).length"
+        [limit]="5">
+        <ng-container *ngFor="let organization$ of (resolved.organizations ? resolved.organizations.items : []) | slice : 0 : 5">
+          <ngx-t3-avatar
+            *ngIf="{ value: organization$ | async } as organization"
+            size="xxs"
+            [placeholder]="AvatarPlaceholder.Organization"
+            [src]="organization.value && organization.value.logo"
+            [square]="true"
+            [matTooltip]="organization.value && organization.value.businessName || 'Redacted'"></ngx-t3-avatar>
+        </ng-container>
+      </ngx-t3-avatar-group>
+      <button
+        end
+        mat-icon-button
+        routerLink="organizations">
+        <mat-icon class="opal-s-5 opal-text-grey-400">arrow_forward</mat-icon>
+      </button>
+    </ngx-t3-description-item>
+    <!-- Note: this should be set as multiline when the verify is available -->
+    <ngx-t3-description-item
+      [label]="'i18n.Common.ledger' | translate"
+      class="opal-fx-align-baseline">
+      <div class="opal-fx-col opal-w-full">
+        <div class="opal-fx-row opal-fx-align-center">
+          <span
+            class="opal-body-2 opal-text-underline opal-pointer"
+            routerLink="/explorer">
+            {{ 'i18n.Project.ProjectSide.inspectLedger' | translate  }}
+          </span>
+          <button
+            end
+            mat-icon-button
+            routerLink="/explorer">
+            <mat-icon class="opal-s-4 opal-text-grey-400">open_in_new</mat-icon>
+          </button>
+        </div>
+        <div
+          *ngIf="ledgerService.problems.length"
+          class="opal-fx-row opal-fx-align-center opal-bg-red-100 opal-radius-4 opal-pl-3 opal-pr-2 opal-mr-2 opal-no-pointer opal-mb-2">
+          <mat-icon class="opal-text-red opal-s-4">error</mat-icon>
+          <span class="opal-ml-2 opal-body-2 opal-w-full">
+            {{ 'i18n.Project.ProjectSide.validationErrors' | translate }}
+          </span>
+          <button
+            mat-icon-button
+            matTooltip="Click to inspect the errors"
+            class="opal-mr-n-2"
+            (click)="openValidationErrorsDialog()">
+            <mat-icon class="opal-s-4 opal-text-grey-400">arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </ngx-t3-description-item>
+  </ngx-t3-descriptions>
+
+  <span class="opal-h4 opal-d-block opal-mt-8 opal-px-4">
+    {{ 'i18n.Common.workflow' | translate }}
+  </span>
+  <ng-container *ngIf="resolved.workflow; else noWorkflow">
+    <ngx-t3-descriptions>
+      <ngx-t3-description-item [label]="'i18n.Common.name' | translate">
+        <div
+          *ngIf="resolved.workflow?.dsl?.definition?.name as name; else redacted"
+          class="opal-ellipsed opal-body-2">
+          {{ name }}
+        </div>
+      </ngx-t3-description-item>
+      <ngx-t3-description-item [label]="'i18n.Project.ProjectSide.lastState' | translate">
+        <ngx-t3-tag
+          *ngIf="resolved.workflow.lastState | exported; else redacted"
+          class="opal-radius-8 opal-bg-accent-500 no-ellipse"
+          size="md">
+          {{ resolved.workflow.lastState | noValueLabel }}
+        </ngx-t3-tag>
+      </ngx-t3-description-item>
+    </ngx-t3-descriptions>
+  </ng-container>
+
+  <span class="opal-h4 opal-d-block opal-mt-8 opal-px-4">
+    {{ 'i18n.Common.resources' | translate }}
+  </span>
+  <ngx-t3-descriptions>
+    <ngx-t3-description-item
+      [label]="'i18n.Common.docs' | translate"
+      [multiline]="true">
+      <div class="opal-fx-col opal-body-2 opal-ellipsed">
+        <span>
+          {{ resolved.availableDocuments }} / {{ resolved.totalDocuments }} {{ 'i18n.Common.included' | translate | lowercase}}
+        </span>
+        <ng-container *ngIf="resolved.exportRequest">
+          <span>
+            {{ resolved.exportRequest.documentVersion | apply : getIncludedResourceVersionLabel | translate }}
+          </span>
+          <span>
+            {{ (resolved.exportRequest.deletedDocuments
+              ? 'i18n.Project.ProjectSide.deletedDocumentIncluded'
+              : 'i18n.Project.ProjectSide.deletedDocumentNotIncluded' ) | translate }}
+          </span>
+        </ng-container>
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      label="streams"
+      class="opal-pb-0"
+      [multiline]="true"
+      [hasDivider]="false">
+      <div class="opal-fx-col opal-body-2 opal-ellipsed">
+        <span>
+          {{ resolved.availableStreams }} / {{ resolved.totalStreams }} {{ 'i18n.Common.included' | translate | lowercase}}
+        </span>
+        <ng-container *ngIf="resolved.exportRequest">
+          <span>
+            {{ resolved.exportRequest.streamVersion | apply : getIncludedResourceVersionLabel | translate}}
+          </span>
+          <span>
+            {{ (resolved.exportRequest.deletedStreams
+              ? 'i18n.Project.ProjectSide.deletedStreamIncluded'
+              : 'i18n.Project.ProjectSide.deletedStreamNotIncluded' ) | translate }}
+          </span>
+        </ng-container>
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.refs' | translate">
+      <div class="opal-body-2 opal-ellipsed">
+        {{ (resolved.exportRequest.streamReferences ? 'i18n.Common.included' : 'i18n.Common.excluded') | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      class="opal-pb-0"
+      [label]="'i18n.Common.threads' | translate"
+      [multiline]="true"
+      [hasDivider]="false">
+      <div class="opal-body-2 opal-ellipsed">
+        {{ resolved.availableThreads }} / {{ resolved.totalThreads }} {{ 'i18n.Common.included' | translate | lowercase}}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.refs' | translate">
+      <div class="opal-body-2 opal-ellipsed">
+        {{ (resolved.exportRequest.streamReferences ? 'i18n.Common.included' : 'i18n.Common.excluded') | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.collaborators' | translate">
+      <ngx-t3-avatar-group
+        size="xxs"
+        [count]="(resolved.projectParticipants?.items || []).length"
+        [limit]="5">
+        <ng-container *ngFor="let projectParticipant of resolved.projectParticipants?.items | slice : 0 : 5">
+          <ngx-t3-avatar
+            *ngIf="{
+              member: projectParticipant.member$ | async,
+              organization: projectParticipant.organization$ | async
+            } as resolvedParticipant"
+            size="xxs"
+            [src]="resolvedParticipant.member && resolvedParticipant.member.avatar"
+            [matTooltip]="resolvedParticipant.member && resolvedParticipant.member.fullName || 'Redacted'"></ngx-t3-avatar>
+        </ng-container>
+      </ngx-t3-avatar-group>
+      <button
+        end
+        mat-icon-button
+        routerLink="participants">
+        <mat-icon class="opal-s-5 opal-text-grey-400">arrow_forward</mat-icon>
+      </button>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.workflow' | translate">
+      <div class="opal-body-2 opal-ellipsed">
+        {{ resolved.exportRequest.workflowMode | apply : getWorkflowInclusionLabel | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Project.ProjectSide.ledgerKeys' | translate"
+      [hasDivider]="false">
+      <div class="opal-body-2 opal-ellipsed">
+        {{ resolved.exportRequest.keyMode | apply : getLedgerKeysLabel | translate }}
+      </div>
+    </ngx-t3-description-item>
+  </ngx-t3-descriptions>
+</div>

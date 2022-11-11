@@ -1,0 +1,49 @@
+<div class="animation-container">
+  <div class="bg"></div>
+  <div
+    class="blockchain"
+    [ngClass]="'anim-step-' + step">
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block
+      type="type-1"
+      [isCurrent]="step === 1"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block
+      type="type-2"
+      [isCurrent]="step === 2"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block
+      type="type-3"
+      [isCurrent]="step === 3"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+    <app-carousel-block type="static"></app-carousel-block>
+  </div>
+</div>
+<div class="clipmask"></div>
+
+<div class="text-boxes">
+  <div
+    *ngFor="let item of carouselItems; let index = index"
+    class="text-box text-box-1"
+    [class.selected]="index + 1 === step">
+    <h2>{{ item.title | translate}}</h2>
+    <p [innerHtml]="item.description | translate | safeHtml"></p>
+  </div>
+</div>
+
+<div class="carousel-switch">
+  <div
+    *ngFor="let switch of carouselItems; let index = index"
+    matRipple
+    class="control"
+    [class.selected]="index + 1 === step"
+    (click)="goToStep(index + 1)"></div>
+</div>

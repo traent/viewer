@@ -1,0 +1,30 @@
+.container-dashboard {
+  padding: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+
+  > .tw-sticky {
+    top: 0px !important;
+    backdrop-filter: blur(8px);
+    background: #f5f5f7a0;
+  }
+}
+
+.form-item-list {
+  width: 800px;
+}
+
+.form-item-box {
+  margin: 24px 0px;
+  border: solid 1px theme("colors.neutral.200");
+  border-radius: 8px;
+  background: white;
+
+  .heading {
+    heigth: 30px;
+  }
+
+  .description {
+    padding: 6px 8px;
+  }
+}

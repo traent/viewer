@@ -1,0 +1,63 @@
+<div
+  *ngIf="uiDataBlock$ | async as uiDataBlock"
+  class="opal-fx-col"
+  (click)="$event.stopPropagation()">
+  <div class="opal-text-capitalize opal-p-3 opal-pl-10 opal-bg-grey-100 opal-h5 opal-ellipsed opal-fx-row opal-fx-align-center">
+    <button
+      *ngIf="{ value: !uiDataBlock.hasKey && !hasKeyPair } as keyMissing"
+      mat-icon-button
+      [matTooltip]="keyMissing.value ? '' : decryptedViewMode ? 'Encrypt' : 'Decrypt'"
+      [disabled]="keyMissing.value"
+      (click)="decryptedViewMode = !decryptedViewMode">
+      <mat-icon class="opal-s-4">
+        {{ decryptedViewMode ? 'lock_open' : 'lock' }}
+      </mat-icon>
+    </button>
+    <ngx-t3-copy-to-clipboard
+      *ngIf="{
+        value: decryptedData$ | async | uint8 : 'raw'
+      } as decryptedData"
+      position="right"
+      [tooltip]="decryptedViewMode ? 'Click to copy unencrypted data to clipboard' : 'decrypt the block to copy its content'"
+      [hover]="false"
+      [additionalClasses]="decryptedViewMode ? 'opal-pointer' : 'opal-no-pointer'"
+      [textToCopy]="decryptedViewMode ? decryptedData.value || undefined : undefined">
+      <span class="opal-mr-2">Data</span>
+    </ngx-t3-copy-to-clipboard>
+  </div>
+  <div class="opal-min-h-11">
+    <ng-container *ngIf="decryptedViewMode ? decryptedData$ : rawData$ as content">
+      <cdk-virtual-scroll-viewport
+        *ngIf="content | async as data; else loading"
+        itemSize="50"
+        appendOnly
+        class="opal-fx-row opal-overflow-y-auto opal-min-h-80 opal-text-monospace opal-p-3 opal-pl-20 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
+        <div *cdkVirtualFor="let row of data | apply : chunkData" class="opal-fx-row">
+          <div class="opal-fx-center opal-fx-wrap opal-p-3 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
+            <div
+              *ngFor="let item of row"
+              class="opal-p-1 opal-body-2 opal-text-underline opal-text-uppercase opal-s-5 opal-fx-center">
+              {{ item | uint8 : 'hex' }}
+            </div>
+          </div>
+          <div class="opal-fx-center opal-fx-wrap opal-p-3 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
+            <div
+              *ngFor="let item of row"
+              class="opal-p-1 opal-body-2 opal-text-underline opal-s-5 opal-fx-center">
+              {{ item | uint8 : 'raw' }}
+            </div>
+          </div>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    </ng-container>
+    <ng-template #loading>
+      <ngx-t3-spinner-context class="opal-my-10 opal-d-block">
+        <p
+          class="opal-mt-10 opal-h4"
+          after>
+          {{ 'i18n.Explorer.decrypting' | translate }}
+        </p>
+      </ngx-t3-spinner-context>
+    </ng-template>
+  </div>
+</div>

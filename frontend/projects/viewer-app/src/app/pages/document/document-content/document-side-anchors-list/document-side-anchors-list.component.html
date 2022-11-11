@@ -1,0 +1,35 @@
+<ng-container>
+  <ngx-t3-tabs class="opal-px-4 opal-pt-5 opal-pb-3">
+    <ngx-t3-tab-item
+      value="threads"
+      routerLinkActive="active"
+      routerLink="./threads"
+      width="fill">
+      <mat-icon class="opal-s-4 opal-mr-2 material-icons-outlined">forum</mat-icon>
+      {{ 'i18n.Common.threads' | translate }}
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="streams"
+      routerLinkActive="active"
+      routerLink="./streams"
+      width="fill">
+      <mat-icon
+        class="opal-s-4 opal-mr-2"
+        svgIcon="stream-overview"></mat-icon>
+      {{ 'i18n.Common.streams' | translate }}
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="log"
+      routerLinkActive="active"
+      routerLink="./log"
+      width="fill">
+      <mat-icon class="opal-s-4 opal-mr-2">list</mat-icon>
+      {{ 'i18n.Common.log' | translate }}
+    </ngx-t3-tab-item>
+  </ngx-t3-tabs>
+
+  <hr class="opal-m-0">
+
+  <router-outlet></router-outlet>
+
+</ng-container>

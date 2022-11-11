@@ -1,0 +1,36 @@
+
+$default-topbar-height: 60px;
+$default-topbar-border-width: 1px;
+$default-topbar-border-color: theme("colors.grey.200");
+$default-topbar-font-color: theme("colors.black.500");
+
+.topbar {
+  height: var(--topbar-height, $default-topbar-height);
+  border-width: var(--topbar-border-width, $default-topbar-border-width);
+  border-color: var(--topbar-border-color, $default-topbar-border-color);
+  border-style: solid;
+  color: var(--topbar-font-color, $default-topbar-font-color);
+
+  .logo {
+    width: 100px;
+    height: 18px;
+  }
+}
+
+.login-btn {
+  height: 30px;
+  line-height: inherit;
+
+  &.white-stroked {
+    background-color: transparent;
+    border: 1px solid theme("colors.white.500");
+  }
+}
+
+.user-overlay {
+  width: 360px;
+
+  .name {
+    max-width: 250px;
+  }
+}

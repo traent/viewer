@@ -1,0 +1,34 @@
+<ng-container *ngIf="{
+  form: form$ | async,
+  formFillItem: formFillItem$ | async,
+  documentFormItem: documentFormItem$ | async
+} as resolved">
+  <ng-container *ngIf="resolved.documentFormItem && resolved.formFillItem && resolved.form">
+    <ngx-t3-form-item-filler
+      class="tw-w-full tw-mt-3 tw-block"
+      [invalid]="resolved.form.dirty && !resolved.form.valid"
+      [name]="resolved.formFillItem.name"
+      [description]="resolved.formFillItem.description"
+      [icon]="resolved.formFillItem.type | apply : getRedactableStreamTypeIcon"
+      [updatedAt]="resolved.formFillItem.updatedAt"
+      [required]="resolved.formFillItem.required">
+
+      <div
+        form-value
+        class="tw-ml-3">
+        <ngx-t3-stream-value-renderer
+          *ngIf="resolved.formFillItem.value !== undefined; else notDefined"
+          rendererType="default"
+          [value]="resolved.formFillItem.value"
+          [type]="resolved.formFillItem.type"
+          [configuration]="resolved.formFillItem.configuration"></ngx-t3-stream-value-renderer>
+
+        <ng-template #notDefined>
+          <em class="body-2 tw-text-grey-500">No Value</em>
+        </ng-template>
+      </div>
+
+    </ngx-t3-form-item-filler>
+  </ng-container>
+
+</ng-container>

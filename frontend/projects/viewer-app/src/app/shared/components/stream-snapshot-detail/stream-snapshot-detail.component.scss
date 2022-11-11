@@ -1,0 +1,15 @@
+ngx-t3-stream-value-renderer {
+  --stream-value-renderer: 14px;
+}
+
+ngx-t3-description-item.changed {
+  color: theme("colors.black.500") !important;
+  --description-label-background-color: theme("colors.yellow.200");
+  --description-label-padding-x: 4px;
+  --description-label-padding-y: 2px;
+  --description-label-radius: 2px;
+}
+
+ngx-t3-description-item {
+  min-height: 29px !important;
+}

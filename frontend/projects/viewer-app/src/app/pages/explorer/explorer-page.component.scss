@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  > * {
+    min-width: 800px;
+  }
+}
+
+.layout-content {
+  background-color: theme("colors.grey.100");
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.back-to-viewer {
+  line-height: 36px;
+  font-size: 13px;
+}
+
+.layout-content > .top-content {
+  padding: 9px 48px;
+}
+
+.layout-content > .main-content {
+  padding: 24px 48px;
+}

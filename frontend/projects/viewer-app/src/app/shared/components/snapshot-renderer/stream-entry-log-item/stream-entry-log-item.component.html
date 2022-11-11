@@ -1,0 +1,39 @@
+<div class="opal-fx-row">
+  <app-image-icon [image]="itemImage$ | async"></app-image-icon>
+
+  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+    <ng-container *ngIf="props$ | async as props; else skeleton">
+      <div
+        *ngIf="{
+          member: props.member.name,
+          memberClass: props.member.class,
+          streamName: props.streamName | escapeHtml,
+          streamClass: props.streamStyle
+        } as translateParams"
+        #snapshotContainer
+        ngxT3PointerInnerClick
+        class="snapshot-content"
+        [ngSwitch]="props.operation"
+        (innerClick)="clickHandler($event, snapshot)">
+        <span
+          *ngSwitchCase="'creation'"
+          [innerHtml]="props.isWorkflowTransition | apply : getStreamCreationLabel | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'update'"
+          [innerHtml]="props.isWorkflowTransition | apply : getStreamUpdateLabel | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'deletion'"
+          [innerHtml]="'i18n.SnapshotItem.OperationLabel.StreamEntry.removal' | translate : translateParams | safeHtml">
+        </span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #skeleton>
+  <div class="opal-fx-g-1">
+    <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+  </div>
+</ng-template>

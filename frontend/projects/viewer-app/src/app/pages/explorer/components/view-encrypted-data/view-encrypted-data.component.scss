@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  background-color: theme("colors.grey.100");
+
+  &.sticky-below-row .header {
+    z-index: 3;
+    display: block;
+    position: sticky;
+    top: 44px; // height of the row above
+  }
+}
+
+.text-monospace {
+  font-family: monospace;
+}

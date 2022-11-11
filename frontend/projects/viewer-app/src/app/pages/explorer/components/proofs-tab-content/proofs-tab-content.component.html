@@ -1,0 +1,56 @@
+<div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+
+  <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-radius-8 opal-pos-rel">
+    <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
+      <div class="opal-w-45 opal-fx-justify-start opal-pl-4 opal-border-box">
+        {{ 'i18n.Explorer.notary' | translate }}
+      </div>
+      <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-10">
+        {{ 'i18n.Explorer.merkleTreeRoot' | translate }}
+      </div>
+    </div>
+    <cdk-accordion-item
+      *ngFor="let notaryItem of notaryItems"
+      #accordionItem="cdkAccordionItem"
+      class="opal-border-b-1 opal-d-block opal-border-grey-200 opal-pointer"
+      (click)="accordionItem.toggle()">
+      <ng-container *ngIf="notaryItem.json$ | async as jsonData">
+        <div
+          *ngIf="notaryItem"
+          class="opal-fx-row opal-fx-align-center opal-py-3 opal-body-2 opal-pos-rel"
+          matRipple>
+          <mat-icon
+            class="opal-pos-abs opal-my-auto opal-inset-l-4 opal-s-4 opal-text-grey-400"
+            [class.opal-rotate-90]="accordionItem.expanded">
+            chevron_right
+          </mat-icon>
+          <div class="opal-w-45 opal-fx-center">
+            {{ notaryItem.name }}
+          </div>
+          <div
+            *ngIf="jsonData.merkleRoot as merkleRoot"
+            class="opal-pl-10 opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            <ngx-t3-copy-to-clipboard
+              class="opal-w-full"
+              position="left"
+              [textToCopy]="merkleRoot"
+              (click)="$event.stopImmediatePropagation()">
+              <div
+                class="opal-body-2 opal-ellipsed opal-mr-1">
+                {{ merkleRoot }}
+              </div>
+            </ngx-t3-copy-to-clipboard>
+          </div>
+        </div>
+
+        <json-editor
+          *ngIf="accordionItem.expanded"
+          class="opal-border-none opal-d-block opal-pl-8"
+          [data]="(notaryItem.json$ | async) || {}"
+          [options]="editorOptions"
+          (click)="$event.stopPropagation()">
+        </json-editor>
+      </ng-container>
+    </cdk-accordion-item>
+  </div>
+</div>

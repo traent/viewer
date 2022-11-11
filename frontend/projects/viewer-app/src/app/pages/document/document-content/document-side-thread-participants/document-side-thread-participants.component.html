@@ -1,0 +1,14 @@
+<ng-container *ngIf="{ participants: participants$ | async } as resolved">
+  <ngx-t3-sidebar-header
+    class="opal-sidebar-header-container"
+    [backToLabel]="'i18n.Common.threadDetails' | translate"
+    [label]="(resolved.participants?.total?.value || 0) + ' ' + (resolved.participants?.total?.value === 1 ? 'Participant' : 'Participants')"
+    (backTo)="router.navigate(['..'],  { relativeTo: route })">
+  </ngx-t3-sidebar-header>
+
+  <div class="opal-overflow-y-auto opal-pb-3">
+    <app-participant-list [paginator]="resolved.participants"></app-participant-list>
+  </div>
+</ng-container>
+
+

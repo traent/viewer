@@ -1,0 +1,84 @@
+<div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+  <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
+    <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
+      <div class="opal-w-20 opal-pl-4 opal-border-box">
+        {{'i18n.Explorer.blockTab.index' | translate }}
+      </div>
+      <div class="opal-fx-g-1 opal-fx-b-0 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.linkHash' | translate }}
+      </div>
+      <div class="opal-w-35 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.encapsulations' | translate }}
+      </div>
+      <div class="opal-w-20 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.type' | translate }}
+      </div>
+      <div class="opal-w-20 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.size' | translate }}
+      </div>
+      <div class="opal-fx-g-1 opal-fx-b-0 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.merkleTreeRoot' | translate }}
+      </div>
+      <div class="opal-fx-g-1 opal-fx-b-0 opal-max-w-50 opal-px-3 opal-border-box">
+        {{'i18n.Explorer.blockTab.createdAt' | translate }}
+      </div>
+    </div>
+    <cdk-accordion-item
+      *ngFor="let blockItem of blockItems$ | async"
+      #accordionItem="cdkAccordionItem"
+      class="opal-border-b-1 opal-d-block opal-border-grey-200"
+      (click)="accordionItem.toggle()">
+      <app-block-row-item
+        class="opal-inset-t-0 opal-pos-sticky opal-d-block opal-z-index-4 opal-pointer"
+        [ngClass]="{
+          'opal-bg-white': !accordionItem.expanded,
+          'opal-bg-grey-100': accordionItem.expanded
+        }"
+        [blockItem]="blockItem"
+        [isOpen]="accordionItem.expanded">
+      </app-block-row-item>
+      <ng-container *ngIf="accordionItem.expanded">
+        <ng-container *ngIf="(blockItem | apply : expandBlocks) | async as expandBlocks">
+          <app-expandable-item
+            *ngFor="let block of expandBlocks.blocks"
+            [block]="block">
+          </app-expandable-item>
+          <app-view-encrypted-data
+            *ngIf="expandBlocks.dataBlock"
+            class="sticky-below-row"
+            [hasKeyPair]="!!(keyPair$ | async)"
+            [uiDataBlock]="blockItem">
+          </app-view-encrypted-data>
+        </ng-container>
+      </ng-container>
+    </cdk-accordion-item>
+  </div>
+
+  <ng-container *ngIf="totalBlockItems$ | async as totalBlockItems">
+    <ngx-t3-table-paginator
+      class="opal-radius-b-8"
+      [pageSize]="pageEvent$.value.pageSize"
+      [length]="(blockItems$ | async)?.length || 0"
+      [total]="totalBlockItems"
+      [ofLabel]="'i18n.TablePaginator.of' | translate"
+      [pageLabel]="'i18n.TablePaginator.page' | translate"
+      [totalPageLabel]="'i18n.TablePaginator.perPage' | translate"
+      (pageChange)="pageEvent$.next($event)">
+    </ngx-t3-table-paginator>
+  </ng-container>
+</div>
+
+<div class="opal-fx-row opal-w-full opal-mt-3">
+  <div
+    *ngFor="let encapsulation of blockEncapsulation | keyvalue"
+    class="opal-fx-row opal-mr-3 opal-fx-center">
+    <ngx-t3-tag
+      [class]="encapsulation.key | apply : fromPascalCaseToKebabCase"
+      [matTooltip]="encapsulation.value.fullName">
+      {{ encapsulation.value.shortName }}
+    </ngx-t3-tag>
+    <span class="opal-body-2 opal-pl-1">
+      {{ encapsulation.value.fullName | translate }}
+    </span>
+  </div>
+</div>

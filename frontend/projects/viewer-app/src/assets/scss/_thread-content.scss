@@ -1,0 +1,75 @@
+:root {
+  --ngx-t3-thread-message-code-block-bg-color: rgba(var(--opal-black-500-rgb), 0.1) !important;
+}
+
+.message-content-container {
+  line-height: 20px;
+
+  .message-content-tag {
+    @extend .opal-body-1;
+    display: inline-flex;
+    align-items: center;
+    margin-inline: 1px;
+    max-width: 100%;
+    width: fit-content;
+    height: 19px;
+    line-height: 19px;
+    border-radius: 4px;
+    padding: 0px 4px;
+
+    &.thread {
+      background-color: theme("colors.ottanio.200");
+      --ngx-t3-thread-message-render-tag-bg-color: theme("colors.ottanio.200");
+      mat-icon:first-of-type {
+        @extend .opal-text-ottanio-600;
+      }
+    }
+    &.document {
+      background-color: theme("colors.grey.200");
+      --ngx-t3-thread-message-render-tag-bg-color: theme("colors.grey.200");
+      mat-icon:first-of-type {
+        @extend .opal-text-grey-600;
+      }
+    }
+    &.participant {
+      background-color: theme("colors.indigo.200");
+      --ngx-t3-thread-message-render-tag-bg-color: theme("colors.indigo.200");
+      mat-icon:first-of-type {
+        @extend .opal-text-indigo-500;
+      }
+    }
+    &.stream {
+      background-color: theme("colors.blue.200");
+      --ngx-t3-thread-message-render-tag-bg-color: theme("colors.blue.200");
+      mat-icon:first-of-type {
+        @extend .opal-text-blue-600;
+      }
+    }
+    &.redacted-fragment {
+      background-color: theme("colors.grey.200");
+      --ngx-t3-thread-message-render-tag-bg-color: theme("colors.grey.200");
+      mat-icon:first-of-type {
+        @extend .opal-text-grey-400;
+      }
+    }
+
+    mat-icon {
+      @extend .opal-d-inline-flex;
+      @extend .opal-s-4;
+      &:first-of-type {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .code-block {
+    background: var(--ngx-t3-thread-message-code-block-bg-color);
+  }
+
+  .reduced {
+    .code-block {
+      background: var(--ngx-t3-thread-message-code-block-bg-color);
+      @extend .opal-ellipsed;
+    }
+  }
+}

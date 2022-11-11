@@ -1,0 +1,64 @@
+<div class="opal-fx-g-1 opal-fx-row opal-overflow-hidden opal-s-full">
+  <div class="opal-overflow-y-hidden opal-overflow-x-auto opal-fx-row opal-w-full">
+    <main class="opal-fx-col opal-fx-g-1 opal-bg-grey-100 opal-overflow-y-hidden opal-overflow-x-auto">
+      <div
+        *ngIf="title$ | async; else titleSkeleton"
+        class="opal-h2 opal-px-12 opal-pt-5 opal-pb-4 opal-ellipsed">
+        {{ title$ | async }}
+      </div>
+      <ng-template #titleSkeleton>
+        <ngx-t3-skeleton class="opal-mx-12 opal-mt-5 opal-mb-4 opal-h-7 opal-w-50 opal-d-block"></ngx-t3-skeleton>
+      </ng-template>
+
+      <div class="opal-fx-row opal-fx-align-center opal-mb-4 opal-px-12">
+        <ngx-t3-tabs class="opal-text-capitalize opal-mr-6">
+          <ngx-t3-tab-item
+            *ngIf="defaultPage$ | async as defaultPage"
+            class="opal-text-500"
+            value="dashboard"
+            (click)="navigateToDefaultPage(defaultPage)">
+            <mat-icon class="opal-s-4 opal-mr-1 material-icons-outlined">dashboard</mat-icon>
+            {{ 'i18n.Common.dashboard' | translate }}
+          </ngx-t3-tab-item>
+          <ngx-t3-tab-item
+            class="opal-text-500"
+            value="documents"
+            routerLinkActive="active"
+            routerLink="/project/documents">
+            <mat-icon class="opal-s-4 opal-mr-1 material-icons-outlined">description</mat-icon>
+            {{ 'i18n.Common.docs' | translate }}
+          </ngx-t3-tab-item>
+          <ngx-t3-tab-item
+            class="opal-text-500"
+            value="streams"
+            routerLinkActive="active"
+            routerLink="/project/streams">
+            <mat-icon
+              class="opal-s-4 opal-mr-1"
+              svgIcon="stream-overview"></mat-icon>
+            {{ 'i18n.Common.streams' | translate }}
+          </ngx-t3-tab-item>
+          <ngx-t3-tab-item
+            class="opal-text-500"
+            value="threads"
+            routerLinkActive="active"
+            routerLink="/project/threads">
+            <mat-icon class="opal-s-4 opal-mr-1 material-icons-outlined">forum</mat-icon>
+            {{ 'i18n.Common.threads' | translate }}
+          </ngx-t3-tab-item>
+        </ngx-t3-tabs>
+      </div>
+
+      <div class="opal-fx-b-0 opal-fx-g-1 opal-px-12 opal-py-6 opal-border-t-1 opal-border-grey-200 opal-fx-col opal-overflow-hidden">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+  <ngx-t3-right-sidebar
+    *ngIf="{ showSidebar: (showSidebar$ | async) } as sidebar"
+    [open]="sidebar.showSidebar ?? false"
+    (openChange)="rightSidebarManagerService.setShowSidebarPreference(!sidebar.showSidebar)">
+    <router-outlet name="aside"></router-outlet>
+  </ngx-t3-right-sidebar>
+</div>

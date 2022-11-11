@@ -1,0 +1,24 @@
+<ngx-t3-tabs class="opal-mx-4 opal-text-capitalize">
+  <ngx-t3-tab-item
+    class="opal-fx-g-1 opal-fx-b-0"
+    value="info"
+    routerLinkActive="active"
+    routerLink="info">
+    <mat-icon class="opal-s-4 opal-mr-1">info</mat-icon>
+    {{ 'i18n.Common.info' | translate }}
+  </ngx-t3-tab-item>
+  <ngx-t3-tab-item
+    class="opal-fx-g-1 opal-fx-b-0"
+    value="log"
+    routerLinkActive="active"
+    routerLink="log">
+    <mat-icon class="opal-s-4 opal-mr-1">list</mat-icon>
+    {{ 'i18n.Common.log' | translate }}
+  </ngx-t3-tab-item>
+</ngx-t3-tabs>
+
+<div class="opal-mt-3 opal-border-b-1 opal-border-grey-200"></div>
+
+<div class="opal-fx-g-1 opal-overflow-hidden">
+  <router-outlet></router-outlet>
+</div>
