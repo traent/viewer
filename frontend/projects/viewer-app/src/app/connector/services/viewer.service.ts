@@ -9,6 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { ViewerAgent } from '../models/viewer-agent';
 import { ViewerMember } from '../models/viewer-member';
 import { ViewerOrganization } from '../models/viewer-organization';
 
@@ -25,6 +26,63 @@ export class ViewerService extends BaseService {
     http: HttpClient
   ) {
     super(config, http);
+  }
+
+  /**
+   * Path part for operation getViewerAgent
+   */
+  static readonly GetViewerAgentPath = '/viewer/agents/{agentId}';
+
+  /**
+   * Get member or thing details.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getViewerAgent()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getViewerAgent$Response(params: {
+    agentId: string;
+    't3-AsAgentId'?: string;
+  }): Observable<StrictHttpResponse<ViewerAgent>> {
+
+    const rb = new RequestBuilder(this.rootUrl, ViewerService.GetViewerAgentPath, 'get');
+    if (params) {
+      rb.path('agentId', params.agentId, {});
+      rb.header('t3-AsAgentId', params['t3-AsAgentId'], {});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<ViewerAgent>;
+      })
+    );
+  }
+
+  /**
+   * Get member or thing details.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `getViewerAgent$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getViewerAgent(params: {
+    agentId: string;
+    't3-AsAgentId'?: string;
+  }): Observable<ViewerAgent> {
+
+    return this.getViewerAgent$Response(params).pipe(
+      map((r: StrictHttpResponse<ViewerAgent>) => r.body as ViewerAgent)
+    );
   }
 
   /**

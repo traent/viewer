@@ -35,6 +35,7 @@ ARG CONFIGURATION
 ARG NPM_AUTH_TOKEN
 
 COPY apps/package.json apps/package-lock.json apps/.npmrc ./
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN npm ci
 
 ## opal
@@ -45,6 +46,7 @@ RUN npm run build
 
 ## opal-material
 WORKDIR /apps
+COPY ./apps/projects/traent-design-system ./projects/traent-design-system
 COPY ./apps/projects/opal-material ./projects/opal-material
 
 # The actual Viewer

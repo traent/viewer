@@ -6,6 +6,7 @@
       <ngx-t3-tab-item
         class="opal-h-12 opal-fx-row opal-fx-justify-start opal-mx-0 opal-border-b-1 opal-border-grey-200 opal-radius-0"
         routerLink="."
+        queryParamsHandling="merge"
         [queryParams]="{ type: 'all' }"
         [class.active]="type === 'all'">
         <ngx-t3-icon
@@ -20,6 +21,7 @@
         <ngx-t3-tab-item
           class="opal-h-12 opal-fx-row opal-fx-justify-start opal-mx-0 opal-border-b-1 opal-border-grey-200 opal-radius-0"
           routerLink="."
+          queryParamsHandling="merge"
           [queryParams]="{ type: item.key}"
           [class.active]="type === item.key">
           <ngx-t3-icon
@@ -189,6 +191,7 @@
         <mat-row
           *matRowDef="let item; columns: [ 'name', 'machine-name', 'value', 'class' ];"
           class="opal-pointer opal-w-full"
+          queryParamsHandling="preserve"
           routerLinkActive="bg-accent-100"
           [routerLink]="['/project', 'streams', {
               outlets: {
@@ -196,7 +199,6 @@
                 primary: [item.data.id]
               }
             }]"
-          queryParamsHandling="preserve"
           (click)="rightSidebarManagerService.setShowSidebarPreference(true)">
         </mat-row>
       </mat-table>

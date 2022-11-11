@@ -9,9 +9,13 @@
   <div class="opal-body-2 opal-text-code errors-box">
     <span
       *ngFor="let error of data.errors; let last = last"
-      class="opal-d-block"
-      [class.opal-mb-1]="!last">
-      {{ error }}
+      class="tw-block">
+      {{ 'i18n.Project.LedgerValidationDialog.Badge.error' | translate }} {{ error }}
+    </span>
+    <span
+      *ngFor="let warning of data.warnings; let last = last"
+      class="tw-block">
+      {{ 'i18n.Project.LedgerValidationDialog.Badge.warning' | translate }} {{ warning }}
     </span>
   </div>
 </mat-dialog-content>

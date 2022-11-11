@@ -184,6 +184,8 @@
   "i18n.Project.DocumentDashboard.downloadDocument": "Scarica documento",
   "i18n.Project.DocumentDashboard.openDocument": "Apri documento",
   "i18n.Project.DocumentLog.viewDocument": "visualizza il documento",
+  "i18n.Project.LedgerValidationDialog.Badge.error": "[ERR]",
+  "i18n.Project.LedgerValidationDialog.Badge.warning": "[WARN]",
   "i18n.Project.LedgerValidationDialog.subtitle": "Si sono verificati alcuni errori durante la convalida del ledger.",
   "i18n.Project.LedgerValidationDialog.title": "Validazione del Ledger",
   "i18n.Project.ProjectPage.backInfoProject": "Info progetto",
@@ -201,7 +203,10 @@
   "i18n.Project.ProjectSide.lastState": "ultimo stato",
   "i18n.Project.ProjectSide.lastStatusIncl'": "Solamente l'ultimo stato incluso",
   "i18n.Project.ProjectSide.ledgerKeys": "Chiavi del ledger",
+  "i18n.Project.ProjectSide.Validation.Error.tooltip": "Clicca per ispezionare gli errori",
+  "i18n.Project.ProjectSide.Validation.Warning.tooltip": "Clicca per ispezionare avvisi",
   "i18n.Project.ProjectSide.validationErrors": "Errori di validazione",
+  "i18n.Project.ProjectSide.validationWarnings": "Avvisi di validazione",
   "i18n.Project.ProjectsPage.ProjectItem.noDocs": "Nessun documento in questo progetto",
   "i18n.Project.ProjectUpsertDialog.noProjectWorkflow": "Nessun workflow associato al progetto",
   "i18n.Project.Stream.Common.noClasses": "Nessuna classe",
@@ -269,7 +274,8 @@
   "i18n.TablePaginator.of": "di",
   "i18n.TablePaginator.page": "Pagina",
   "i18n.TablePaginator.perPage": "Elementi per pagina",
-  "i18n.Toolbar.errorLedger": "Questo ledger contiene errori di validità",
+  "i18n.Toolbar.errorLedger": "Questo ledger contiene errori di validazione",
   "i18n.Toolbar.logIn": "Log in",
-  "i18n.Toolbar.logOut": "Log out da Traent"
+  "i18n.Toolbar.logOut": "Log out da Traent",
+  "i18n.Toolbar.warningLedger": "Questo ledger contiene avvisi di validazione"
 }

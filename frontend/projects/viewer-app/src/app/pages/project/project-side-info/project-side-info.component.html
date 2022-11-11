@@ -49,9 +49,9 @@
     </ngx-t3-description-item>
     <ngx-t3-description-item [label]="'i18n.Common.size' | translate">
       <div
-        *ngIf="storageService.archiveSize"
+        *ngIf="storageService.getLedger().archiveSize as archiveSize"
         class="opal-ellipsed opal-body-2">
-        {{ storageService.archiveSize | apply : formatBytesSize }}
+        {{ archiveSize | apply : formatBytesSize }}
       </div>
     </ngx-t3-description-item>
     <ngx-t3-description-item [label]="'i18n.Common.organizations' | translate">
@@ -72,41 +72,61 @@
       <button
         end
         mat-icon-button
+        queryParamsHandling="merge"
         routerLink="organizations">
         <mat-icon class="opal-s-5 opal-text-grey-400">arrow_forward</mat-icon>
       </button>
     </ngx-t3-description-item>
-    <!-- Note: this should be set as multiline when the verify is available -->
     <ngx-t3-description-item
+      class="tw-items-baseline"
       [label]="'i18n.Common.ledger' | translate"
-      class="opal-fx-align-baseline">
+      [multiline]="true">
       <div class="opal-fx-col opal-w-full">
         <div class="opal-fx-row opal-fx-align-center">
           <span
             class="opal-body-2 opal-text-underline opal-pointer"
+            queryParamsHandling="merge"
             routerLink="/explorer">
             {{ 'i18n.Project.ProjectSide.inspectLedger' | translate  }}
           </span>
           <button
             end
             mat-icon-button
+            queryParamsHandling="merge"
             routerLink="/explorer">
             <mat-icon class="opal-s-4 opal-text-grey-400">open_in_new</mat-icon>
           </button>
         </div>
         <div
-          *ngIf="ledgerService.problems.length"
+          *ngIf="ledgerService.hasErrors"
           class="opal-fx-row opal-fx-align-center opal-bg-red-100 opal-radius-4 opal-pl-3 opal-pr-2 opal-mr-2 opal-no-pointer opal-mb-2">
-          <mat-icon class="opal-text-red opal-s-4">error</mat-icon>
+          <mat-icon class="opal-text-red opal-s-4 tw-shrink-0">error</mat-icon>
           <span class="opal-ml-2 opal-body-2 opal-w-full">
             {{ 'i18n.Project.ProjectSide.validationErrors' | translate }}
           </span>
           <button
             mat-icon-button
-            matTooltip="Click to inspect the errors"
             class="opal-mr-n-2"
+            [matTooltip]="'i18n.Project.ProjectSide.Validation.Error.tooltip' | translate"
             (click)="openValidationErrorsDialog()">
             <mat-icon class="opal-s-4 opal-text-grey-400">arrow_forward</mat-icon>
+          </button>
+        </div>
+        <div
+          *ngIf="!ledgerService.hasErrors && ledgerService.hasWarnings"
+          class="tw-flex tw-items-center tw-bg-yellow-100 tw-rounded tw-pl-4 tw-pr-2 tw-mb-2">
+          <div class="tw-flex tw-items-center tw-cursor-none tw-pointer-events-none">
+            <mat-icon class="opal-s-4 tw-text-orange-5 tw-shrink-0">warning</mat-icon>
+            <span class="tw-ml-3 tw-text-sm tw-w-full">
+              {{ 'i18n.Project.ProjectSide.validationWarnings' | translate }}
+            </span>
+          </div>
+          <button
+            mat-icon-button
+            class="-tw-mr-2"
+            [matTooltip]="'i18n.Project.ProjectSide.Validation.Warning.tooltip' | translate"
+            (click)="openValidationErrorsDialog()">
+            <mat-icon class="opal-s-4 tw-text-grey-4">arrow_forward</mat-icon>
           </button>
         </div>
       </div>
@@ -222,6 +242,7 @@
       <button
         end
         mat-icon-button
+        queryParamsHandling="merge"
         routerLink="participants">
         <mat-icon class="opal-s-5 opal-text-grey-400">arrow_forward</mat-icon>
       </button>

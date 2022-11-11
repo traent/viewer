@@ -1,9 +1,8 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IdentityService } from '@viewer/services';
+import { IdentityService, LedgerService } from '@viewer/services';
 
 import { environment } from '../../../../environments/environment';
-
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
@@ -11,7 +10,6 @@ import { environment } from '../../../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent {
-  @Input() invalidLedgerBadge = false;
   @Input() logoColor: 'white' | 'black' = 'black';
   @Input() whiteStroked = false;
 
@@ -27,6 +25,6 @@ export class TopbarComponent {
 
   constructor(
     readonly identityService: IdentityService,
-  ) {
-  }
+    readonly ledgerService: LedgerService,
+  ) { }
 }

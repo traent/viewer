@@ -23,14 +23,21 @@
 
   <div class="opal-fx-row opal-fx-align-center opal-h-full">
     <div
-      *ngIf="invalidLedgerBadge"
-      class="opal-fx-row opal-fx-align-center opal-bg-red-100 opal-radius-4 opal-p-3 opal-mr-5 opal-h-10 opal-border-box opal-no-pointer">
-      <mat-icon class="opal-text-red opal-s-4">
-        error
-      </mat-icon>
+      *ngIf="ledgerService.hasErrors"
+      class="tw-flex tw-items-center tw-bg-red-100 tw-rounded tw-p-3 tw-mr-5 tw-h-10 tw-box-border tw-pointer-events-none tw-cursor-default">
+      <mat-icon class="opal-s-4 tw-text-red-500">error</mat-icon>
 
-      <span class="opal-ml-2 opal-body-2">
+      <span class="tw-ml-2 tw-text-sm">
         {{ 'i18n.Toolbar.errorLedger' | translate }}
+      </span>
+    </div>
+    <div
+      *ngIf="!ledgerService.hasErrors && ledgerService.hasWarnings"
+      class="tw-flex tw-items-center tw-bg-yellow-100 tw-rounded tw-p-3 tw-mr-5 tw-h-10 tw-box-border tw-pointer-events-none tw-cursor-default">
+      <mat-icon class="opal-s-4 tw-text-orange-5">warning</mat-icon>
+
+      <span class="tw-ml-2 tw-text-sm">
+        {{ 'i18n.Toolbar.warningLedger' | translate }}
       </span>
     </div>
 
@@ -75,9 +82,7 @@
                 size="md"
                 [src]="resolved.user.avatar"></ngx-t3-avatar>
               <div class="opal-fx-row opal-fx-align-center name opal-mt-3">
-                <span class="opal-d-block opal-ellipsed opal-mr-1 opal-text-500 opal-h4">
-                  {{ resolved.user.fullName }}
-                </span>
+                <span class="opal-d-block opal-ellipsed opal-mr-1 opal-text-500 opal-h4">{{ resolved.user.fullName }}</span>
                 <ngx-t3-identity-validation
                   size="sm"
                   [userValidation]="resolved.user.validation?.state | identityValidation : 'user'"></ngx-t3-identity-validation>
@@ -93,5 +98,6 @@
           </div>
         </ng-template>
       </ng-container>
+    </div>
   </div>
 </div>

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { LedgerError, requiredTrustedNotaries } from '@viewer/models';
-import { u8ToBase64 } from '@viewer/utils';
+import { isEncapsulation, u8ToBase64 } from '@viewer/utils';
 import { BehaviorSubject } from 'rxjs';
 
 import { AcknowledgementService } from './acknowledgement.service';
 import { DotNetWrapperService } from './dotnet-wrapper.service';
 import { LedgerObjectsService } from './ledger-objects.service';
-import { isEncapsulation, StorageService } from './storage.service';
+import { StorageService } from './storage.service';
 import { formatValidationError } from '../utils/validation';
 import { NotaryService } from './notary.service';
 
@@ -22,9 +22,18 @@ export interface ValidatedBlock {
 @Injectable({ providedIn: 'root' })
 export class LedgerService {
   problems: string[] = [];
+  warnings: string[] = [];
   archiveLoaded = false;
 
   readonly reset$ = new BehaviorSubject<void>(undefined);
+
+  get hasErrors() {
+    return this.problems.length > 0;
+  }
+
+  get hasWarnings() {
+    return this.warnings.length > 0;
+  }
 
   constructor(
     private readonly acknowledgementService: AcknowledgementService,
@@ -38,15 +47,15 @@ export class LedgerService {
     this.reset();
     await this.storageService.load(data);
 
-    const info = await this.storageService.getLedgerInfo();
-    const notaries = await this.storageService.getNotaries();
+    const info = await this.storageService.getLedger().getLedgerInfo();
+    const notaries = await this.storageService.getLedger().getNotaries();
     const state = await this.dotNet.makeValidator(info.address);
     const totalBlocks = info.headIndex + 1;
 
     // TODO: should we report the progress on this?
     const merkleRootsToBeFound = new Set<string>();
     const missingNotaryIds = new Set<string>(Object.keys(requiredTrustedNotaries));
-    for (const notaryProof of this.storageService.getNotaryProofs()) {
+    for (const notaryProof of this.storageService.getLedger().getNotaryProofs()) {
       const notary = notaries.find((n) => n.id === notaryProof.name);
       if (!notary) {
         this.problems.push(`Found proof for unknown notary: ${notaryProof.name}`);
@@ -109,17 +118,22 @@ export class LedgerService {
     }
 
     try {
+      let inFlightBlocks = 0;
       for (let i = 0; i < totalBlocks; i++) {
         yield {
           checkedBlocks: i,
           totalBlocks,
         };
 
-        const raw = await this.storageService.getRawBlock(i);
+        inFlightBlocks++;
+
+        const raw = await this.storageService.getLedger().getRawBlock(i);
         if (raw) {
           const result = state.evaluate(raw.payload, raw.writeReceipt);
           if (result.merkleRootHash) {
-            merkleRootsToBeFound.delete(u8ToBase64(result.merkleRootHash));
+            if (merkleRootsToBeFound.delete(u8ToBase64(result.merkleRootHash))) {
+              inFlightBlocks = 0;
+            }
           }
           await this.dispatchBlock(i, result);
           this.problems.push(...result.problems.map((p) => formatValidationError(p, i)));
@@ -132,6 +146,10 @@ export class LedgerService {
         checkedBlocks: totalBlocks,
         totalBlocks,
       };
+
+      if (inFlightBlocks) {
+        this.warnings.push(`${inFlightBlocks} blocks have not been notarized yet`);
+      }
 
       for (const merkleRoot of merkleRootsToBeFound) {
         this.problems.push(`The Merkle root ${merkleRoot} has been notarized but it has not been found in a block`);
@@ -150,6 +168,7 @@ export class LedgerService {
   reset() {
     this.archiveLoaded = false;
     this.problems = [];
+    this.warnings = [];
     this.reset$.next();
     this.acknowledgementService.reset();
     this.ledgerObjectsService.reset();
@@ -177,7 +196,7 @@ export class LedgerService {
     if (terminalBlock.type === 'Data') {
       const data = terminalBlock.data;
       let decrypted$: Promise<Uint8Array>;
-      validated.getDecrypted = () => decrypted$ ??= this.storageService.decryptBlock(data, blockIndex);
+      validated.getDecrypted = () => decrypted$ ??= this.storageService.getLedger().decryptBlock(data, blockIndex);
     }
 
     await this.acknowledgementService.appendBlock(validated);
