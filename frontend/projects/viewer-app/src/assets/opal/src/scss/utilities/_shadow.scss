@@ -1,0 +1,16 @@
+// Box shadow
+@each $size, $sizePx in ('none': none, 1: 4px, 2: 5px, 3: 6px) {
+  // opal-shadow-1, opal-shadow-2, opal-shadow-3
+  .opal-shadow-#{$size} {
+    @if ($size == 'none') {
+      @apply tw-shadow-none #{!important};
+    } @else {
+      @apply tw-shadow-#{$size} #{!important};
+    }
+  }
+}
+
+.menu-shadow,
+.opal-menu-shadow {
+  @apply tw-shadow-[0px_0px_20px_1px_rgba(135,141,147,0.15)];
+}

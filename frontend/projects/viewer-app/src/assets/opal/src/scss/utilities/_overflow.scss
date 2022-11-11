@@ -1,0 +1,8 @@
+@each $overflow in (auto, hidden, visible, scroll) {
+  @each $dimension in (_, x, y) {
+    // .opal-overflow-hidden, .opal-overflow-x-hidden, .opal-overflow-y-auto...
+    .opal-overflow#{ if($dimension == _, "", "-" + $dimension) }-#{$overflow} {
+      overflow#{ if($dimension == _, "", "-" + $dimension) }: $overflow;
+    }
+  }
+}

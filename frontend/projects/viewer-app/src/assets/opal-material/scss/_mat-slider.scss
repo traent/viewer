@@ -1,0 +1,36 @@
+mat-slider.video-controls {
+  .mat-slider-thumb {
+    background-color: #039FCE !important;
+    border: unset !important;
+    right: -12px !important;
+  }
+
+  .mat-slider-track-fill {
+    background: white !important;
+  }
+
+  .mat-slider-track-fill,
+  .mat-slider-wrapper,
+  .mat-slider-track-wrapper,
+  .mat-slider-track-background {
+    height: 8px !important;
+    border-radius: 8px;
+  }
+
+  .mat-slider-track-background {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  &.disabled {
+    * {
+      opacity: 0.9;
+    }
+  }
+}
+
+.mat-slider:hover,
+.mat-slider.cdk-focused {
+  .mat-slider-track-background {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}

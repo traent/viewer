@@ -1,0 +1,47 @@
+ngx-t3-menu-item,
+ngx-t3-menu-router-item,
+.menu-item,
+.menu-router-item {
+  display: block;
+  outline: none;
+
+  &:not(:last-of-type) {
+    margin-bottom: 4px;
+  }
+
+  > [mat-button] {
+    display: block;
+    color: var(--menu-button-fg-color, theme("colors.grey.600"));
+    font-family: $font-family-brand;
+    font-size: 16px;
+    width: 100%;
+    font-weight: normal;
+    text-align: left;
+    letter-spacing: 0;
+    text-transform: inherit;
+    padding: 0 8px;
+
+    mat-icon {
+      height: 24px;
+      width: 24px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    &.secondary {
+      font-family: $font-family-content;
+      font-size: 14px;
+      font-weight: normal;
+      padding-left: 48px;
+    }
+  }
+  &.active > button, > button.active {
+    color: theme("colors.accent.600") !important;
+    &:not(.secondary) {
+      background: var(--menu-active-bg-color, theme("colors.accent.100"));
+      .mat-button-focus-overlay {
+        display: none;
+      }
+    }
+  }
+}

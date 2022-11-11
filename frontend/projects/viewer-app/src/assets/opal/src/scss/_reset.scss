@@ -1,0 +1,28 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+a,
+a:active {
+  color: var(--color);
+}
+
+hr {
+  border: 0;
+  margin: 0;
+  height: 0;
+  border-top: 1px solid var(--hr-color, theme("colors.neutral.200"));
+}
+
+pre {
+  font-size: 16px;
+  font-family: $font-family-content;
+  white-space: pre-wrap;
+  line-height: 19.2px;
+}

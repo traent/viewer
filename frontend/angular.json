@@ -107,73 +107,18 @@
                   "maximumError": "40kb"
                 }
               ]
-            },
-            "ci": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "4mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "40kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/viewer-app/src/environments/environment.ts",
-                  "with": "projects/viewer-app/src/environments/environment.ci.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "deploy": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "4mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "40kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/viewer-app/src/environments/environment.ts",
-                  "with": "projects/viewer-app/src/environments/environment.deploy.ts"
-                }
-              ],
-              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "port": 4600,
-            "disableHostCheck": true,
-            "sslKey": "../../tests/dev/certs/star-e4s1-net.key",
-            "sslCert": "../../tests/dev/certs/star-e4s1-net.crt",
-            "ssl": true
-          },
           "configurations": {
             "development": {
               "browserTarget": "viewer-app:build:development"
             },
             "production": {
               "browserTarget": "viewer-app:build:production"
-            },
-            "ci": {
-              "browserTarget": "viewer-app:build:ci"
-            },
-            "deploy": {
-              "browserTarget": "viewer-app:build:deploy"
             }
           },
           "defaultConfiguration": "development"

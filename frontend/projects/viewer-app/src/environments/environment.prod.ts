@@ -1,10 +1,8 @@
 const urls = {
-  backend: 'https://backend.e4s1.net:5001',
-  orn: 'https://orn.e4s1.net:4001',
-  era: 'https://era.e4s1.net:4500',
-  admin: 'https://admin.e4s1.net:4300',
-  id: 'https://id.e4s1.net:4400',
-  viewer: 'https://viewer.e4s1.net:4600',
+  backend: 'https://id-service.traent.com',
+  era: 'https://era.traent.com',
+  id: 'https://id.traent.com',
+  viewer: 'https://viewer.traent.com',
 };
 
 const privacyPolicyLedgerUrl = 'https://traent-dev-pages.s3.amazonaws.com/TermsOfService.ledger';

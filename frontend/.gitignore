@@ -4,7 +4,6 @@
 /dist
 /tmp
 /out-tsc
-wasm-parser
 # Only exists if Bazel was run
 /bazel-out
 

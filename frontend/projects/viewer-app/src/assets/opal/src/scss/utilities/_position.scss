@@ -1,0 +1,23 @@
+// Position
+@each $key, $value in (static: static, abs: absolute, fix: fixed, rel: relative, sticky: sticky) {
+  // .opal-pos-absolute, .opal-pos-relative...
+  .opal-pos-#{$key} {
+    position: $value !important;
+  }
+}
+
+@for $sizeKey from 0 through 10 {
+  @each $key, $side in (t: top, b: bottom, l: left, r: right) {
+    // .opal-inset-t-0 .opal-inset-t-1 .opal-inset-t-2 .opal-inset-t-3 ...
+    .opal-inset-#{$key}-#{$sizeKey} {
+      #{$side}: #{$sizeKey * 4}px;
+    }
+  }
+}
+
+.opal-inset-0 {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}

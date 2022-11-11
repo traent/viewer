@@ -1,0 +1,67 @@
+.mat-snack-bar-container {
+  background: transparent;
+  box-shadow: none !important;
+  color: black;
+}
+
+.toast {
+  width: 440px;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: theme("colors.white.500");
+  border: 1px solid #E0E0E0;
+  box-shadow: 0px 10px 30px 1px rgba(136, 152, 167, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+
+  &.warning .toast-icon-wrapper {
+    background-color: theme("colors.orange.600");
+  }
+  &.error .toast-icon-wrapper {
+    background-color: theme("colors.warn.500");
+  }
+  &.success .toast-icon-wrapper {
+    background-color: theme("colors.green.500");
+  }
+  &.info .toast-icon-wrapper {
+    background-color: theme("colors.accent.500");
+  }
+
+  .toast-title {
+    display: flex;
+    align-items: center;
+    .toast-icon-wrapper {
+      height: 24px;
+      width: 24px;
+      margin-right: 12px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      mat-icon {
+        height: 18px;
+        width: 18px;
+        font-size: 18px;
+        line-height: 18px;
+        color: white;
+      }
+    }
+    .toast-close {
+      margin-left: auto;
+      margin-right: -4px;
+      height: 32px;
+      width: 32px;
+      mat-icon {
+        height: 18px;
+        width: 18px;
+        font-size: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+
+  .toast-content {
+    margin-top: 12px;
+    font-size: 14px;
+  }
+}

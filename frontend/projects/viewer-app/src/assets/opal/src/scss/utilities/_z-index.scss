@@ -1,0 +1,7 @@
+// Z-index
+@for $size from 0 through 40 {
+  // .opal-z-index-0, opal-z-index-1...
+  .opal-z-index-#{$size} {
+    z-index: $size;
+  }
+}
