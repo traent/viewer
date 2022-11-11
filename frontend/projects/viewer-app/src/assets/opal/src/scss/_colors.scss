@@ -1,0 +1,190 @@
+$colors: (
+  'black': (
+    500: black,
+  ),
+  'white': (
+    500: white,
+  ),
+  'primary': (
+    100: null,
+    200: null,
+    300: null,
+    400: null,
+    500: black,
+    600: null,
+    700: null,
+    contrast : (
+      500: white,
+    )
+  ),
+  'accent': (
+    100: #DFF3FA,
+    200: #A6E4F8,
+    300: #6ACDEC,
+    400: #12B6E8,
+    500: #039FCE,
+    600: #007BAF,
+    700: #005975,
+    contrast : (
+      500: white,
+    )
+  ),
+  'warn': (
+    100: null,
+    200: null,
+    300: null,
+    400: null,
+    500: #E9071E,
+    600: #D21307,
+    700: #D21307,
+    contrast: (
+      500: white,
+    )
+  ),
+  'grey': (
+    100: #F2F2F2,
+    200: #E0E0E0,
+    300: #BDBDBD,
+    400: #828282,
+    500: #4F4F4F,
+    600: #333333,
+  ),
+  'red': (
+    100: #FFEBEE,
+    200: #FFCDD2,
+    300: #FFA4A4,
+    400: #F08888,
+    500: #E57373,
+    600: #DA5353,
+  ),
+  'orange': (
+    100: #FFF3E0,
+    200: #FFE0B2,
+    300: #FFCC80,
+    400: #FFA44F,
+    500: #FF9B26,
+    600: #F17400,
+  ),
+  'yellow': (
+    100: #FFFBE7,
+    200: #FFF2C4,
+    300: #FFE99A,
+    400: #FFDC5E,
+    500: #FFCB13,
+    600: #F6B100,
+  ),
+  'green': (
+    100: #E8F5E9,
+    200: #C8E6C9,
+    300: #A5D6A7,
+    400: #81C784,
+    500: #66BB88,
+    600: #41A368,
+  ),
+  'blue': (
+    100: #E3F2FD,
+    200: #BBDEFB,
+    300: #90CAF9,
+    400: #64B5F6,
+    500: #42A5F5,
+    600: #3885E4,
+  ),
+  'iris': (
+    100: #aebaf6,
+    200: #97a7f3,
+    300: #8093f1,
+    400: #6980ee,
+    500: #526deb,
+    600: #3b59e9,
+  ),
+  'purple': (
+    100: #F3E5F5,
+    200: #E1BEE7,
+    300: #D184DE,
+    400: #BA68C8,
+    500: #AB47BC,
+    600: #9327A6,
+  ),
+  'transparent': (
+    500: transparent,
+  ),
+  'ottanio': (
+    100: #E0F6F8,
+    200: #BCF5F9,
+    300: #8FDFEA,
+    400: #5BCCDB,
+    500: #13A4B8,
+    600: #0095A9,
+  ),
+  'indigo': (
+    100: #E8EAF6,
+    200: #C5CAE9,
+    300: #9FA8DA,
+    400: #7986CB,
+    500: #5C6BC0,
+    600: #3345AE,
+  ),
+  'lime': (
+    100: #EAF4C3,
+    200: #D4EE9C,
+    300: #CCF07E,
+    400: #B8E45A,
+    500: #9ACA33,
+    600: #7BB108,
+  ),
+  'violet': (
+    100: #E4E1FF,
+    200: #C5BFF4,
+    300: #A98CE8,
+    400: #865FDA,
+    500: #7037E9,
+    600: #541BCF,
+  ),
+  'coolgrey': (
+    100: #F5F5F7,
+    200: #E9E9ED,
+    300: #CBCBD0,
+    400: #A0A0A9,
+    500: #6A6A73,
+    600: #424547,
+  ),
+  'traentblue' : (
+    100: #E1EBF7,
+    200: #B3CDF3, 
+    300: #84B0F0,
+    400: #5692EC,
+    500: #2859e9,
+    600: #0031B6,
+  ),
+  'traentwhite' : (
+    500: #F4FAFF,
+  ),
+  'traentblack' : (
+    500: #222222,
+  ),
+  'brown' : (
+    100: #FFE6CF,
+    200: #ECC5A1,
+    300: #CE8550,
+    400: #C56E30,
+    500: #A75418,
+    600: #863B04,
+  ),
+);
+
+@function var-palette($color-name) {
+  $palette: map-get($colors, $color-name);
+  $var-palette: ();
+  @each $shade, $color in $palette {
+    @if ($shade == "contrast") {
+      $var-palette: map-merge($var-palette, ('contrast': $color));
+    } @else {
+      @if ($shade == 500) {
+        $var-palette: map-merge($var-palette, ($shade: var(--#{$color-name}, #{$color})));
+      } @else {
+        $var-palette: map-merge($var-palette, ($shade: var(--#{$color-name}-#{$shade}, #{$color})));
+      }
+    }
+  }
+  @return $var-palette;
+}

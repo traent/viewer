@@ -1,0 +1,18 @@
+.mat-bottom-sheet-container {
+  border-radius: 16px 16px 0 0 !important;
+  background-color: var(--opal-page-bg);
+
+  &.full-page {
+    padding: 0;
+    min-width: 100vw;
+    max-width: 0;
+    min-height: 50vh;
+    position: relative;
+    overflow: visible;
+  }
+}
+
+.cdk-overlay-backdrop.blur {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.6);
+}

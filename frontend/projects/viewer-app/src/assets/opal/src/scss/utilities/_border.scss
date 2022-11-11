@@ -1,0 +1,33 @@
+// Border radius
+@each $side in (_, top, bottom, left, right) {
+  @each $size in (0, 2, 4, 8, 12, 16, 20, 24, 32) {
+    // .opal-radius-4, .opal-radius-t-0, .opal-radius-r-12..
+    .opal-radius#{ if($side == _, "", '-' + str-slice($side, 1, 1)) }-#{$size} {
+      @if ($side == top or $side == bottom) {
+        @apply tw-rounded-l-[#{$size}px] tw-rounded-r-[#{$size}px] #{!important};
+      } @else if ($side == right or $side == left) {
+        @apply tw-rounded-t-[#{$size}px] tw-rounded-b-[#{$size}px] #{!important};
+      } @else {
+        @apply tw-rounded-[#{$size}px] #{!important};
+      }
+    }
+  }
+}
+
+// Border width
+@each $side in (_, top, bottom, left, right) {
+  @for $size from 0 to 8 {
+    // .opal-border-4, .opal-border-t-0, .opal-border-r-8..
+    .opal-border#{ if($side == _, "", '-' + str-slice($side, 1, 1)) }-#{$size} {
+      @if ($side == _) {
+        @apply tw-border-[#{$size}px] tw-border-solid #{!important};
+      } @else {
+        @apply tw-border-#{str-slice($side, 1, 1)}-[#{$size}px] tw-border-solid #{!important};
+      }
+    }
+  }
+}
+
+.opal-rounded {
+  @apply tw-rounded-[50%];
+}

@@ -1,0 +1,22 @@
+// Fonts
+$font-family-emoji: theme("fontFamily.emoji");
+$font-family-content: theme("fontFamily.content");
+$font-family-brand: theme("fontFamily.brand");
+$font-family-code: theme("fontFamily.code");
+$font-family-mono: theme("fontFamily.mono");
+$font-family-logo: theme("fontFamily.logo");
+
+$font-size-base-content: 16px;
+
+// Measures
+$spacing-base: 16px;
+
+// Breakpoints
+$breakpoints: (
+  xs: 320px,
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+  2xl: 1440px,
+) !default;

@@ -1,0 +1,18 @@
+{
+  "name": "opal",
+  "version": "0.0.1",
+  "author": "Geckosoft S.r.l.",
+  "scripts": {
+    "build": "rm -rf dist && npm run build-sass && npm run build-autoprefix && npm run build-cleancss",
+    "build-sass": "./node_modules/.bin/sass ./src/index.scss ./dist/css/index.css",
+    "build-autoprefix": "./node_modules/.bin/postcss --use autoprefixer --map --output ./dist/css/index.css ./dist/css/index.css",
+    "build-cleancss": "./node_modules/.bin/cleancss -o ./dist/css/index.min.css ./dist/css/index.css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.2",
+    "clean-css-cli": "^5.5.2",
+    "postcss": "^8.4.8",
+    "postcss-cli": "^9.1.0",
+    "sass": "^1.49.9"
+  }
+}

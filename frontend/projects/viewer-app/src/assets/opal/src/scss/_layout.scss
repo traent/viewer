@@ -1,0 +1,43 @@
+.opal-container-base {
+  margin: 0 auto;
+  width: 100%;
+  z-index: 0;
+  box-sizing: border-box;
+}
+
+.opal-container {
+  @extend .opal-container-base;
+  max-width: 1200px;
+  min-width: 450px;
+  padding: 0 48px;
+}
+
+.opal-container-dashboard {
+  @extend .opal-container-base;
+  max-width: 1200px;
+  min-width: 800px;
+  padding: 0 48px;
+}
+
+.opal-container-dashboard-fullwidth {
+  @extend .opal-container-dashboard;
+  max-width: unset;
+}
+
+.opal-container-fixed {
+  @extend .opal-container-base;
+  width: 100%;
+  max-width: 696px;
+  padding: 0 48px;
+}
+
+.opal-container-fluid {
+  @extend .opal-container-base;
+  padding: 0 48px 28px 48px;
+  box-sizing: border-box;
+}
+
+.opal-sidebar-header-container {
+  display: block;
+  padding: 24px 16px 12px;
+}

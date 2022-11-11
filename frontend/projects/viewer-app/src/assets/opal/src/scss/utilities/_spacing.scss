@@ -1,0 +1,22 @@
+// Margins and paddings
+@each $attr in (padding, margin) {
+  @each $direction in (_, top, bottom, left, right, x, y) {
+    @each $sign in ('-', '+') {
+      @for $size from -1 through 40 {
+        // .opal-p-1, opal-pt-2, opal-mx-3, opal-ml-n-2, opal-pt-n-1...
+        .opal-#{ str-slice($attr, 1, 1) }#{ if($direction == _, "", str-slice($direction, 1, 1)) }#{ if($sign == '+', "", '-n') }-#{if($size < 0, auto, $size)} {
+          $val: #{if($size < 0, auto, if($sign == '+', $size * 4, -$size * 4) * 1px)};
+          @if ($direction == 'x') {
+            #{$attr}-left: $val !important;
+            #{$attr}-right: $val !important;
+          } @else if ($direction == 'y') {
+            #{$attr}-top: $val !important;
+            #{$attr}-bottom: $val !important;
+          } @else {
+            #{$attr}#{ if($direction == _, "", "-" + $direction) }: $val !important;
+          }
+        }
+      }
+    }
+  }
+}
