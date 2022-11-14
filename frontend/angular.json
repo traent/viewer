@@ -59,7 +59,6 @@
             "styles": [
               "./node_modules/@traent/ngx-components/assets/scss/styles.scss",
               "./node_modules/jsoneditor/dist/jsoneditor.min.css",
-              "./node_modules/opal/dist/css/index.min.css",
               "projects/viewer-app/src/styles.scss"
             ],
             "scripts": [],
