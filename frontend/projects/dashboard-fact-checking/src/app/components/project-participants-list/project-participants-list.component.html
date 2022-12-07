@@ -1,0 +1,31 @@
+<div class="opal-bg-blue-100 opal-p-2 opal-radius-8">
+  <h2 class="opal-h3 opal-text-500 opal-mb-3">
+    {{ 'Giornalisti ed esperti' | translate }}
+  </h2>
+
+  <ngx-t3-paginator-list
+    *ngIf="paginator"
+    class="opal-overflow-y-auto opal-fx-g-1"
+    [paginator]="paginator">
+    <app-participant-identity
+      *ngFor="let p of paginator?.items?.value; let last = last"
+      size="sm"
+      [class.opal-mb-4]="!last"
+      [class.opal-mb-0]="last"
+      [participant]="p">
+    </app-participant-identity>
+
+    <ng-template
+      #loadMoreButton
+      let-loadMore>
+      <div class="opal-fx-row opal-fx-justify-center opal-p-4">
+        <a
+          class="opal-pointer opal-text-underline opal-text-accent-600"
+          (click)="loadMore()">
+          {{ 'Carica altri' | translate }}
+        </a>
+      </div>
+    </ng-template>
+  </ngx-t3-paginator-list>
+
+</div>

@@ -1,0 +1,63 @@
+<ng-container *ngIf="{
+ renewableEnergy: renewableEnergy$ | async,
+ scopeEmissions: scopeEmissions$ | async,
+ femaleEmployees: femaleEmployees$ | async,
+ socialCommitment: socialCommitment$ | async,
+ ethicsBreach: ethicsBreach$ | async,
+ independentDirectors: independentDirectors$ | async
+} as resolved">
+
+  <h1 class="md:hidden mb-5">Esg Data</h1>
+
+  <div
+    class="grow flex flex-col">
+    <div class="w-full flex flex-col">
+      <h4 class="2xl:hidden illuminem-text-green-600 mb-2.5">Environmental</h4>
+
+      <div class="md:flex">
+        <div class="hidden 2xl:block w-[90px] illuminem-capital illuminem-text-green-600">E</div>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 md:mr-30px lg:pb-10"
+          [indicatorModel]="resolved.renewableEnergy || undefined"></app-indicator-card>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 lg:pb-10"
+          [indicatorModel]="resolved.scopeEmissions || undefined"></app-indicator-card>
+
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <h4 class="2xl:hidden illuminem-text-blue-500 mb-2.5">Sustainability</h4>
+      <div class="md:flex">
+        <div class="hidden 2xl:block w-[90px] illuminem-capital illuminem-text-blue-500">S</div>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 md:mr-30px lg:pb-10"
+          [indicatorModel]="resolved.femaleEmployees || undefined"></app-indicator-card>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 lg:pb-10"
+          [indicatorModel]="resolved.socialCommitment || undefined"></app-indicator-card>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <h4 class="2xl:hidden illuminem-text-violet-500 mb-2.5">Governance</h4>
+
+      <div class="md:flex">
+        <div class="hidden 2xl:block w-[90px] illuminem-capital illuminem-text-violet-500">G</div>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 md:mr-30px lg:pb-10"
+          [indicatorModel]="resolved.ethicsBreach || undefined"></app-indicator-card>
+
+        <app-indicator-card
+          class="block md:h-[156px] lg:h-[25vh] lg:min-h-[240px] max-h-[500px] grow md:basis-0 mb-7 lg:mb-0 lg:pb-10"
+          [indicatorModel]="resolved.independentDirectors || undefined"></app-indicator-card>
+      </div>
+    </div>
+  </div>
+
+</ng-container>

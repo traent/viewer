@@ -1,0 +1,41 @@
+FROM --platform=${BUILDPLATFORM:-linux} node:16 as node-builder
+
+# App dependencies
+WORKDIR /apps
+ENV NODE_OPTIONS=--max_old_space_size=4096
+ARG CONFIGURATION
+ARG NPM_AUTH_TOKEN
+
+COPY apps/package.json apps/package-lock.json apps/.npmrc ./
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+RUN npm ci
+
+## opal
+COPY ./apps/projects/opal ./projects/opal
+WORKDIR /apps/projects/opal
+RUN npm ci
+RUN npm run build
+
+## opal-material
+WORKDIR /apps
+COPY ./apps/projects/opal-material ./projects/opal-material
+
+# The actual Viewer
+ARG TARGET_PROJECT
+
+WORKDIR /viewer/frontend
+
+COPY viewer/frontend/projects ./projects
+COPY viewer/frontend/package.json viewer/frontend/package-lock.json viewer/frontend/.npmrc ./
+COPY viewer/frontend/angular.json apps/tsconfig.json ./
+COPY viewer/frontend/git-version.json ./
+RUN npm ci
+
+COPY viewer/frontend/i18n-cache-busting.js ./
+RUN npm run i18n:cache-busting -- ${TARGET_PROJECT}
+
+RUN npm run build -- --project=${TARGET_PROJECT} --configuration=${CONFIGURATION}
+
+FROM nginx
+COPY --from=node-builder /viewer/frontend/dist/${TARGET_PROJECT} /
+CMD ls

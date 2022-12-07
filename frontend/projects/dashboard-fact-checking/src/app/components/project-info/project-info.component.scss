@@ -1,0 +1,11 @@
+@use "utilities/breakpoints" as breakpoints;
+
+h1 {
+  font-size: 28px !important;
+  @include breakpoints.respond-above(md) {
+    font-size: 32px !important;
+  }
+  @include breakpoints.respond-above(lg) {
+    font-size: 40px !important;
+  }
+}

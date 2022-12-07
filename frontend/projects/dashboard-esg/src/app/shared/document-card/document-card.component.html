@@ -1,0 +1,58 @@
+<div
+  *ngIf="{
+    thumbnail: thumbnail$ | async
+  } as resolved"
+  class="relative h-full"
+  [class.cursor-pointer]="resolved.thumbnail"
+  (click)="resolved.thumbnail && openNewTab()">
+  <ng-container *ngIf="resolved.thumbnail !== null; else skeleton">
+    <ng-container *ngIf="resolved.thumbnail | exportedAndDefined; else redactedOrUndefined">
+      <div class="document-card-buttons absolute top-2 right-2 w-8 h-8 rounded-2xl overflow-hidden">
+        <div class="h-full pb-0.5 flex items-center justify-center illuminem-text-grey-500">
+<!--          <button-->
+<!--            class="icon-button-24"-->
+<!--            mat-icon-button-->
+<!--            matTooltip="Open in a new tab"-->
+<!--            (click)="openNewTab()">-->
+<!--            <mat-icon>launch</mat-icon>-->
+<!--          </button>-->
+          <button
+            class="icon-button-24"
+            mat-icon-button
+            matTooltip="Download"
+            (click)="download()">
+            <mat-icon svgIcon="download"></mat-icon>
+          </button>
+        </div>
+      </div>
+      <div
+        class="preview rounded-md bg-cover h-full w-full"
+        [style.background-image]="resolved.thumbnail">
+      </div>
+    </ng-container>
+
+    <ng-template #redactedOrUndefined>
+      <ng-container
+        *ngIf="resolved.thumbnail | redacted; else notDefined"
+        [ngTemplateOutlet]="redacted">
+      </ng-container>
+    </ng-template>
+  </ng-container>
+</div>
+
+<ng-template #skeleton>
+  <ngx-t3-skeleton class="h-full preview rounded-md w-full"></ngx-t3-skeleton>
+</ng-template>
+
+<ng-template #redacted>
+  <div class="h-full redacted-or-undefined flex items-center justify-center">
+    <span *ngIf="!hideNoDataLabel">Redacted information</span>
+  </div>
+</ng-template>
+
+<ng-template #notDefined>
+  <div
+    class="h-full redacted-or-undefined flex items-center justify-center">
+    <span *ngIf="!hideNoDataLabel"> No data available</span>
+  </div>
+</ng-template>

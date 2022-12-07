@@ -1,0 +1,42 @@
+<div class="overflow-auto h-full">
+  <div class="m-auto min-w-[280px] max-w-[1535px]">
+    <div class="px-5 pb-5">
+
+      <!-- xs to lg -->
+      <div class="lg:flex xl:hidden mt-5">
+
+        <app-organization-info class="block mb-20 lg:sticky lg:self-start lg:overflow-y-auto lg:top-5 lg:mr-10"></app-organization-info>
+
+        <div>
+          <app-organization-indicators class="block mb-20 lg:mb-10"></app-organization-indicators>
+
+          <app-organization-about class="block mb-20"></app-organization-about>
+
+          <app-organization-documents class="block"></app-organization-documents>
+
+          <app-footer class="block mb-6"></app-footer>
+        </div>
+      </div>
+
+      <!-- xl and higher-->
+      <div class="hidden xl:flex xl:flex-col mt-5">
+        <div class="flex">
+          <div class="grow flex flex-col mr-5">
+            <div class="flex">
+              <app-organization-info class="block w-[400px] mb-20 mr-5"></app-organization-info>
+
+              <app-organization-indicators class="flex flex-col grow mb-10"></app-organization-indicators>
+            </div>
+
+            <app-organization-documents class="block"></app-organization-documents>
+          </div>
+
+          <app-organization-about class="block w-[320px]"></app-organization-about>
+        </div>
+
+        <app-footer class="block mb-6"></app-footer>
+      </div>
+    </div>
+  </div>
+
+</div>

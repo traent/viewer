@@ -1,0 +1,26 @@
+.ack-dialog-content {
+  max-height: 300px;
+}
+
+.block-info-row {
+  &:not(.opal-h-auto) {
+    height: 20px;
+  }
+  label.overline, label.opal-overline {
+    min-width: 100px;
+    line-height: 20px;
+  }
+}
+
+.org-info-col {
+  width: 200px;
+}
+
+.date-info-col {
+  width: 150px;
+}
+
+.hash-col {
+  width: 150px;
+}
+

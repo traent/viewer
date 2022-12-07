@@ -1,0 +1,27 @@
+<ngx-t3-tag
+  *ngIf="color | exportedAndDefined; else redactedColor"
+  class="opal-no-pointer"
+  [ngClass]="innerClasses || []"
+  [chip]="true"
+  [style.--ngx-t3-tag-color]="'black'"
+  [style.background-color]="color"
+  [matTooltip]="tooltipLabel"
+  [matTooltipShowDelay]="600">
+  <ng-container *ngIf="tagName | exported; else redactedTag">{{ tagName | noValueLabel }}</ng-container>
+
+</ngx-t3-tag>
+
+<ng-template #redactedColor>
+  <ngx-t3-tag
+    class="opal-no-pointer opal-text-white-200 opal-bg-grey-300"
+    [ngClass]="innerClasses || []"
+    [chip]="true"
+    [matTooltip]="tooltipLabel"
+    [matTooltipShowDelay]="600">
+    <ng-container *ngIf="tagName | exported; else redactedTag">{{ tagName | noValueLabel }}</ng-container>
+  </ngx-t3-tag>
+</ng-template>
+
+<ng-template #redactedTag>
+  <small class="redacted">Redacted</small>
+</ng-template>

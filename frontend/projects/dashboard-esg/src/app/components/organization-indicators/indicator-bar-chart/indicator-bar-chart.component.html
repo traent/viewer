@@ -1,0 +1,13 @@
+
+<div
+  *ngIf="barChart$ | async as barChart">
+    <canvas
+      baseChart
+      [style.height]="barChartHeight + 'px'"
+      [style.width]="'100%'"
+      [data]="barChart.barChartData"
+      [options]="barChart.barChartOptions"
+      [plugins]="barChartPlugins"
+      [type]="barChartType">
+    </canvas>
+</div>

@@ -26,15 +26,17 @@
 
     <hr>
 
-    <div class="opal-px-4 opal-fx-row opal-fx-align-center">
-      <mat-slide-toggle
-        class="opal-py-3 opal-mr-2"
-        [disableRipple]="true"
-        [ngModel]="compareMode"
-        [disabled]="!resolved.versions || resolved.versions.length < 2"
-        (change)="resolved.versions && toggleCompareMode(resolved.versions)">
-      </mat-slide-toggle>
-      <span class="opal-text-grey-500">{{ 'i18n.Document.DocumentVersion.compare' | translate }}</span>
+    <div class="tw-px-4 tw-py-3">
+      <div class="tw-h-9 tw-flex tw-items-center">
+        <mat-slide-toggle
+          class="tw-mr-2"
+          [disableRipple]="true"
+          [ngModel]="compareMode"
+          [disabled]="!resolved.versions || resolved.versions.length < 2"
+          (change)="resolved.versions && toggleCompareMode(resolved.versions)">
+        </mat-slide-toggle>
+        <span class="tw-text-neutral-500">{{ 'i18n.Document.DocumentVersion.compare' | translate }}</span>
+      </div>
     </div>
 
     <hr>

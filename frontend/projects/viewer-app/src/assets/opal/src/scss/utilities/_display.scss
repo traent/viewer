@@ -1,7 +1,0 @@
-// Display
-@each $display in (none, block, inline-block, inline-flex, inline, contents) { // Flex is managed in _flex.scss utility
-  // .opal-d-block, .opal-d-none...
-  .opal-d-#{$display} {
-    display: $display !important;
-  }
-}

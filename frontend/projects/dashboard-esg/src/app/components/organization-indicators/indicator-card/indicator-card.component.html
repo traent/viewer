@@ -1,0 +1,66 @@
+<div
+  *ngIf="indicatorModel"
+  class="min-h-[100px] md:h-[156px] flex flex-col lg:h-full p-4 rounded-3xl illuminem-bg-light 2xl:illuminem-bg-light-translucent 2xl:backdrop-blur-md"
+  [class.pending]="isDataPending"
+  [class.has-dialog]="indicatorModel.hasDialog"
+  (click)="openOverlay()">
+
+  <div
+    class="min-h-6 mb-[5px] flex items-center"
+    [class.illuminem-text-green-600]="indicatorModel.type === 'env'"
+    [class.illuminem-text-blue-500]="indicatorModel.type === 'soc'"
+    [class.illuminem-text-violet-500]="indicatorModel.type === 'gov'">
+    <mat-icon
+      *ngIf="indicatorModel.icon"
+      [svgIcon]=indicatorModel.icon></mat-icon>
+    <span class="inline-block illuminem-tag uppercase ml-2.5">{{ indicatorModel.title }}</span>
+
+    <mat-icon
+      *ngIf="indicatorModel.tooltip"
+      class="ml-auto"
+      [matTooltip]="indicatorModel.tooltip">info</mat-icon>
+  </div>
+
+  <ng-container *ngIf="!isDataPending; else spinner">
+    <ng-container *ngIf="indicatorModel.value | exportedAndDefined; else redactedOrUndefined">
+      <div class="md:h-[64px] mb-[5px] flex-1 flex items-end">
+        <div>
+          <span class="title">{{ indicatorModel.valueLabel }}</span>
+
+          <span
+            *ngIf="indicatorModel.unit"
+            class="sm:hidden md:inline body-1 illuminem-text-grey-300">
+        {{ indicatorModel.unit }}
+      </span>
+        </div>
+      </div>
+      <div
+        *ngIf="indicatorModel.unit"
+        class="md:hidden body-1 illuminem-text-grey-300">
+        {{ indicatorModel.unit }}
+      </div>
+
+      <div class="hidden md:block body-2 illuminem-text-grey-300">{{ indicatorModel.year }}</div>
+    </ng-container>
+
+    <ng-template #redactedOrUndefined>
+      <ng-container *ngIf="indicatorModel.value | redacted; else notDefined">
+        <div class="flex-1 flex items-end illuminem-text-grey-400">
+          <span>Redacted information</span>
+        </div>
+      </ng-container>
+      <ng-template #notDefined>
+        <div class="flex-1 flex items-end illuminem-text-grey-400">
+          <span>No data available</span>
+        </div>
+      </ng-template>
+    </ng-template>
+
+  </ng-container>
+
+  <ng-template #spinner>
+    <div class="flex-1 flex items-end">
+      <mat-spinner diameter="24"></mat-spinner>
+    </div>
+  </ng-template>
+</div>

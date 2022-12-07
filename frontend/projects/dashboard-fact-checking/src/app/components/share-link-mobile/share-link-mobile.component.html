@@ -1,0 +1,47 @@
+<div *ngIf="{ mainArticleUrl: mainArticleUrl$ | async } as resolved">
+  <span class="opal-h4 opal-py-2 opal-d-block opal-text-500 opal-mb-2">{{ 'Condividi su' | translate }}</span>
+
+  <button
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-w-full opal-bg-coolgrey-100 opal-px-2 opal-text-capitalize opal-text-400"
+    mat-flat-button
+    appSocialShare="tw"
+    [url]="resolved.mainArticleUrl">
+    <mat-icon
+      class="opal-mr-2"
+      svgIcon="twitter">
+    </mat-icon>
+    <span class="opal-body-1">{{ 'Twitter' | translate }}</span>
+  </button>
+
+  <button
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-w-full opal-bg-coolgrey-100 opal-px-2 opal-text-capitalize opal-text-400"
+    mat-flat-button
+    appSocialShare="fb">
+    <mat-icon
+      class="opal-mr-2"
+      svgIcon="facebook">
+    </mat-icon>
+    <span class="opal-body-1">{{ 'Facebook' | translate }}</span>
+  </button>
+
+  <button
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-w-full opal-bg-coolgrey-100 opal-px-2 opal-text-capitalize opal-text-400"
+    mat-flat-button
+    appSocialShare="in"
+    [url]="resolved.mainArticleUrl">
+    <mat-icon
+      class="opal-mr-2"
+      svgIcon="linkedin">
+    </mat-icon>
+    <span class="opal-body-1">{{ 'LinkedIn' | translate }}</span>
+  </button>
+
+  <button
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-w-full opal-bg-coolgrey-100 opal-px-2 opal-text-capitalize opal-text-none opal-text-400"
+    mat-flat-button
+    [ngxT3ClickToCopy]="resolved.mainArticleUrl"
+    [additionalClasses]="''">
+    <mat-icon class="opal-mr-2">link</mat-icon>
+    <span class="opal-body-1">{{ 'Copia link' | translate }}</span>
+  </button>
+</div>

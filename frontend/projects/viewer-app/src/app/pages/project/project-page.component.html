@@ -24,7 +24,8 @@
             class="opal-text-500"
             value="documents"
             routerLinkActive="active"
-            routerLink="/project/documents">
+            routerLink="/project/documents"
+            queryParamsHandling="merge">
             <mat-icon class="opal-s-4 opal-mr-1 material-icons-outlined">description</mat-icon>
             {{ 'i18n.Common.docs' | translate }}
           </ngx-t3-tab-item>
@@ -32,7 +33,8 @@
             class="opal-text-500"
             value="streams"
             routerLinkActive="active"
-            routerLink="/project/streams">
+            routerLink="/project/streams"
+            queryParamsHandling="merge">
             <mat-icon
               class="opal-s-4 opal-mr-1"
               svgIcon="stream-overview"></mat-icon>
@@ -42,7 +44,8 @@
             class="opal-text-500"
             value="threads"
             routerLinkActive="active"
-            routerLink="/project/threads">
+            routerLink="/project/threads"
+            queryParamsHandling="merge">
             <mat-icon class="opal-s-4 opal-mr-1 material-icons-outlined">forum</mat-icon>
             {{ 'i18n.Common.threads' | translate }}
           </ngx-t3-tab-item>

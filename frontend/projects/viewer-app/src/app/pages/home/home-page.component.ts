@@ -4,7 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { InvalidLedgerKeysError, LedgerError, NoAvailableDecryptionKeyError } from '@viewer/models';
 import { DocumentService, LedgerService, StorageService } from '@viewer/services';
-import { getHeaderControlFromRoute, getHideCancelUploadControlFromRoute } from '@viewer/utils';
+import {
+  extractNavigationValuesFromDefaultPage,
+  getHeaderControlFromRoute,
+  getHideCancelUploadControlFromRoute,
+} from '@viewer/utils';
 import { NgxT3DialogService } from '@traent/ngx-dialog';
 import { abortableGenerator, ProcessAbortError } from '@traent/ts-utils';
 import { map, timer, switchMap } from 'rxjs';
@@ -104,11 +108,11 @@ export class HomePageComponent {
   ) {
   }
 
-  async loadData(data: Blob | string, withNavigation = true): Promise<void> {
+  async loadData(data: File | string, withNavigation = true): Promise<void> {
     if (typeof data === 'string') {
       this.fileName = decodeURI(data.split('/').pop() || '');
     } else {
-      this.fileName = (data as any).name;
+      this.fileName = data.name;
     }
 
     this.abortController = new AbortController();
@@ -118,15 +122,8 @@ export class HomePageComponent {
       for await (const message of this.process) {
         this.loadingMessage = message;
       }
-      const exportRequest = await this.storageService.getExportRequest();
-
-      if (withNavigation && exportRequest?.defaultPage) {
-        await this.router.navigateByUrl(exportRequest.defaultPage);
-        return;
-      }
-
       if (withNavigation) {
-        await this.router.navigate(['project', { queryParamsHandling: 'preserve' }]);
+        await this.navigateMainPage();
       }
     } catch (error: unknown) {
       if (error instanceof NoAvailableDecryptionKeyError || error instanceof InvalidLedgerKeysError) {
@@ -139,7 +136,7 @@ export class HomePageComponent {
         });
 
         if (proceed) {
-          await this.router.navigate(['explorer', { queryParamsHandling: 'preserve' }]);
+          await this.router.navigate(['explorer'], { queryParamsHandling: 'preserve' });
         }
       } else if (error instanceof ProcessAbortError) {
         this.reset();
@@ -150,12 +147,6 @@ export class HomePageComponent {
           this.loadingMessage = undefined;
           this.error = 'generic';
         }
-      }
-      const exportRequest = await this.storageService.getExportRequest();
-
-      if (exportRequest?.defaultPage) {
-        await this.router.navigateByUrl(exportRequest.defaultPage);
-        return;
       }
     }
   }
@@ -168,14 +159,20 @@ export class HomePageComponent {
     this.ledgerService.reset();
   }
 
-  startLocalFileLoad(target: HTMLInputElement | FileList) {
-    if (target instanceof HTMLInputElement && target.files) {
-      this.loadData(target.files[0]);
-      target.value = ''; // prevent onchange not firing on same file
+  async startLocalFileLoad(target: HTMLInputElement | FileList) {
+    let file: File | null = null;
+    if (target instanceof HTMLInputElement) {
+      file = target.files && target.files.item(0);
+      if (file) {
+        target.value = ''; // prevent onchange not firing on same file
+      }
     } else if (target instanceof FileList) {
-      this.loadData(target[0]);
+      file = target.item(0);
     }
-    return;
+
+    if (file) {
+      await this.loadData(file);
+    }
   }
 
   async invalidLedgerNavigation(): Promise<void> {
@@ -189,7 +186,8 @@ export class HomePageComponent {
     if (!proceed) {
       return;
     }
-    this.router.navigate(['project'], { queryParamsHandling: 'preserve' });
+
+    this.navigateMainPage();
   }
 
   private async *loadingProcess(data: string | Blob): AsyncGenerator<LoadingLabel, void> {
@@ -206,5 +204,22 @@ export class HomePageComponent {
         message: this.translateService.instant('i18n.Home.evaluatingLedgerBlock', { index, totalBlocks: progress.totalBlocks }),
       };
     }
+  }
+
+  private async navigateMainPage() {
+    const exReq = await this.storageService.getLedger().getExportRequest();
+
+    if (exReq?.defaultPage) {
+      const options = extractNavigationValuesFromDefaultPage(exReq.defaultPage);
+      if (options?.baseUrlWithoutQueryParams) {
+        await this.router.navigate(
+          [options.baseUrlWithoutQueryParams],
+          { queryParams: options.queryParams, queryParamsHandling: 'merge' },
+        );
+        return;
+      }
+    }
+
+    await this.router.navigate(['project', { queryParamsHandling: 'preserve' }]);
   }
 }

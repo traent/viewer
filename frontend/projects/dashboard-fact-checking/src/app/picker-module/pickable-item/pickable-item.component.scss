@@ -1,0 +1,33 @@
+:host {
+
+  .icon {
+    background-color: var(--pickable-icon-background-color, var(--bg-grey-100));
+  }
+
+  .icon-selected {
+    position: relative;
+    top: 2px;
+  }
+
+  .icon-indeterminate {
+    position: relative;
+    top: -6px;
+  }
+
+  &.loading {
+    padding-left: 6px;
+    padding-right: 6px;
+    height: 36px;
+  }
+
+  &:not(.loading) {
+    outline: none;
+    display: block;
+    cursor: pointer;
+
+    &.active {
+      background-color: theme("colors.coolgrey.100");
+    }
+  }
+
+}

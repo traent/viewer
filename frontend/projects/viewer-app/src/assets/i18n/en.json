@@ -184,6 +184,8 @@
   "i18n.Project.DocumentDashboard.downloadDocument": "Download document",
   "i18n.Project.DocumentDashboard.openDocument": "Open document",
   "i18n.Project.DocumentLog.viewDocument": "view document",
+  "i18n.Project.LedgerValidationDialog.Badge.error": "[ERR]",
+  "i18n.Project.LedgerValidationDialog.Badge.warning": "[WARN]",
   "i18n.Project.LedgerValidationDialog.subtitle": "Some errors occurred while validating the ledger.",
   "i18n.Project.LedgerValidationDialog.title": "Ledger validation",
   "i18n.Project.ProjectPage.backInfoProject": "Project info",
@@ -201,7 +203,10 @@
   "i18n.Project.ProjectSide.lastState": "last state",
   "i18n.Project.ProjectSide.lastStatusIncl'": "Only last status included'",
   "i18n.Project.ProjectSide.ledgerKeys": "Ledger keys",
+  "i18n.Project.ProjectSide.Validation.Error.tooltip": "Click to inspect the errors",
+  "i18n.Project.ProjectSide.Validation.Warning.tooltip": "Click to inspect the warnings",
   "i18n.Project.ProjectSide.validationErrors": "validation errors",
+  "i18n.Project.ProjectSide.validationWarnings": "validation warnings",
   "i18n.Project.ProjectsPage.ProjectItem.noDocs": "No documents in this project",
   "i18n.Project.ProjectUpsertDialog.noProjectWorkflow": "No workflow applied to this project",
   "i18n.Project.Stream.Common.noClasses": "No classes",
@@ -271,5 +276,6 @@
   "i18n.TablePaginator.perPage": "Items per page",
   "i18n.Toolbar.errorLedger": "This ledger has validation errors",
   "i18n.Toolbar.logIn": "log in",
-  "i18n.Toolbar.logOut": "Log out from Traent"
+  "i18n.Toolbar.logOut": "Log out from Traent",
+  "i18n.Toolbar.warningLedger": "This ledger has validation warnings"
 }

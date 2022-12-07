@@ -1,0 +1,24 @@
+<div
+  *ngIf="indicatorModel"
+  class="grow flex flex-col md:flex-row justify-center mt-[5px] md:mt-6 xl:w-[1068px]">
+
+  <div class="md:pt-6 grow-0 shrink-0 md:basis-[340px] lg:basis-[400px] xl:basis-[500px]">
+    <div
+      *ngIf="indicatorModel.unit"
+      class="flex justify-center">
+      <h5 class="illuminem-text-grey-300">{{ indicatorModel.unit }}</h5>
+    </div>
+
+    <app-indicator-bar-chart
+      class="block mt-[5px] md:w-[340px] lg:w-[400px] m-auto"
+      [indicatorModel]="indicatorModel"
+      [company]="company"
+      [industry]="industry"></app-indicator-bar-chart>
+  </div>
+
+  <div
+    class="body-1 pb-5 px-5 pt-5 md:px-0 md:pt-0 grow-0 shrink-0 md:basis-[340px]"
+    [innerHTML]="indicatorModel.description">
+  </div>
+
+</div>

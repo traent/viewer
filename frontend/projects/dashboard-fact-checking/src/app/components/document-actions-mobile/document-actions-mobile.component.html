@@ -1,0 +1,28 @@
+<div>
+  <span class="opal-h4 opal-py-2 opal-d-block opal-text-500 opal-mb-3">{{ 'Opzioni' | translate }}</span>
+
+  <div
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-pointer"
+    (click)="showBlockchainInfoHandler()">
+    <mat-icon
+      class="opal-mr-2"
+      svgIcon="ack-ok">
+    </mat-icon>
+    <span class="opal-body-1">
+      {{ 'Informazioni Blockchain' | translate }}
+    </span>
+  </div>
+
+  <div
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-pointer"
+    (click)="showDocumentDetailsHandler()">
+    <mat-icon class="opal-mr-2">info</mat-icon>
+    <span class="opal-body-1">{{ 'Dettagli documento' | translate }}</span>
+  </div>
+  <div
+    class="opal-fx-row opal-fx-align-center opal-h-13 opal-pointer"
+    (click)="downloadDocumentHandler()">
+    <mat-icon class="opal-mr-2">download</mat-icon>
+    <span class="opal-body-1">{{ 'Scarica documento' | translate }}</span>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+@use "utilities/breakpoints" as breakpoints;
+
+.tags-filters-mobile-btn {
+  display: block;
+
+  @include breakpoints.respond-above(lg) {
+    display: none;
+  }
+}
+
+.tags-filters-btn {
+  display: none;
+
+  @include breakpoints.respond-above(lg) {
+    display: block;
+  }
+}

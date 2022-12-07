@@ -73,6 +73,7 @@
       mat-stroked-button
       mat-dialog-close
       class="opal-mr-2"
+      queryParamsHandling="merge"
       [routerLink]="['/project/threads', { outlets: { primary: [thread.id], aside: [thread.id] } }]">
       {{ 'i18n.Common.viewThread' | translate }}
     </button>

@@ -25,7 +25,7 @@ export class AcknowledgementsDialogComponent {
         organization$: organizationKeyId
           ? this.organizationService.getOrganizationByKey(organizationKeyId)
           : of(undefined),
-        block$: ack && this.storageService.getBlock(ack.blockIndex),
+        block$: ack && this.storageService.getLedger().getBlock(ack.blockIndex),
       };
     }));
 

@@ -1,7 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
-@import "./assets/opal-material/theme.scss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@import "../../../node_modules/@traent/ngx-dialog/assets/styles.scss";
+// TODO: Import compiled and minified libs
+@import "../../../../../apps/projects/opal-material/theme.scss";
+
+@import "@traent/ngx-components/assets/css/styles.min.css";
+@import "@traent/ngx-dialog/assets/styles.min";
+@import "@traent/ngx-paginator/assets/styles.min";
+@import "@traent/ngx-spinner/assets/styles.min";
+@import "@traent/ngx-toast/assets/styles.min";
+@import "@traent/ngx-tooltip/assets/styles.min";
+
 
 @import "./assets/scss/json-editor";
 @import "./assets/scss/log-item";

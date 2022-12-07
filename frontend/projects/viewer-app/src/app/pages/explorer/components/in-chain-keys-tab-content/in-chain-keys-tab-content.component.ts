@@ -22,7 +22,7 @@ export class InChainKeysTabContentComponent {
   }
 
   readonly inchainKeys$ = this.inchainKeysPageEvent$.pipe(
-    switchMap((pageEvent) => this.storageService.getInchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
+    switchMap((pageEvent) => this.storageService.getLedger().getInchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

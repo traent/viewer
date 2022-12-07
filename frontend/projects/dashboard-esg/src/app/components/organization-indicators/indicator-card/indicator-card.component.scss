@@ -1,0 +1,10 @@
+:host {
+  > div.has-dialog:not(.pending) {
+    @apply cursor-pointer;
+
+    &:hover {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) -82.16%, rgba(153, 153, 153, 0.2) 100%), rgba(32, 32, 32, 0.7) !important;
+      backdrop-filter: blur(12px) !important;
+    }
+  }
+}

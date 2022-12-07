@@ -1,0 +1,16 @@
+<ngx-t3-member-identity
+  *ngIf="{
+      member: participant && (participant.member$ | async),
+      organization: participant && (participant.organization$ | async)
+    } as participant"
+  [size]="size"
+  [memberSrc]="participant.member && participant.member.avatar"
+  [organizationSrc]="participant.organization && participant.organization.logo"
+  [firstLine]="participant.member && participant.member.fullName || 'Redacted'"
+  [secondLine]="showSecondLine ? participant.member && participant.member.jobTitle : undefined">
+  <ngx-t3-identity-validation
+    [size]="validationSize"
+    [userValidation]="participant.member?.userValidationState | identityValidation : 'user'"
+    [memberValidation]="participant.member?.memberValidationState | identityValidation : 'member'">
+  </ngx-t3-identity-validation>
+</ngx-t3-member-identity>

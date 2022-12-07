@@ -1,0 +1,14 @@
+<ng-container *ngFor="let item of textContent?.items; index as index">
+  <div
+    *ngIf="textContent?.styles as styles"
+    [attr.data-text]="true"
+    [attr.data-page]="pageNumber"
+    [attr.data-index]="index"
+    [style.left.px]="item.transform[4]"
+    [style.bottom.px]="item.transform[5] + (item.transform[3] < 0 ? item.transform[3] : 0)"
+    [style.width.px]="item.width"
+    [style.height.px]="item.height"
+    [style.font-size.px]="item.transform | apply : getFontSizeFromTransform"
+    [style.font-family]="styles[item.fontName].fontFamily"
+    [textContent]="item.str"></div>
+</ng-container>

@@ -1,0 +1,10 @@
+<h2
+  *ngIf="title$ | async as title; else skeleton"
+  class="h-[26px] mb-2.5">{{ title}}</h2>
+<ng-template #skeleton>
+  <ngx-t3-skeleton class="h-[26px] w-30 mb-2.5"></ngx-t3-skeleton>
+</ng-template>
+
+<app-document-card
+  class="h-[180px] w-full"
+  [document]="pitchBook$ | async"></app-document-card>

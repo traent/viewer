@@ -1,0 +1,68 @@
+<ng-container *ngIf="{ activeTag: activeTag$ | async } as resolved">
+  <div class="opal-p-3 opal-border-b-1 opal-border-grey-100 opal-fx-row opal-fx-justify-between opal-fx-align-center">
+    <span class="opal-h4 opal-text-500">{{ 'Documenti' | translate }}</span>
+
+    <div
+      class="opal-pointer"
+      ngxT3Tooltip
+      tooltipMode="click"
+      [tooltipTemplate]="filterGroups"
+      [tooltipPosition]="tooltipPosition">
+      <button
+        mat-stroked-button
+        class="tags-filters-btn"
+        [ngClass]="{ 'opal-bg-accent text-white': resolved.activeTag?.id }">
+        {{ resolved.activeTag ? resolved.activeTag.name : ('Tutti' | translate) }}
+        <mat-icon class="opal-mr-0">expand_more</mat-icon>
+      </button>
+      <ng-template #filterGroups>
+        <div
+          class="opal-w-75 opal-border-box opal-bg-white opal-radius-4 opal-overflow-hidden opal-mb-4 opal-border-grey-200 opal-border-1 opal-menu-shadow"
+          cdkTrapFocus
+          @fadeInTopBottomAndOutAnimation
+          [cdkTrapFocusAutoCapture]="true">
+          <app-document-tags-picker
+            [tags]="(tags$ | async) || []"
+            [selectedTagId]="resolved.activeTag?.id || undefined"
+            (applySelection)="onApplyHandler($event)"
+            (resetSelection)="onResetHandler()">
+          </app-document-tags-picker>
+        </div>
+      </ng-template>
+    </div>
+
+    <button
+      mat-stroked-button
+      class="tags-filters-mobile-btn"
+      [ngClass]="{ 'opal-bg-accent text-white': resolved.activeTag?.id }"
+      (click)="showTagsFilterHandler()">
+      {{ resolved.activeTag ? resolved.activeTag.name : ('Tutti' | translate) }}
+      <mat-icon class="opal-mr-0">expand_more</mat-icon>
+    </button>
+  </div>
+
+  <div>
+    <div
+      *ngIf="resolved.activeTag && resolved.activeTag.name"
+      class="opal-p-2">
+      <div
+        class="tag opal-d-inline-block opal-px-2 opal-text-uppercase opal-radius-20 opal-p-1 opal-my-1 opal-ellipsed opal-text-600 opal-body-2"
+        [style.background-color]="resolved.activeTag.color">
+        {{ resolved.activeTag.name }}
+      </div>
+
+      <p
+        *ngIf="resolved.activeTag.description"
+        class="opal-my-0">
+        {{ resolved.activeTag.description }}
+      </p>
+    </div>
+
+    <app-document-list-item
+      *ngFor="let document of documents$ | async"
+      class="opal-d-block opal-border-b-1 opal-border-grey-100 opal-pointer"
+      [document]="document"
+      (click)="clickDocument.emit(document.data)">
+    </app-document-list-item>
+  </div>
+</ng-container>

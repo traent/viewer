@@ -1,0 +1,44 @@
+<ng-container *ngIf="{
+   documentPage: documentsPage$ | async,
+   noNewsLabel: noNewsLabel$ | async,
+   page: page$ | async,
+   hasNext: hasNext$ | async,
+   hasPrevious: hasPrevious$ | async
+} as resolved">
+  <div class="flex items-center justify-between">
+    <h2 class="text-white">Communications</h2>
+    <div
+      *ngIf="resolved.documentPage && resolved.documentPage.total > resolved.documentPage.page.limit"
+      class="flex">
+      <button
+        [disabled]="!resolved.hasPrevious"
+        [class.illuminem-text-grey-400]="!resolved.hasPrevious"
+        (click)="resolved.page && page$.next(resolved.page - 1)"
+        mat-icon-button><mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <button
+        [disabled]="!resolved.hasNext"
+        [class.illuminem-text-grey-400]="!resolved.hasNext"
+        (click)="resolved.page && page$.next(resolved.page + 1)"
+        mat-icon-button><mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="resolved.documentPage">
+    <ng-container *ngIf="resolved.documentPage.total === 0; else communicationItems">
+      <h5 class="illuminem-text-grey-300 mt-[10px] mb-[40px]">{{ resolved.noNewsLabel }}</h5>
+      <app-document-card
+        class="block h-[216px]" [hideNoDataLabel]="true"></app-document-card>
+    </ng-container>
+    <ng-template #communicationItems>
+      <app-communication-item
+        *ngFor="let doc of resolved.documentPage.items; first as first; trackBy: trackById"
+        class="block pt-3 mb-3 border-t border-1 illuminem-border-grey-400"
+        [document]="doc"></app-communication-item>
+    </ng-template>
+
+  </ng-container>
+
+</ng-container>

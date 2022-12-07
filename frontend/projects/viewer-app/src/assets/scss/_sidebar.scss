@@ -1,4 +1,4 @@
-@use '../opal/src/scss/utilities/text.scss' as *;
+@use '../../../../../../../apps/projects/opal/src/scss/utilities/text.scss' as *;
 
 .overview-resource-name {
   @include ellipse-at-line(3, 22px);

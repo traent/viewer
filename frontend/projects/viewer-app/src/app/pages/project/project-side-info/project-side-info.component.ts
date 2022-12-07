@@ -68,9 +68,9 @@ export class ProjectSideInfoComponent {
     map((items) => items.length),
   );
 
-  readonly exportDateTime$ = this.storageService.getLedgerInfo().then(({ createdAt }) => createdAt);
+  readonly exportDateTime$ = this.storageService.getLedger().getLedgerInfo().then(({ createdAt }) => createdAt);
   readonly workflow$ = this.workflowService.getProjectWorkflow();
-  readonly exportRequest$ = this.storageService.getExportRequest();
+  readonly exportRequest$ = this.storageService.getLedger().getExportRequest();
 
   readonly AvatarPlaceholder = AvatarPlaceholder;
   readonly formatBytesSize = formatBytesSize;
@@ -94,6 +94,7 @@ export class ProjectSideInfoComponent {
     this.dialog.open(ValidationErrorsDialogComponent, {
       data: {
         errors: this.ledgerService.problems,
+        warnings: this.ledgerService.warnings,
       },
       panelClass: ['opal-w-600px'],
     });

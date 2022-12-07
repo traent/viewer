@@ -1,0 +1,87 @@
+<div class="opal-p-3 opal-fx-row opal-fx-align-center opal-fx-justify-between">
+  <div class="opal-mr-3 opal-fx-col opal-ellipsed">
+    <span class="opal-ellipsed opal-mb-1">{{ document?.data?.name }}</span>
+    <div
+      *ngIf="document?.data && document?.data?.updatedInBlock"
+      class="opal-fx-row">
+      <app-acks-icon
+        *ngIf="document?.ackInfo$ | async as ackInfo"
+        class="opal-mr-2 desktop-btn"
+        ngxT3PreventClickPropagation
+        [status]="ackInfo.status"
+        (click)="openAcknowledgementsDialogHandler($any(document).data.updatedInBlock)">
+      </app-acks-icon>
+
+      <app-acks-icon
+        *ngIf="document?.ackInfo$ | async as ackInfo"
+        class="opal-mr-2 mobile-btn"
+        ngxT3PreventClickPropagation
+        [status]="ackInfo.status">
+      </app-acks-icon>
+
+      <span class="opal-text-grey-400 opal-body-2">
+        {{ document?.data?.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="opal-fx-row opal-fx-s-0 opal-fx-justify-center opal-fx-align-center">
+    <ng-container *ngFor="let tag of document?.tags$ | async | slice : 0 : 1">
+      <ng-container *ngIf="tag && tag.name">
+        <div
+          *ngIf="tag.color | exportedAndDefined; else redactedTagColor"
+          class="tag opal-px-2 opal-text-uppercase opal-radius-20 opal-p-1 opal-my-1 opal-ellipsed opal-text-600 opal-body-2 opal-mr-3 opal-text-black"
+          [style.background-color]="tag.color">
+          {{ tag.name }}
+        </div>
+      </ng-container>
+
+      <ng-template #redactedTagColor>
+        <div
+          *ngIf="tag && tag.name"
+          class="tag opal-px-2 opal-text-uppercase opal-radius-20 opal-p-1 opal-my-1 opal-ellipsed opal-text-600 opal-body-2 opal-mr-3 opal-bg-grey-300 opal-text-white-200">
+          {{ tag.name }}
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <div>
+      <button
+        *ngIf="document?.data?.isContentReadable"
+        mat-icon-button
+        class="desktop-btn"
+        ngxT3PreventClickPropagation
+        [mat-menu-trigger-for]="menuDocument">
+        <mat-icon class="opal-text-grey-400">more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menuDocument="matMenu">
+        <ng-container *ngIf="document">
+          <button
+            mat-menu-item
+            queryParamsHandling="merge"
+            [routerLink]="[]"
+            [queryParams]="{ docDetails: document.data.id }">
+            <mat-icon class="opal-s-4">info</mat-icon>
+            {{ 'Dettagli documento' | translate }}
+          </button>
+          <button
+            mat-menu-item
+            (click)="downloadDocumentHandler()">
+            <mat-icon class="opal-s-4">cloud_download</mat-icon>
+            <span>{{ 'Scarica documento' | translate }}</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+
+      <button
+        *ngIf="true"
+        mat-icon-button
+        class="mobile-btn"
+        ngxT3PreventClickPropagation
+        (click)="showDocumentActionsHandler()">
+        <mat-icon class="opal-text-grey-400">more_vert</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

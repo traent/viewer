@@ -1,6 +1,6 @@
 <ng-container *ngIf="{
   offchainKeys: offchainKeys$ | async,
-  offchainKeysCount: storageService.getOffchainKeysCount()
+  offchainKeysCount: storageService.getLedger().getOffchainKeysCount()
 } as resolved">
   <div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
     <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
@@ -26,10 +26,7 @@
               position="left"
               [textToCopy]="hash"
               (click)="$event.stopImmediatePropagation()">
-              <div
-                class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">
-                {{ hash }}
-              </div>
+              <div class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">{{ hash }}</div>
             </ngx-t3-copy-to-clipboard>
           </div>
         </div>
@@ -41,10 +38,7 @@
             position="left"
             [textToCopy]="key"
             (click)="$event.stopImmediatePropagation()">
-            <div
-              class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">
-              {{ key }}
-            </div>
+            <div class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">{{ key }}</div>
           </ngx-t3-copy-to-clipboard>
         </div>
       </div>

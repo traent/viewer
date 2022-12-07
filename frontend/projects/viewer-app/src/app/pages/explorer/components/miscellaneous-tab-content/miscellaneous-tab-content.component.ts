@@ -10,8 +10,8 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
 })
 export class MiscellaneousTabContentComponent {
 
-  readonly keyPair$ = this.storageService.getKeyPair();
-  readonly exportRequest$ = this.storageService.getExportRequest();
+  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
+  readonly exportRequest$ = this.storageService.getLedger().getExportRequest();
 
   readonly editorOptions = new JsonEditorOptions();
 

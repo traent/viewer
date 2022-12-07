@@ -1,0 +1,17 @@
+@use "utilities/breakpoints" as breakpoints;
+
+.desktop-btn {
+  display: none;
+
+  @include breakpoints.respond-above(lg) {
+    display: block;
+  }
+}
+
+.mobile-btn {
+  display: block;
+
+  @include breakpoints.respond-above(lg) {
+    display: none;
+  }
+}

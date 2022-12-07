@@ -106,7 +106,7 @@ export class ServiceWorkerService {
   }
 
   private async getBlockIdentification(payload: { blockIndex: number }) {
-    return this.storageService.getBlockIdentification(payload.blockIndex);
+    return this.storageService.getLedger().getBlockIdentification(payload.blockIndex);
   }
 
   private async getLatestAcknowledgements() {
@@ -129,7 +129,7 @@ export class ServiceWorkerService {
   }
 
   private async checkLedgerId(ledgerId: string) {
-    const ledger = await this.storageService.getLedgerInfo();
+    const ledger = await this.storageService.getLedger().getLedgerInfo();
     if (ledgerId !== b64ToB64UrlEncoding(ledger.address)) {
       throw new Error(`Unknown ledger: ${ledgerId}`);
     }

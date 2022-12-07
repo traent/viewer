@@ -1,0 +1,102 @@
+@use "utilities/breakpoints" as breakpoints;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.opal-content-container {
+  @include breakpoints.respond-above(lg) {
+    height: 100%;
+  }
+}
+
+.opal-container {
+  flex-direction: column-reverse !important;
+  justify-content: start;
+  min-width: 0 !important;
+  padding: 0 12px !important;
+
+  @include breakpoints.respond-above(md) {
+    padding-right: 24px !important;
+    padding-left: 0 !important;
+  }
+
+  @include breakpoints.respond-above(lg) {
+    flex-direction: row !important;
+    padding: 0 48px 0 24px !important;
+  }
+}
+
+aside {
+  @include breakpoints.respond-above(lg) {
+    padding: 0 34px;
+    width: 300px !important;
+    overflow-y: auto;
+  }
+}
+
+.share-button-container {
+  display: none;
+
+  @include breakpoints.respond-above(md) {
+    display: block;
+    padding: 0 24px;
+  }
+  @include breakpoints.respond-above(lg) {
+    padding: 0 48px;
+  }
+}
+
+.share-mobile-btn {
+  @include breakpoints.respond-above(md) {
+    display: none;
+  }
+}
+
+.navigate-btn-viewer {
+  display: none;
+  @include breakpoints.respond-above(lg) {
+    display: block;
+  }
+}
+
+ngx-t3-right-sidebar {
+  display: none;
+
+  @include breakpoints.respond-above(lg) {
+    display: block;
+  }
+}
+
+.authors-container {
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoints.respond-above(md) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@include breakpoints.respond-above(lg) {
+  main {
+    min-width: 600px;
+    overflow-x: hidden;
+  }
+}
+
+.date-info-container {
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoints.respond-above(md) {
+    flex-direction: row;
+
+    div:first-child {
+      margin-right: 24px;
+    }
+  }
+}

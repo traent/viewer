@@ -1,0 +1,224 @@
+<ng-container *ngIf="{
+  address: address$ | async,
+  allianceRole: allianceRole$ | async,
+  company: company$ | async,
+  companyDescription: companyDescription$ | async,
+  foundation: foundation$ | async,
+  funding: funding$ | async,
+  goals: goals$ | async,
+  industry: industry$ | async,
+  isClaimableOnTraent: isClaimableOnTraent$ | async,
+  isLookingFinancing: isLookingFinancing$ | async,
+  logo: logo$ | async,
+  numberOfEmployees: numberOfEmployees$ | async,
+  providedBy: providedBy$ | async,
+  revenue: revenue$ | async,
+  valuation: valuation$ | async,
+  web: web$ | async
+} as resolved">
+
+  <img *ngIf="resolved.logo; else logoSkeleton"
+    class="w-[72px] mb-[15px] rounded-md"
+    [src]="resolved.logo">
+  <ng-template #logoSkeleton>
+    <ngx-t3-skeleton class="w-[72px] h-[72px] mb-[15px] rounded-md"></ngx-t3-skeleton>
+  </ng-template>
+
+  <h1 *ngIf="resolved.company; else companySkeleton" class="h-[30px] illuminem-text-grey-100 mb-1.5">
+     <span>{{ resolved.company }}</span>
+  </h1>
+  <ng-template #companySkeleton>
+    <ngx-t3-skeleton class="h-[30px] w-60 mb-1.5 rounded-sm"></ngx-t3-skeleton>
+  </ng-template>
+
+  <div class="illuminem-text-grey-300 mb-8">
+
+    <div class="h-5 flex items-center mb-[5px]">
+      <mat-icon
+        class="icon-16 mr-1"
+        svgIcon="flag"></mat-icon>
+      <h5>
+        <span *ngIf="resolved.foundation; else spinner">
+          {{ resolved.foundation }}
+        </span>
+      </h5>
+    </div>
+
+    <div class="h-5 flex items-center mb-[5px]">
+      <mat-icon
+        class="icon-16 mr-1"
+        svgIcon="pin-drop"></mat-icon>
+      <span *ngIf="resolved.address; else spinner">
+        {{ resolved.address }}
+      </span>
+    </div>
+
+    <div class="h-5 flex items-center mb-[5px]">
+      <mat-icon class="icon-16 mr-1">group_outlined</mat-icon>
+      <h5>
+        <app-stream-value
+          rendering="more"
+          [value]="resolved.numberOfEmployees"></app-stream-value></h5>
+    </div>
+
+    <div class="h-5 flex items-center mb-[5px]">
+      <mat-icon class="icon-16 mr-1">apartment</mat-icon>
+      <h5>
+        <app-stream-value [value]="resolved.industry"></app-stream-value>
+      </h5>
+    </div>
+
+    <ng-container *ngIf="resolved.allianceRole | exportedAndDefined">
+      <div *ngIf="resolved.allianceRole?.value === 'Leader'"
+           class="flex items-center mb-[15px] illuminem-text-yellow-600">
+        <mat-icon class="icon-16 mr-1">star</mat-icon>
+        <h5>ESG Alliance Leader</h5>
+      </div>
+
+      <div *ngIf="resolved.allianceRole?.value === 'Member'"
+           class="flex items-center mb-[15px] illuminem-text-blue">
+        <mat-icon class="icon-16 mr-1">star</mat-icon>
+        <h5>ESG Alliance Member</h5>
+      </div>
+    </ng-container>
+
+    <div
+      *ngIf="resolved.web"
+      class="flex items-center">
+      <span class="mr-1">{{ resolved.web }}</span>
+      <a
+        class="flex items-center"
+        href="{{ resolved.web }}"
+        target="_blank">
+        <mat-icon class="icon-16">launch</mat-icon>
+      </a>
+    </div>
+
+    <ng-template #spinner>
+      <mat-spinner diameter="16"></mat-spinner>
+    </ng-template>
+
+  </div>
+
+  <ng-container *ngIf="resolved.companyDescription | exportedAndDefined">
+    <p
+      *ngIf="resolved.companyDescription?.value"
+      class="body-1 mb-8">
+      {{ resolved.companyDescription?.value }}
+    </p>
+  </ng-container>
+
+  <div class="text-overline">
+    <div class="h-10 flex items-center mb-1 uppercase illuminem-bg-light rounded-sm px-4">
+      <span class="w-[120px] mr-3">revenue</span>
+      <h5>
+        <app-stream-value
+          rendering="currency"
+          [value]="resolved.revenue"></app-stream-value>
+      </h5>
+      <span class="body-1 illuminem-text-grey-400 ml-auto">2022</span>
+    </div>
+
+    <div class="h-10 flex items-center mb-1 uppercase illuminem-bg-light rounded-sm px-4">
+      <span class="w-[120px] mr-3">firm valuation</span>
+      <h5>
+        <app-stream-value
+          rendering="currency"
+          [value]="resolved.valuation"></app-stream-value>
+      </h5>
+      <span class="body-1 illuminem-text-grey-400 ml-auto">2022</span>
+    </div>
+
+    <div class="h-10 flex items-center mb-1 uppercase illuminem-bg-light rounded-sm px-4">
+      <span class="w-[120px] mr-3">funding</span>
+      <h5>
+        <app-stream-value
+          rendering="currency"
+          [value]="resolved.funding"></app-stream-value>
+      </h5>
+      <span class="body-1 illuminem-text-grey-400 ml-auto">2022</span>
+    </div>
+
+    <ng-container *ngIf="resolved.goals | exportedAndDefined">
+      <div
+        class="flex items-center mb-1 uppercase illuminem-bg-light rounded-sm px-4"
+        [class.h-10]="(resolved.goals || []).length === 0">
+        <span class="w-[120px] shrink-0 mr-3">SDG</span>
+        <div class="flex flex-wrap justify-start pt-1 pb-2">
+          <ng-container *ngFor="let goal of resolved.goals">
+            <img
+              *ngIf="goal | apply : sustainabilityGoalMap as goalSvg"
+              class="w-6 h-6 mt-1 mr-1"
+              [matTooltip]="goal"
+              [src]="'assets/svg/' + goalSvg">
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <ng-container *ngIf="resolved.isLookingFinancing | exportedAndDefined">
+    <div
+      *ngIf="resolved.isLookingFinancing?.value === true"
+      class="h-10 flex items-center uppercase rounded-sm px-4 text-overline border-solid illuminem-border-light-black illuminem-bg-green-600 text-black">
+      <mat-icon
+        class="icon-16 mr-3"
+        svgIcon="paid"></mat-icon>
+      <span>currently looking for financing</span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="resolved.providedBy !== null; else providedBySkeleton">
+    <div
+      *ngIf="resolved.providedBy"
+      class="block flex mt-8 items-center">
+      <h3 class="block h-4 mt-1.5 mr-3 illuminem-tag uppercase text-overline illuminem-text-grey-300">These data are provided by</h3>
+
+      <div class="block flex items-center mt-1 md:mt-0">
+        <img
+          *ngIf="resolved.providedBy.logo"
+          class="h-4 w-4 mr-2"
+          [src]="resolved.providedBy.logo">
+        <span
+          *ngIf="resolved.providedBy.businessName"
+          class="mr-1" >
+          {{ resolved.providedBy.businessName }}
+        </span>
+        <mat-icon class="icon-16 illuminem-text-accent-500">verified</mat-icon>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #providedBySkeleton>
+    <ngx-t3-skeleton class="h-4 mt-1.5 w-[120px] rounded-sm"></ngx-t3-skeleton>
+  </ng-template>
+
+  <a
+    *ngIf="resolved.isClaimableOnTraent"
+    class="flex items-center min-h-[52px] traent-bg-600 text-white w-full mt-1.5 "
+    mat-flat-button
+    href="mailto: info@illuminem.com">
+    <div class="w-full flex items-center">
+      <img
+        class="text-white mr-3"
+        src="assets/svg/logo-traent.svg">
+
+      <span class="button-cta3 mr-3">Claim this data on Traent</span>
+
+      <mat-icon class="icon-16">arrow_forward</mat-icon>
+    </div>
+  </a>
+
+<!--  <div class="h-[52px] mt-8 flex items-center mb-1 uppercase illuminem-bg-light rounded-sm px-4">-->
+<!--    <span class="w-[120px] mr-3 text-overline">Share On</span>-->
+<!--    <div class="flex items-center">-->
+<!--      <mat-icon-->
+<!--        class="mr-3"-->
+<!--        svgIcon="facebook"></mat-icon>-->
+<!--      <mat-icon-->
+<!--        class="mr-3"-->
+<!--        svgIcon="linkedin"></mat-icon>-->
+<!--      <mat-icon class="mr-3">link</mat-icon>-->
+<!--    </div>-->
+<!--  </div>-->
+
+</ng-container>

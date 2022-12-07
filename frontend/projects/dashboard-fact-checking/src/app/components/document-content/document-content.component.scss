@@ -1,0 +1,33 @@
+@use "utilities/breakpoints" as breakpoints;
+
+.document-name {
+  line-height: 1.1em;
+}
+
+.mobile-btn {
+  display: block;
+
+  @include breakpoints.respond-above(lg) {
+    display: none;
+  }
+}
+
+.desktop-btn {
+  display: none;
+
+  @include breakpoints.respond-above(lg) {
+    display: block;
+  }
+}
+
+.pdf-viewer {
+  height: 480px;
+  margin-bottom: 32px;
+
+  @include breakpoints.respond-above(md) {
+    height: 768px;
+  }
+  @include breakpoints.respond-above(lg) {
+    margin-bottom: 0;
+  }
+}

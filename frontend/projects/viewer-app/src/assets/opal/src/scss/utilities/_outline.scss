@@ -1,8 +1,0 @@
-// outline width
-@for $size from 0 to 8 {
-  // .opal-outline-0, .opal-outline-1 ...
-  .opal-outline-#{$size} {
-    outline-style: solid;
-    outline-width: #{$size}px;
-  }
-}

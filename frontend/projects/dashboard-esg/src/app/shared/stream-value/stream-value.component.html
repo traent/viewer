@@ -1,0 +1,51 @@
+<ng-container *ngIf="value !== null; else spinner">
+  <ng-container *ngIf="value; else notDefined">
+    <ng-container *ngIf="value | exportedAndDefined; else redactedOrUndefined">
+
+      <ng-container [ngSwitch]="rendering">
+        <ng-container *ngSwitchCase="'default'">
+          <ng-container *ngIf="value.value | exported; else redacted">
+            <span *ngIf="value.value; else notDefined">
+              {{ value.value }}
+            </span>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'currency'">
+          <ng-container *ngIf="(value.value | exported) && (value.configuration | exported); else redacted">
+            <span *ngIf="value.value && value.configuration?.symbol; else notDefined">
+              {{ value.configuration?.symbol }}{{ value.value | apply : formatNumber }}
+            </span>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'more'">
+          <ng-container *ngIf="value.value | exported; else redacted">
+            <span *ngIf="value.value; else notDefined">
+              {{ value.value }}+
+            </span>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+    </ng-container>
+  </ng-container>
+
+</ng-container>
+
+<ng-template #spinner>
+  <mat-spinner diameter="16"></mat-spinner>
+</ng-template>
+
+<ng-template #redactedOrUndefined>
+  <ng-container
+    *ngIf="value | redacted; else notDefined"
+    [ngTemplateOutlet]="redacted"></ng-container>
+</ng-template>
+
+<ng-template #redacted>
+  <div>-</div>
+</ng-template>
+
+<ng-template #notDefined>
+  <div>-</div>
+</ng-template>
+

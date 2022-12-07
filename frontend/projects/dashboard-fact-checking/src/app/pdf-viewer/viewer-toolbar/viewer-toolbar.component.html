@@ -1,0 +1,79 @@
+<ng-container *ngIf="data">
+  <div
+    class="pdf-pages-navigation-popup"
+    [class.opal-d-none]="!navigationPopupVisible"
+    [class.opal-fx-row]="navigationPopupVisible"
+    (clickOutside)="navigationPopupVisible = false">
+    <ng-container *ngFor="let pdfPage of data | apply : getPages | async">
+      <div
+        class="pdf-page"
+        (click)="navigationPopupVisible = false; selectPageHandler(pdfPage)">
+        <div>
+          <app-pdf-page-canvas
+            *ngIf="navigationPopupVisible"
+            [pdfPageProxy]="pdfPage"
+            [zoom]="1/8">
+          </app-pdf-page-canvas>
+        </div>
+        <div class="pdf-page-text">{{ pdfPage.pageNumber }}</div>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
+
+<div class="viewer-toolbar">
+  <ng-container *ngIf="showAnchors">
+    <button
+      [class.active]="anchorMode === 'point'"
+      (click)="anchorModeChange.emit('point')">
+      <mat-icon
+        svgIcon="point-select"
+        class="opal-s-4">
+      </mat-icon>
+    </button>
+    <button
+      [class.active]="anchorMode === 'text-selection'"
+      (click)="anchorModeChange.emit('text-selection')">
+      <mat-icon
+        svgIcon="text-select"
+        class="opal-s-4">
+      </mat-icon>
+    </button>
+  </ng-container>
+
+  <button
+    *ngIf="page !== undefined"
+    mat-button
+    class="pdf-pages-btn"
+    [style.width]="pagesButtonWidth"
+    (click)="navigationPopupVisible = !navigationPopupVisible; $event.stopPropagation()">
+    <div class="pdf-pages-btn-inner">
+      <div>
+        Page {{ page || 1 }}/{{ data?.numPages }}
+      </div>
+      <mat-icon class="opal-s-5">
+        {{ navigationPopupVisible ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+  </button>
+  <button
+    mat-icon-button
+    aria-label="Zoom out"
+    [disabled]="zoom === zoomValues[0]"
+    (click)="changeZoomHandler(-1)">
+    <mat-icon>remove</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    aria-label="Zoom in"
+    [disabled]="zoom === zoomValues[zoomValues.length - 1]"
+    (click)="changeZoomHandler(1)">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    aria-label="Fit page"
+    (click)="fitPageContentHandler()">
+    <mat-icon>fit_screen</mat-icon>
+  </button>
+</div>

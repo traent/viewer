@@ -1,0 +1,26 @@
+<div *ngIf="{ activeTagId: activeTagId$ | async } as resolved">
+  <span class="opal-h4 opal-py-2 opal-d-block opal-text-500 opal-mb-3">{{ 'Mostra documenti' | translate }}</span>
+
+  <div
+    class="opal-h-13 opal-pointer opal-body-1 opal-fx-row opal-fx-justify-between"
+    (click)="clearTagHandler()">
+    <span>{{ 'Tutti' | translate }}</span>
+    <mat-icon
+      *ngIf="resolved.activeTagId === undefined"
+      color="accent">
+      check
+    </mat-icon>
+  </div>
+
+  <div
+    *ngFor="let tag of tags$ | async"
+    class="opal-h-13 opal-pointer opal-body-1 opal-fx-row opal-fx-justify-between"
+    (click)="selectTagHandler(tag)">
+    <span>{{ tag.name }}</span>
+    <mat-icon
+      *ngIf="resolved.activeTagId === tag.id"
+      color="accent">
+      check
+    </mat-icon>
+  </div>
+</div>

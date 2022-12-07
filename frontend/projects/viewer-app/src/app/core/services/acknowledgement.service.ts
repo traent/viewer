@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AcknowledgementStatus, Acknowledgement, BlockAcknowledgementInfo, LedgerPolicyV1 } from '@viewer/models';
-import { b64ToB64UrlEncoding, parsePolicyV1, u8ToBase64, u8ToBase64Url } from '@viewer/utils';
+import { b64ToB64UrlEncoding, isEncapsulation, parsePolicyV1, u8ToBase64, u8ToBase64Url } from '@viewer/utils';
 import { calculateJwkThumbprint } from 'jose';
 
 import { DotNetWrapperService } from './dotnet-wrapper.service';
 import { ValidatedBlock } from './ledger.service';
-import { isEncapsulation } from './storage.service';
 
 type AuthorAcknowledgements = Record<string, Acknowledgement[]>;
 

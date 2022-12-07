@@ -10,6 +10,7 @@ import { ApiModule } from '@api/api.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AuthModule } from 'angular-auth-oidc-client';
+import { NgxT3AnalyticsModule, NgxT3AnalyticsService } from '@traent/ngx-analytics';
 import { NgxT3DialogModule } from '@traent/ngx-dialog';
 import { NgxT3ToastModule } from '@traent/ngx-toast';
 
@@ -71,6 +72,9 @@ const HttpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
     HttpClientModule,
     NgxT3ToastModule,
     NgxT3DialogModule, //todo: this should be removed (a task to investigate further has been created)
+    NgxT3AnalyticsModule.forRoot({
+      developerMode: !environment.enableAnalytics,
+    }),
     ReactiveFormsModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
@@ -90,9 +94,12 @@ const HttpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
 })
 export class AppModule {
   constructor(
+    analyticsService: NgxT3AnalyticsService,
     matIconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
   ) {
+    analyticsService.startTracking();
+
     icons.forEach(([name, path]) => matIconRegistry.addSvgIcon(name, sanitizer.bypassSecurityTrustResourceUrl(path)));
   }
 }
