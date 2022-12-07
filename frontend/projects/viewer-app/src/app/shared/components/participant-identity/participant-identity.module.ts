@@ -1,6 +1,13 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApplyModule, IdentityModule } from '@traent/ngx-components';
+import { NgModule } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  ApplyModule,
+  IdentityModule,
+  ThingAvatarComponent,
+  ThingInlineInfoComponent,
+  ThingInlineTypeComponent,
+} from '@traent/ngx-components';
 
 import { ParticipantIdentityComponent } from './participant-identity.component';
 import { IdentityValidationModule } from '../../identity-validation/identity-validation.module';
@@ -16,6 +23,10 @@ import { IfPersonParticipantModule } from '../if-person-participant/if-person-pa
     IdentityModule,
     IdentityValidationModule,
     IfPersonParticipantModule,
+    ThingAvatarComponent,
+    ThingInlineInfoComponent,
+    ThingInlineTypeComponent,
+    TranslateModule,
   ],
   exports: [
     ParticipantIdentityComponent,

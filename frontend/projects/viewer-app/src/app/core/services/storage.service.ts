@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { unzipRaw } from 'unzipit';
 
+import { DotNetWrapperService } from './dotnet-wrapper.service';
+import { LedgerBlockParseService } from './ledger-block-parse.service';
 import {
   LedgerInfo,
   MissingExportVersionError,
@@ -8,14 +11,12 @@ import {
   UnsupportedVersionError,
   ZipEntry,
 } from '../models';
-import { createReader, Ledger, LedgerStorage } from '../utils';
-import { DotNetWrapperService } from './dotnet-wrapper.service';
-import { LedgerBlockParseService } from './ledger-block-parse.service';
+import { b64ToB64UrlEncoding, createReader, Ledger, LedgerStorage } from '../utils';
 
 const exportLedgerFilename = 'ledger.json';
 
-// NOTE: this is a <ledgerId, ledger> map that will allow us to access the ledger by its id (in the future there will be more than one)
-type LedgersMap = Record<string, Ledger>;
+// `LedgersIndex` is a data type that aims to link each `ledgerId` to its corresponding index inside the `ledgers` array
+type LedgersIndex = Record<string, number>;
 type LedgerStorageMap = Record<string, LedgerStorage>;
 
 // IMPORTANT: this is the core function that needs to:
@@ -27,7 +28,7 @@ type LedgerStorageMap = Record<string, LedgerStorage>;
 //
 // Note: the `ledger.json`'s ledgers change from version 0 to version 1, so we need to implement two different interfaces
 // in particular
-const parseLedgersMap = async (entries: ZipEntry[]): Promise<LedgerStorageMap> => {
+const parseLedgersMap = async (entries: ZipEntry[]): Promise<[number | undefined, LedgerStorageMap]> => {
   const ledgersMap: LedgerStorageMap = {};
   const manifest = entries.find((e) => e.name === exportLedgerFilename);
   if (!manifest) {
@@ -42,8 +43,9 @@ const parseLedgersMap = async (entries: ZipEntry[]): Promise<LedgerStorageMap> =
 
   if (version === 0) {
     // In v0, ledgerInfo has the same information contained in ledger.json
-    ledgersMap[manifestData.address] = new LedgerStorage(version, manifestData, entries);
-    return ledgersMap;
+    const ledgerId = b64ToB64UrlEncoding(manifestData.address);
+    ledgersMap[ledgerId] = new LedgerStorage(version, manifestData, entries);
+    return [0, ledgersMap];
   }
 
   if (version === 1) {
@@ -61,10 +63,11 @@ const parseLedgersMap = async (entries: ZipEntry[]): Promise<LedgerStorageMap> =
         headIndex,
         version: manifestData.version,
       };
-      ledgersMap[address] = new LedgerStorage(version, ledgerInfo, [manifest, ...ledgerEntries], dir);
+      const ledgerId = b64ToB64UrlEncoding(address);
+      ledgersMap[ledgerId] = new LedgerStorage(version, ledgerInfo, [manifest, ...ledgerEntries], dir);
     }
 
-    return ledgersMap;
+    return [manifestData.defaultLedger, ledgersMap];
   }
 
   throw new UnsupportedVersionError(version);
@@ -72,36 +75,58 @@ const parseLedgersMap = async (entries: ZipEntry[]): Promise<LedgerStorageMap> =
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-  ledgersMap: LedgersMap = {};
+  private ledgers: Ledger[] = [];
+  private ledgersIndex: LedgersIndex = {};
+  archiveSize = 0;
+  defaultLedger?: Ledger;
+  exportName?: string;
+
+  readonly ready$ = new Subject<void>();
 
   constructor(
     private readonly dotnet: DotNetWrapperService,
     private readonly parser: LedgerBlockParseService,
   ) { }
 
-  async load(data: Blob | string): Promise<void> {
-    const zipInfo = await unzipRaw(createReader(data));
-    const map = await parseLedgersMap(zipInfo.entries);
-    this.ledgersMap = Object.fromEntries(Object.entries(map).map(([k, v]) => [
-      k,
-      new Ledger({ cryptoProvider: this.dotnet, blockParser: this.parser, ledgerStorage: v }),
-    ]));
+  async load(data: Blob | string, exportName: string): Promise<void> {
+    this.reset();
+
+    const dataReader = createReader(data);
+    const zipInfo = await unzipRaw(dataReader);
+    const [defaultIdx, map] = await parseLedgersMap(zipInfo.entries);
+    for (const [index, [id, ledgerStorage]] of Object.entries(map).entries()) {
+      this.ledgers = [...this.ledgers, new Ledger({ id, cryptoProvider: this.dotnet, blockParser: this.parser, ledgerStorage })];
+      this.ledgersIndex[id] = index;
+    }
+
+    if (defaultIdx !== undefined) {
+      this.defaultLedger = this.ledgers[defaultIdx];
+    } else if (this.ledgers.length === 1) {
+      this.defaultLedger = this.ledgers[0];
+    }
+
+    this.exportName = exportName;
+    this.archiveSize = await dataReader.getLength();
+    this.ready$.next();
   }
 
-  getLedger() {
-    /**
-     * Note: this is a temporary solution.
-     * This will need to change to use an explicit ledger ID instead.
-     */
-    const id = Object.keys(this.ledgersMap)[0];
-    if (id in this.ledgersMap === false) {
+  getLedger(id: string) {
+    if (id in this.ledgersIndex === false) {
       throw new Error(`Ledger ${id} not found`);
     }
 
-    return this.ledgersMap[id];
+    return this.ledgers[this.ledgersIndex[id]];
+  }
+
+  getLedgers() {
+    return [...this.ledgers];
   }
 
   reset(): void {
-    this.ledgersMap = {};
+    this.defaultLedger = undefined;
+    this.exportName = undefined;
+    this.archiveSize = 0;
+    this.ledgers = [];
+    this.ledgersIndex = {};
   }
 }

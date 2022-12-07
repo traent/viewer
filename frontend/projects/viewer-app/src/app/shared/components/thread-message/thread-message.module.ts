@@ -2,11 +2,18 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ApplyModule, ThreadModule, TimeAgoPipeModule, RedactedModule } from '@traent/ngx-components';
+import {
+  ApplyModule,
+  RedactedModule,
+  ThingInlineInfoComponent,
+  ThreadMessageThingAuthorInfoComponent,
+  ThreadModule,
+  TimeAgoPipeModule,
+} from '@traent/ngx-components';
 
+import { ThreadMessageComponent } from './thread-message.component';
 import { AcksIconModule } from '../acks-icon/acks-icon.module';
 import { IfPersonParticipantModule } from '../if-person-participant/if-person-participant.module';
-import { ThreadMessageComponent } from './thread-message.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +27,8 @@ import { ThreadMessageComponent } from './thread-message.component';
     MatButtonModule,
     MatIconModule,
     RedactedModule,
+    ThingInlineInfoComponent,
+    ThreadMessageThingAuthorInfoComponent,
     ThreadModule,
     TimeAgoPipeModule,
   ],

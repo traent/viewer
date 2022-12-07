@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { UIPaginator } from '@traent/ngx-paginator';
 import { ThreadReference } from '@viewer/models';
 import { DocumentSupplier } from '@viewer/services';
-import { UIPaginator } from '@traent/ngx-paginator';
 
 @Component({
   selector: 'app-thread-references',

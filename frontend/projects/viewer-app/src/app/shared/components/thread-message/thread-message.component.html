@@ -6,7 +6,7 @@
   } as resolved">
   <ngx-t3-thread-message
     *ngIf="resolved.threadMessage && (resolved.threadMessage.message | exportedAndDefined)"
-    class="opal-d-block opal-max-w-full"
+    class="tw-block tw-max-w-full"
     [createdAt]="(resolved.threadMessage.createdAt || '') | ago | titlecase"
     [message]="resolved.threadMessage.message"
     [mode]="mode"
@@ -14,30 +14,39 @@
     <ng-container
       *appIfPersonParticipant="resolved.creator; else workflowParticipant"
       author>
-      <ngx-t3-thread-message-author-info
-        *ngIf="{
-          member: resolved.creator && resolved.creator.member$ | async,
-          organization: resolved.creator && resolved.creator.organization$ | async
-        } as creatorDetails"
-        author
-        class="opal-d-block"
-        [class.opal-mb-2]="mode === 'complete'"
-        [avatarSize]="mode === 'complete' ? 'xs' : 'xxs'"
-        [authorName]="creatorDetails.member && creatorDetails.member.fullName"
-        [authorAvatar]="creatorDetails.member && creatorDetails.member.avatar"
-        [authorOrganizationLogo]="creatorDetails.organization && creatorDetails.organization.logo">
-      </ngx-t3-thread-message-author-info>
+      <ng-container *ngIf="{
+        agent: resolved.creator && resolved.creator.agent$ | async,
+        organization: resolved.creator && resolved.creator.organization$ | async
+      } as creatorDetails">
+        <ngx-t3-thread-message-author-info
+          *ngIf="creatorDetails.agent?.agentType !== ViewerAgentType.Thing"
+          class="tw-block"
+          [class.tw-mb-2]="mode === 'complete'"
+          [avatarSize]="mode === 'complete' ? 'xs' : 'xxs'"
+          [authorName]="creatorDetails.agent && creatorDetails.agent.fullName"
+          [authorAvatar]="creatorDetails.agent && creatorDetails.agent.avatar"
+          [authorOrganizationLogo]="creatorDetails.organization && creatorDetails.organization.logo">
+        </ngx-t3-thread-message-author-info>
+
+        <ngx-t3-thread-message-thing-author-info
+          *ngIf="creatorDetails.agent && creatorDetails.agent.agentType === ViewerAgentType.Thing"
+          avatarSize="xs"
+          [thingAvatar]="creatorDetails.agent.avatar"
+          [thingInfo]="creatorDetails.agent.type | apply : getThingTypeInfo"
+          [thingName]="creatorDetails.agent.name"
+          [thingOrganizationLogo]="creatorDetails.organization?.logo"></ngx-t3-thread-message-thing-author-info>
+      </ng-container>
     </ng-container>
     <ng-template #workflowParticipant>
       <ngx-t3-thread-message-workflow-author-info
-        class="opal-d-block"
-        [class.opal-mb-2]="mode === 'complete'"
+        class="tw-block"
+        [class.tw-mb-2]="mode === 'complete'"
         [avatarSize]="mode === 'complete' ? 'xs' : 'xxs'"></ngx-t3-thread-message-workflow-author-info>
     </ng-template>
 
     <ng-container additionalMessageInfo>
       <app-acks-icon
-        class="opal-ml-1 opal-mt-2"
+        class="!tw-ml-1 tw-mt-2"
         [status]="resolved.acksInfo && resolved.acksInfo.status"
         (click)="resolved.threadMessage && openAcknowledgementsDialog(resolved.threadMessage.updatedInBlock)">
       </app-acks-icon>
@@ -48,7 +57,7 @@
       #rendererTemplate>
       <ng-container *ngIf="mode === 'complete' && (resolved.replyTo | exportedAndDefined)">
         <app-thread-message
-          class="opal-fx-g-1 opal-fx-b-0 opal-d-block"
+          class="tw-grow tw-basis-0 tw-block"
           mode="reduced"
           [threadMessage]="resolved.replyTo">
         </app-thread-message>

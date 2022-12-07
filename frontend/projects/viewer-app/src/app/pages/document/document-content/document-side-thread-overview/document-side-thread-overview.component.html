@@ -1,11 +1,11 @@
 <ngx-t3-sidebar-header
-  class="opal-sidebar-header-container"
+  class="tw-t3-sidebar-header-container"
   [backToLabel]="'i18n.Common.thread' | translate"
   [label]="'i18n.Common.threadDetails' | translate"
   (backTo)="router.navigate(['messages'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
 
-<div class="opal-overflow-y-auto opal-pb-3">
+<div class="tw-overflow-y-auto tw-pb-3">
   <app-thread-overview
     *ngIf="{
       thread: thread$ | async,

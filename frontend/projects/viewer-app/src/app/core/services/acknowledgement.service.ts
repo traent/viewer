@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import { AcknowledgementStatus, Acknowledgement, BlockAcknowledgementInfo, LedgerPolicyV1 } from '@viewer/models';
-import { b64ToB64UrlEncoding, isEncapsulation, parsePolicyV1, u8ToBase64, u8ToBase64Url } from '@viewer/utils';
+import { base64ToU8, isEncapsulation, parsePolicyV1, u8ToBase64, u8ToBase64Url } from '@viewer/utils';
 import { calculateJwkThumbprint } from 'jose';
 
 import { DotNetWrapperService } from './dotnet-wrapper.service';
 import { ValidatedBlock } from './ledger.service';
 
 type AuthorAcknowledgements = Record<string, Acknowledgement[]>;
+export type AcknowledgementByAuthor = Record<string, Acknowledgement | undefined>;
+type AcknowledgementContext = {
+  authorKeyIdMap: Record<string, string>;
+  policy: LedgerPolicyV1;
+  contextHeadIndex: number;
+  state: AuthorAcknowledgements;
+};
 
 const getAck = (block: Ledger.Parser.Block) => block.type === 'Ack' ? block : undefined;
 
-const isInContext = (block: Ledger.Parser.Block) => {
+const isUpdatingContext = (block: Ledger.Parser.Block) => {
   while (isEncapsulation(block)) {
-    if (block.type === 'InContext') {
+    if (block.type === 'UpdateContext') {
       return true;
     }
     block = block.inner;
@@ -34,31 +41,43 @@ const getAuthorKeyThumbprint = async (key: Uint8Array | string): Promise<string>
 
 @Injectable({ providedIn: 'root' })
 export class AcknowledgementService {
-  private state?: AuthorAcknowledgements;
-  private authorKeyIdMap: Record<string, string> = {};
-  private policy?: LedgerPolicyV1;
-  private ledgerId?: Uint8Array;
+  private contextCollection: Record<string, AcknowledgementContext> = {};
 
   constructor(private readonly dotnet: DotNetWrapperService) { }
 
-  private getState() {
-    if (!this.state) {
+  private getState(ledgerId: string) {
+    const state = this.contextCollection[ledgerId] && this.contextCollection[ledgerId].state;
+    if (!state) {
       throw new Error('No state available');
     }
 
-    return this.state;
+    return state;
   }
 
-  async appendBlock({ block, blockIndex, terminalBlock }: ValidatedBlock) {
-    if (blockIndex === 0) {
-      this.state = {};
+  async appendBlock({ ledgerId, block, blockIndex, terminalBlock }: ValidatedBlock) {
+    if (block.type === 'Policy') {
+      const policy = parsePolicyV1(block);
+      this.contextCollection[ledgerId] = {
+        authorKeyIdMap: {},
+        state: {},
+        contextHeadIndex: blockIndex,
+        policy,
+      };
+
+      return await this.addAuthors(ledgerId, this.contextCollection[ledgerId], policy.AuthorKeys);
+    }
+
+    const context = this.contextCollection[ledgerId];
+    const updatedContext = isUpdatingContext(block);
+    if (updatedContext) {
+      context.contextHeadIndex = blockIndex;
     }
 
     if (block.type === 'AuthorSignature') {
-      const target = isInContext(block) ? blockIndex : getAck(terminalBlock)?.targetIndex;
+      const target = updatedContext ? blockIndex : getAck(terminalBlock)?.targetIndex;
       if (target !== undefined) {
         const authorId = u8ToBase64(block.authorId);
-        const state = this.getState();
+        const state = this.getState(ledgerId);
         const acks = state[authorId] ??= [];
 
         acks.push({
@@ -66,49 +85,34 @@ export class AcknowledgementService {
           targetBlock: target,
         });
       }
-    } else if (block.type === 'Policy') {
-      this.policy = parsePolicyV1(block);
-      this.ledgerId = await this.dotnet.compuleLedgerId(this.policy.LedgerPublicKey);
-
-      await this.addAuthors(this.policy.AuthorKeys);
     }
 
     if (terminalBlock.type === 'AddAuthors') {
-      await this.addAuthors(terminalBlock.authorKeys);
+      await this.addAuthors(ledgerId, context, terminalBlock.authorKeys);
     }
   }
 
-  private async addAuthors(authorKeys: Array<Uint8Array | string>) {
-    if (!this.policy) {
-      throw new Error('Policy missing during authors key id generation');
-    }
-
-    if (!this.ledgerId) {
-      throw new Error('Ledger id missing during authors key id generation');
-    }
-
+  private async addAuthors(ledgerId: string, context: AcknowledgementContext, authorKeys: Array<Uint8Array | string>) {
+    const ledgerIdU8 = base64ToU8(ledgerId);
     for (const authorKey of authorKeys) {
       const [authorKeyThumbprint, authorId] = await Promise.all([
         getAuthorKeyThumbprint(authorKey),
-        this.dotnet.computeHash(this.ledgerId, this.policy.HashingAlgorithm, authorKey),
+        this.dotnet.computeHash(ledgerIdU8, context.policy.HashingAlgorithm, authorKey),
       ]);
-      this.authorKeyIdMap[u8ToBase64Url(authorId)] = authorKeyThumbprint;
+      context.authorKeyIdMap[u8ToBase64(authorId)] = authorKeyThumbprint;
     }
   }
 
   reset() {
-    this.authorKeyIdMap = {};
-    this.ledgerId = undefined;
-    this.policy = undefined;
-    this.state = undefined;
+    this.contextCollection = {};
   }
 
-  getAuthorKeyId(authorId: string): string | undefined {
-    return this.authorKeyIdMap[b64ToB64UrlEncoding(authorId)];
+  getAuthorKeyId(ledgerId: string, authorId: string): string | undefined {
+    return this.contextCollection[ledgerId].authorKeyIdMap[authorId];
   }
 
-  async getAcknowledgementStatus(blockIndex: number): Promise<BlockAcknowledgementInfo> {
-    const lastAcknowledgementsList = Object.values(await this.getLatestAcknowledgements());
+  async getAcknowledgementStatus(ledgerId: string, blockIndex: number): Promise<BlockAcknowledgementInfo> {
+    const lastAcknowledgementsList = Object.values(await this.getLatestAcknowledgements(ledgerId));
     const receivedAcknowledgements = lastAcknowledgementsList
       .filter((acknowledge) => acknowledge !== undefined && acknowledge.targetBlock >= blockIndex)
       .length;
@@ -124,9 +128,9 @@ export class AcknowledgementService {
     };
   }
 
-  async getAcknowledgements(blockIndex: number) {
-    const state = this.getState();
-    const result: Record<string, Acknowledgement | undefined> = {};
+  async getAcknowledgements(ledgerId: string, blockIndex: number) {
+    const state = this.getState(ledgerId);
+    const result: AcknowledgementByAuthor = {};
     for (const authorId of Object.keys(state)) {
       const acknowledgements = state[authorId];
       const ack = acknowledgements.find(({ targetBlock }) => targetBlock >= blockIndex);
@@ -135,9 +139,13 @@ export class AcknowledgementService {
     return result;
   }
 
-  async getLatestAcknowledgements() {
-    const state = this.getState();
-    const result: Record<string, Acknowledgement | undefined> = {};
+  async getContextHead(ledgerId: string): Promise<number | undefined> {
+    return this.contextCollection[ledgerId]?.contextHeadIndex;
+  }
+
+  async getLatestAcknowledgements(ledgerId: string) {
+    const state = this.getState(ledgerId);
+    const result: AcknowledgementByAuthor = {};
     for (const authorId of Object.keys(state)) {
       const acknowledges = state[authorId];
       result[authorId] = acknowledges[acknowledges.length - 1];

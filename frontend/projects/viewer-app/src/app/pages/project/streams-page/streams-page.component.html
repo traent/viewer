@@ -1,35 +1,35 @@
-<div class="opal-s-full opal-fx-row">
-  <div class="opal-mr-6 opal-w-80 opal-fx-s-0 opal-overflow-y-auto opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200">
+<div class="tw-w-full tw-h-full tw-flex tw-flex-row">
+  <div class="tw-mr-6 tw-w-80 tw-shrink-0 tw-overflow-y-auto tw-bg-white !tw-rounded-lg tw-border tw-border-neutral-200">
     <ngx-t3-tabs
       *ngIf="type$ | async as type"
-      class="opal-fx-col opal-fx-align-stretch">
+      class="tw-flex tw-flex-col tw-items-stretch">
       <ngx-t3-tab-item
-        class="opal-h-12 opal-fx-row opal-fx-justify-start opal-mx-0 opal-border-b-1 opal-border-grey-200 opal-radius-0"
+        class="!tw-h-12 tw-flex tw-flex-row !tw-justify-start !tw-mx-0 tw-border-b tw-border-neutral-200 tw-rounded-none"
         routerLink="."
         queryParamsHandling="merge"
         [queryParams]="{ type: 'all' }"
         [class.active]="type === 'all'">
         <ngx-t3-icon
-          iconClass="opal-s-6 opal-mr-2"
+          iconClass="tw-w-6 tw-h-6 tw-mr-2"
           aria-label="all streams"
           [icon]="{ custom: 'stream-overview'}">
         </ngx-t3-icon>
-        <span class="opal-text-capitalize opal-h5">{{ 'i18n.Common.all' | translate }}</span>
+        <span class="tw-capitalize tw-h5">{{ 'i18n.Common.all' | translate }}</span>
       </ngx-t3-tab-item>
 
       <ng-container *ngFor="let item of printableStreamTypes | keyvalue">
         <ngx-t3-tab-item
-          class="opal-h-12 opal-fx-row opal-fx-justify-start opal-mx-0 opal-border-b-1 opal-border-grey-200 opal-radius-0"
+          class="!tw-h-12 tw-flex tw-flex-row !tw-justify-start !tw-mx-0 tw-border-b tw-border-neutral-200 tw-rounded-none"
           routerLink="."
           queryParamsHandling="merge"
           [queryParams]="{ type: item.key}"
           [class.active]="type === item.key">
           <ngx-t3-icon
-            iconClass="opal-s-6 opal-mr-2"
+            iconClass="tw-w-6 tw-h-6 tw-mr-2"
             [icon]="$any(item.key) | apply : getStreamTypeIcon"
             [attr.aria-label]="item.key">
           </ngx-t3-icon>
-          <span class="opal-text-capitalize opal-h5">{{ item.value }}</span>
+          <span class="tw-capitalize tw-h5">{{ item.value }}</span>
         </ngx-t3-tab-item>
       </ng-container>
 
@@ -38,14 +38,15 @@
 
   <ng-container *ngIf="{
       stream: stream$ | async,
-      type: type$ | async
+      type: type$ | async,
+      streamIdSelected: streamIdSelected$ | async
     } as resolved">
     <ngx-t3-table-container
       *ngIf="{
         dataSource: resolved.stream?.items || [],
         isEmpty: (resolved.stream?.items || []).length === 0
       } as tableProps"
-      class="opal-fx-g-1"
+      class="tw-min-w-[850px] tw-grow"
       [isLoading]="isLoading">
       <mat-table
         matSort
@@ -53,7 +54,7 @@
         (matSortChange)="sortEvent$.next($event)">
 
         <ng-template #redacted>
-          <div class="redacted opal-w-full">
+          <div class="redacted tw-w-full">
             {{ 'i18n.Common.redacted' | translate }}
           </div>
         </ng-template>
@@ -63,32 +64,32 @@
             *matHeaderCellDef
             mat-sort-header
             sortActionDescription="Sort by name">
-            <span class="opal-overline">
+            <span class="tw-t3-text-overline">
               {{ 'i18n.Common.name' | translate }}
             </span>
           </mat-header-cell>
           <mat-cell *matCellDef="let item">
-            <div class="opal-fx-row opal-fx-align-center opal-w-full">
+            <div class="tw-flex tw-flex-row tw-items-center tw-w-full">
               <div
                 *ngIf="item.data.type | exported; else redactedStreamIcon"
-                class="opal-s-5 opal-radius-4 opal-bg-blue-100 opal-mr-3 stream-icon-container">
+                class="tw-w-5 tw-h-5 !tw-rounded tw-bg-blue-100 tw-mr-3 stream-icon-container">
                 <ngx-t3-icon
-                  iconClass="opal-s-4 opal-text-blue-500"
+                  iconClass="tw-w-4 tw-h-4 tw-text-blue-500"
                   [icon]="item.data.type | apply : getStreamTypeIcon"
                   [attr.aria-label]="item.data.type">
                 </ngx-t3-icon>
               </div>
               <ng-template #redactedStreamIcon>
-                <div class="opal-s-5 opal-radius-4 opal-bg-grey-100 opal-mr-3 stream-icon-container">
+                <div class="tw-w-5 tw-h-5 !tw-rounded tw-bg-neutral-100 tw-mr-3 stream-icon-container">
                   <ngx-t3-icon
-                    iconClass="opal-s-4 opal-text-grey-300"
+                    iconClass="tw-w-4 tw-h-4 tw-text-neutral-300"
                     [icon]="{ material: 'help' }">
                   </ngx-t3-icon>
                 </div>
               </ng-template>
               <div
                 *ngIf="item.data.name | exported; else redacted"
-                class="opal-pr-2 opal-w-full opal-body-2 opal-ellipsed">
+                class="tw-pr-2 tw-w-full tw-text-sm tw-truncate">
                 {{ item.data.name | noValueLabel }}
               </div>
             </div>
@@ -100,14 +101,14 @@
             *matHeaderCellDef
             mat-sort-header
             sortActionDescription="Sort by machine name">
-            <span class="opal-overline">
+            <span class="tw-t3-text-overline">
               {{ 'i18n.Common.machineName' | translate }}
             </span>
           </mat-header-cell>
           <mat-cell *matCellDef="let item">
             <div
               *ngIf="item.data.machineName | exported; else redacted"
-              class="opal-w-full opal-body-2 opal-ellipsed">
+              class="tw-w-full tw-text-sm tw-truncate">
               {{ item.data.machineName | noValueLabel }}
             </div>
           </mat-cell>
@@ -118,15 +119,14 @@
             *matHeaderCellDef
             mat-sort-header
             sortActionDescription="Sort by value">
-            <span class="opal-overline">
+            <span class="tw-t3-text-overline">
               {{ 'i18n.Common.value' | translate }}
             </span>
           </mat-header-cell>
           <mat-cell *matCellDef="let item">
-            <div class="opal-w-full">
+            <div class="tw-w-full">
               <ngx-t3-stream-value-renderer
-                *ngIf="item.data.type !== 'approval'"
-                class="opal-d-block opal-my-2 opal-mr-2"
+                class="tw-block tw-my-2 tw-mr-2"
                 [multiline]="false"
                 [value]="item.data.value"
                 [type]="item.data.type"
@@ -144,40 +144,43 @@
 
         <mat-col matColumnDef="class">
           <mat-header-cell *matHeaderCellDef>
-            <span class="opal-overline">
+            <span class="tw-t3-text-overline">
               {{ 'i18n.Common.classes' | translate }}
             </span>
           </mat-header-cell>
-          <mat-cell *matCellDef="let item">
+          <mat-cell
+            *matCellDef="let item"
+            class="tw-min-w-[220px]">
             <div
               *ngIf="{
                 classes: $any(item.classes$ | async),
                 ackInfo: $any(item.ackInfo$ | async)
               } as resolved"
-              class="opal-w-full opal-fx-row opal-fx-align-center">
+              class="tw-w-full tw-flex tw-flex-row tw-items-center">
               <div
                 *ngIf="resolved.classes as classes"
-                class="opal-fx-g-1 opal-ellipsed">
+                class="tw-grow tw-truncate">
                 <div *ngIf="classes.length !== 0">
                   <ngx-t3-tag-group
-                    class="opal-text-nowrap opal-fx-row opal-fx-g-0"
+                    class="tw-whitespace-nowrap tw-flex tw-gap-1"
                     [count]="classes.length"
                     [limit]="2">
                     <app-redactable-tag
                       *ngFor="let class of $any(classes | slice : 0 : 2)"
                       innerClasses="bg-grey-100"
                       class="t3-tag-like"
-                      [tagName]="class?.name"></app-redactable-tag>
+                      [tagName]="class?.name"
+                      [color]="class?.color"></app-redactable-tag>
                   </ngx-t3-tag-group>
                 </div>
                 <div *ngIf="resolved.classes.length === 0">
-                  <span class="opal-text-grey-400 opal-text-style-italic">
+                  <span class="tw-text-neutral-400 tw-italic">
                     {{ 'i18n.Project.Stream.Common.noClasses' | translate }}
                   </span>
                 </div>
               </div>
               <app-acks-icon
-                class="opal-mt-1"
+                class="tw-mt-1"
                 [status]="resolved.ackInfo && resolved.ackInfo.status"
                 (click)="openAcknowledgementsDialog(item.data.updatedInBlock)">
               </app-acks-icon>
@@ -187,12 +190,13 @@
 
         <mat-header-row
           *matHeaderRowDef="[ 'name', 'machine-name', 'value', 'class' ]; sticky: true"
-          class="opal-w-full"></mat-header-row>
+          class="tw-w-full"></mat-header-row>
         <mat-row
           *matRowDef="let item; columns: [ 'name', 'machine-name', 'value', 'class' ];"
-          class="opal-pointer opal-w-full"
+          class="tw-cursor-pointer tw-w-full"
           queryParamsHandling="preserve"
-          routerLinkActive="bg-accent-100"
+          routerLinkActive="active"
+          [class.tw-bg-accent-100]="resolved.streamIdSelected === item.data.id"
           [routerLink]="['/project', 'streams', {
               outlets: {
                 aside: [item.data.id],
@@ -209,7 +213,7 @@
         [description]="(
           resolved.type === 'all' ?
           'i18n.Common.noStreams' :
-          'i18n.Common.noStreamsType') | translate : {type: resolved.type} ">
+          'i18n.Common.noStreamsType') | translate : { type: resolved.type } ">
       </ngx-t3-empty-state>
 
       <ngx-t3-table-paginator

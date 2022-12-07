@@ -1,5 +1,5 @@
-import { DocumentReferencesMap, ReferenceItem } from '@viewer/models';
 import { isExportedAndDefined } from '@traent/ngx-components';
+import { DocumentReferencesMap, ReferenceItem } from '@viewer/models';
 
 export const referencesByDoc = (references: Array<ReferenceItem | null>): Array<DocumentReferencesMap> => {
   const obj: { [key: string]: DocumentReferencesMap } = {};

@@ -1,0 +1,10 @@
+<div
+  *ngIf="viewUrl$ | async as src"
+  class="tw-h-full tw-flex tw-flex-col">
+  <iframe
+    class="tw-h-full"
+    [class.tw-hidden]="!loaded"
+    [src]="src"
+    (load)="loadHandler($event)">
+  </iframe>
+</div>

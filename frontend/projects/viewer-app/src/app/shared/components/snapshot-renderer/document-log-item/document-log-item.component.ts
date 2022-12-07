@@ -1,10 +1,10 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { MaterialOrCustomIcon } from '@traent/ngx-components';
-import { BehaviorSubject, Observable, combineLatest, firstValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { DocumentV0 } from '@ledger-objects';
+import { MaterialOrCustomIcon } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { DocumentSnapshot, LogItemImage } from '@viewer/models';
+import { parseDocument, ProjectParticipantService } from '@viewer/services';
 import {
   snapshotParticipantLabel,
   getChanges,
@@ -13,8 +13,8 @@ import {
   redactedValue,
   snapshotContent,
 } from '@viewer/utils';
-import { DocumentV0 } from '@ledger-objects';
-import { DocumentService, ProjectParticipantService } from '@viewer/services';
+import { BehaviorSubject, Observable, combineLatest, firstValueFrom } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { DocumentLogDialogComponent } from '../../document-log-dialog/document-log-dialog.component';
 
@@ -42,8 +42,16 @@ const getIsDocumentRename = (snapshot: DocumentSnapshot) => snapshot.operation =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
   private readonly snapshot$ = new BehaviorSubject<DocumentSnapshot | null>(null);
-  @Input() set snapshot(value: DocumentSnapshot | null){
+  @Input() set snapshot(value: DocumentSnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
@@ -54,21 +62,23 @@ export class DocumentLogItemComponent {
     isNotNullOrUndefined(),
     map((snapshot) => ({
       type: 'icon',
-      bgColor: 'opal-bg-grey-100',
-      textColor: 'opal-text-grey-500',
+      bgColor: 'tw-bg-red-100',
+      textColor: 'tw-text-red-500',
       icon: getIconValue(snapshot),
     })),
   );
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([
@@ -97,15 +107,15 @@ export class DocumentLogItemComponent {
 
   constructor(
     private readonly dialog: MatDialog,
-    private readonly documentService: DocumentService,
     private readonly projectParticipantService: ProjectParticipantService,
   ) { }
 
-  async clickHandler(pointerClasses: string, snapshot: DocumentSnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: DocumentSnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'document' && snapshot) {
+      const document = parseDocument(snapshotContent<DocumentV0>(snapshot));
       await firstValueFrom(this.dialog.open(DocumentLogDialogComponent, {
-        data: this.documentService.parseDocument(snapshotContent<DocumentV0>(snapshot)),
-        panelClass: 'opal-w-600px',
+        data: { ledgerId, document },
+        panelClass: 'tw-w-[600px]',
       }).afterClosed());
     }
   }

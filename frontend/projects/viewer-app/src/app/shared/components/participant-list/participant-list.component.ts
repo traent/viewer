@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ProjectParticipant } from '@viewer/models';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { ProjectParticipant } from '@viewer/models';
 
 @Component({
   selector: 'app-participant-list',

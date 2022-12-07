@@ -1,9 +1,9 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { ThreadV0 } from '@ledger-objects';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { LogItemImage, ThreadSnapshot } from '@viewer/models';
+import { parseThread, ProjectParticipantService } from '@viewer/services';
 import {
   getProjectParticipantId,
   redactedClass,
@@ -11,8 +11,8 @@ import {
   snapshotContent,
   snapshotParticipantLabel,
 } from '@viewer/utils';
-import { parseThread, ProjectParticipantService } from '@viewer/services';
-import { ThreadV0 } from '@ledger-objects';
+import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { ThreadLogDialogComponent } from '../../thread-log-dialog/thread-log-dialog.component';
 
@@ -41,8 +41,16 @@ const getThreadUpdateLabel = (type: 'name' | 'resolved' | 'unresolved' | 'generi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThreadLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
   private readonly snapshot$ = new BehaviorSubject<ThreadSnapshot | null>(null);
-  @Input() set snapshot(value: ThreadSnapshot | null){
+  @Input() set snapshot(value: ThreadSnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
@@ -52,19 +60,21 @@ export class ThreadLogItemComponent {
   readonly itemImage: LogItemImage = {
     type: 'icon',
     icon: { custom: 'thread-reference' },
-    bgColor: 'opal-bg-ottanio-100',
-    textColor: 'opal-text-ottanio-600',
+    bgColor: 'tw-bg-cyan-100',
+    textColor: 'tw-text-cyan-600',
   };
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([
@@ -97,11 +107,12 @@ export class ThreadLogItemComponent {
     private readonly projectParticipantService: ProjectParticipantService,
   ) { }
 
-  async clickHandler(pointerClasses: string, snapshot: ThreadSnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: ThreadSnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'thread' && snapshot) {
+      const thread = parseThread(snapshotContent<ThreadV0>(snapshot));
       await firstValueFrom(this.dialog.open(ThreadLogDialogComponent, {
-        data: parseThread(snapshotContent<ThreadV0>(snapshot)),
-        panelClass: 'opal-w-600px',
+        data: { ledgerId, thread },
+        panelClass: 'tw-w-[600px]',
       }).afterClosed());
     }
   }

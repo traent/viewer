@@ -1,8 +1,8 @@
 <div
   *ngIf="references; else skeleton"
-  class="opal-overflow-y-auto opal-fx-g-1">
+  class="tw-overflow-y-auto tw-grow">
 
-  <div class="opal-fx-row opal-mx-4 opal-mb-3 opal-body-2">
+  <div class="tw-flex tw-flex-row tw-mx-4 tw-mb-3 tw-text-sm">
     {{ 'i18n.Common.streamReferenced' | translate }}
   </div>
 
@@ -16,5 +16,5 @@
 </div>
 
 <ng-template #skeleton>
-  <ngx-t3-skeleton class="opal-h-4 opal-w-full opal-mx-n-4 opal-py-3 opal-mx-n-4"></ngx-t3-skeleton>
+  <ngx-t3-skeleton class="tw-h-4 tw-w-full tw--mx-4 tw-py-3 tw--mx-4"></ngx-t3-skeleton>
 </ng-template>

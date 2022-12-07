@@ -1,20 +1,20 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { isExportedAndDefined } from '@traent/ngx-components';
-import { of, BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { LogItemImage, ProjectParticipant, ProjectParticipantSnapshot, WorkflowParticipant } from '@viewer/models';
-import { redactedClass, redactedValue, roleToLabel, snapshotContent, snapshotParticipantLabel, workflowSnapshotImage } from '@viewer/utils';
-import { MemberService, ProjectParticipantService } from '@viewer/services';
 import { ProjectParticipantV0 } from '@ledger-objects';
+import { isExportedAndDefined } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { LogItemImage, ProjectParticipant, ProjectParticipantSnapshot, WorkflowParticipant } from '@viewer/models';
+import { AgentService, ProjectParticipantService } from '@viewer/services';
+import { redactedClass, redactedValue, roleToLabel, snapshotContent, snapshotParticipantLabel, workflowSnapshotImage } from '@viewer/utils';
+import { of, BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 const getIcon = (operation: string, participant?: ProjectParticipant): Observable<LogItemImage> => {
   if (!participant) {
     return of({
       type: 'doubleAvatar',
       icon: { material: operation === 'update' ? 'star' : 'chat' },
-      bgColor: 'opal-bg-blue-600',
-      textColor: 'opal-text-white',
+      bgColor: 'tw-bg-blue-600',
+      textColor: 'tw-text-white',
       src: undefined,
     });
   }
@@ -23,13 +23,18 @@ const getIcon = (operation: string, participant?: ProjectParticipant): Observabl
     return of(workflowSnapshotImage);
   }
 
-  return participant.member$.pipe(
+  return participant.agent$.pipe(
     map((p) => ({
       type: 'doubleAvatar',
       icon: { material: operation === 'update' ? 'star' : 'chat' },
-      bgColor: 'opal-bg-blue-600',
-      textColor: 'opal-text-white',
-      src: p?.avatar,
+      bgColor: 'tw-bg-blue-600',
+      textColor: 'tw-text-white',
+      src: p?.avatar
+        ?? p?.type
+        ? {
+          custom: 'things',
+        }
+        : undefined,
     })),
   );
 };
@@ -40,32 +45,37 @@ const getIcon = (operation: string, participant?: ProjectParticipant): Observabl
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipantLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+
   private readonly snapshot$ = new BehaviorSubject<ProjectParticipantSnapshot | null>(null);
-  @Input() set snapshot(value: ProjectParticipantSnapshot | null){
+  @Input() set snapshot(value: ProjectParticipantSnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
     return this.snapshot$.value;
   }
 
-  readonly invitee$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap((snapshot) => this.getParticipant(snapshot)),
-  );
+  private readonly invitee$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(switchMap(([ledgerId, snapshot]) => this.getParticipant(snapshot, ledgerId)));
 
-  readonly inviteeMember$ = this.invitee$.pipe(
-    switchMap((invitee) => snapshotParticipantLabel(invitee)),
-  );
+  private readonly inviteeMember$ = this.invitee$.pipe(switchMap(snapshotParticipantLabel));
 
-  readonly inviterMember$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly inviterMember$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const obj = snapshotContent<ProjectParticipantV0>(snapshot);
       return isExportedAndDefined(obj.creatorId)
-        ? await this.projectParticipantService.getProjectParticipant(obj.creatorId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: obj.creatorId })
         : undefined;
     }),
-    switchMap((inviter) => snapshotParticipantLabel(inviter)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly itemImage$ = combineLatest([
@@ -90,13 +100,13 @@ export class ParticipantLogItemComponent {
   );
 
   constructor(
-    protected readonly memberService: MemberService,
+    protected readonly agentService: AgentService,
     protected readonly projectParticipantService: ProjectParticipantService,
   ) { }
 
   // FIXME when snapshot.delta will hold participantId
-  async getParticipant(snapshot: ProjectParticipantSnapshot): Promise<ProjectParticipant | undefined> {
-    const participants = await this.projectParticipantService.getProjectParticipantCollection();
+  async getParticipant(snapshot: ProjectParticipantSnapshot, ledgerId?: string): Promise<ProjectParticipant | undefined> {
+    const participants = await this.projectParticipantService.getProjectParticipantCollection({ ledgerId, page: 1 });
     const projectParticipant = participants.items
       .find((participant) => participant.memberId === snapshot.delta.memberId);
     return projectParticipant;

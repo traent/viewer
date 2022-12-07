@@ -1,0 +1,12 @@
+<ngx-t3-sidebar-header
+  class="tw-t3-sidebar-header-container"
+  [label]="'i18n.Common.collaborators' | translate"
+  [backToLabel]="'i18n.Common.backProjectInfo' | translate"
+  (backTo)="router.navigate(['..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
+</ngx-t3-sidebar-header>
+
+<ng-container *ngIf="{ ledgerId: ledgerId$ | async } as resolved">
+  <app-project-side-participants-list
+    *ngIf="resolved.ledgerId !== null"
+    [ledgerId]="resolved.ledgerId"></app-project-side-participants-list>
+</ng-container>

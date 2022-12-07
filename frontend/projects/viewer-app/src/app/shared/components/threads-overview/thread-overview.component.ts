@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { isExported, isExportedAndDefined } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Thread } from '@viewer/models';
-import { ProjectParticipantService, ThreadService, AcknowledgementService } from '@viewer/services';
+import { ProjectParticipantService, ThreadService, LedgerAccessorService } from '@viewer/services';
 import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
 import { BehaviorSubject, switchMap } from 'rxjs';
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 
 @Component({
   selector: 'app-thread-overview',
@@ -25,13 +25,13 @@ export class ThreadOverviewComponent {
 
   readonly blockAcknowledgementsInfo$ = this.thread$.pipe(
     isNotNullOrUndefined(),
-    switchMap((thread) => this.acknowledgementService.getAcknowledgementStatus(thread.updatedInBlock.index)),
+    switchMap((thread) => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(thread.updatedInBlock.index)),
   );
 
   readonly editor$ = this.thread$.pipe(
     isNotNullOrUndefined(),
     switchMap(async (thread) => isExported(thread.updaterId)
-      ? this.projectParticipantService.getProjectParticipant(thread.updaterId)
+      ? this.projectParticipantService.getProjectParticipant({ id: thread.updaterId })
       : undefined,
     ),
   );
@@ -39,7 +39,7 @@ export class ThreadOverviewComponent {
   readonly assignee$ = this.thread$.pipe(
     isNotNullOrUndefined(),
     switchMap(async (thread) => isExportedAndDefined(thread.assigneeId)
-      ? this.projectParticipantService.getProjectParticipant(thread.assigneeId)
+      ? this.projectParticipantService.getProjectParticipant({ id: thread.assigneeId })
       : undefined,
     ),
   );
@@ -51,8 +51,8 @@ export class ThreadOverviewComponent {
   @Output() referencesClick = new EventEmitter<void>();
 
   constructor(
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
-    readonly acknowledgementService: AcknowledgementService,
     readonly dialog: MatDialog,
     readonly threadService: ThreadService,
   ) { }

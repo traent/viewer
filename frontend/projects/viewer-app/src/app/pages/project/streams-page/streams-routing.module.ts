@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { projectSideBarRoutes } from '../project-routing.module';
-import { StreamsPageComponent } from './streams-page.component';
 import { StreamSideLogComponent } from './stream-side-log/stream-side-log.component';
 import { StreamSideOverviewComponent } from './stream-side-overview/stream-side-overview.component';
 import { StreamSideReferenceComponent } from './stream-side-reference/stream-side-reference.component';
 import { StreamSidebarComponent } from './stream-sidebar/stream-sidebar.component';
+import { StreamsPageComponent } from './streams-page.component';
+import { projectSideBarRoutes } from '../project-routing.module';
 
 const routes: Routes = [
   ...projectSideBarRoutes,

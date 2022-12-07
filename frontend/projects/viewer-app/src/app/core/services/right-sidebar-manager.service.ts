@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { isNotNullOrUndefined, required } from '@traent/ts-utils';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Note: this is a copy of the OrgApp's sidebar manager service. It could be moved to a shared library.

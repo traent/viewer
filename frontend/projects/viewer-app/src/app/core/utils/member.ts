@@ -1,23 +1,16 @@
-import { ViewerMember as MemberApiModel } from '@api/models';
-import { Member } from '@viewer/models';
+import { ViewerAgentType } from '@api/models';
 import { Chance } from 'chance';
 
-export const parseMember = (m: MemberApiModel): Member => ({
-  ...m,
-  mock: false,
-  shortName: `${m.firstName} ${m.lastName[0]}.`,
-  fullName: `${m.firstName} ${m.lastName}`,
-  jobTitle: m.jobTitle || undefined,
-});
+import { Agent } from '../models/agent';
 
-
-export const generateMember = (id: string, participantId: string): Member => {
+export const generateMember = (id: string, participantId: string): Partial<Agent> => {
   const chance = new Chance(participantId);
   const firstName = 'User';
   const lastName = id;
   const fullName = `${firstName} ${lastName}`;
   return {
     id: participantId,
+    agentType: ViewerAgentType.Member,
     mock: true,
     fullName,
     shortName: fullName,

@@ -16,7 +16,7 @@ ngx-t3-with-sidebar {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background-color: theme("colors.grey.200");
+  background-color: var(--tw-neutral-200);
   border-radius: 12px;
   letter-spacing: 0;
   padding-top: 1px;

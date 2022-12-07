@@ -16,12 +16,12 @@ import {
   TagModule,
 } from '@traent/ngx-components';
 
-import { AcknowledgmentsDialogModule } from '../../dialogs/acknowledgments-dialog/acknowledgements-dialog.module';
-import { AcksStatusModule } from '../acks-status/acks-status.module';
 import { StreamOverviewComponent } from './stream-overview.component';
+import { AcknowledgmentsDialogModule } from '../../dialogs/acknowledgments-dialog/acknowledgements-dialog.module';
 import { Uint8PipeModule } from '../../uint8/uint8.module';
-import { RedactableTagModule } from '../redactable-tag/redactable-tag.module';
+import { AcksStatusModule } from '../acks-status/acks-status.module';
 import { ParticipantIdentityModule } from '../participant-identity/participant-identity.module';
+import { RedactableTagModule } from '../redactable-tag/redactable-tag.module';
 
 @NgModule({
   declarations: [

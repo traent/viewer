@@ -9,6 +9,7 @@ import { isRedacted, Redactable } from '@traent/ngx-components';
 export class RedactableTagComponent {
   @Input() innerClasses?: string | string[];
   @Input() tagName?: Redactable<string>;
+  @Input() color?: Redactable<string>;
 
   get tooltipLabel(): string {
     if (isRedacted(this.tagName)) {

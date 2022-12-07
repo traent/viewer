@@ -1,0 +1,25 @@
+FROM --platform=${BUILDPLATFORM:-linux} node:16 as node-builder
+
+# The actual Viewer
+ARG TARGET_PROJECT
+
+WORKDIR /viewer/frontend
+
+ENV NODE_OPTIONS=--max_old_space_size=4096
+ARG CONFIGURATION
+ARG NPM_AUTH_TOKEN
+
+COPY viewer/frontend/projects ./projects
+COPY viewer/frontend/package.json viewer/frontend/package-lock.json viewer/frontend/.npmrc ./
+COPY viewer/frontend/angular.json apps/tsconfig.json ./
+COPY viewer/frontend/git-version.json ./
+RUN npm ci
+
+COPY viewer/frontend/i18n-cache-busting.js ./
+RUN npm run i18n:cache-busting -- ${TARGET_PROJECT}
+
+RUN npm run build -- --project=${TARGET_PROJECT} --configuration=${CONFIGURATION}
+
+FROM nginx
+COPY --from=node-builder /viewer/frontend/dist/${TARGET_PROJECT} /
+CMD ls

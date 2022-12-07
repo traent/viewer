@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
 } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Observable, switchMap } from 'rxjs';
 
 @Injectable()
 export class ApiOauthInterceptor implements HttpInterceptor {

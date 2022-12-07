@@ -13,11 +13,11 @@ import {
   SkeletonModule,
 } from '@traent/ngx-components';
 
+import { ThreadOverviewComponent } from './thread-overview.component';
 import { AcknowledgmentsDialogModule } from '../../dialogs/acknowledgments-dialog/acknowledgements-dialog.module';
 import { Uint8PipeModule } from '../../uint8/uint8.module';
 import { AcksStatusModule } from '../acks-status/acks-status.module';
 import { ParticipantIdentityModule } from '../participant-identity/participant-identity.module';
-import { ThreadOverviewComponent } from './thread-overview.component';
 
 @NgModule({
   declarations: [

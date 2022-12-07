@@ -1,13 +1,13 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { isExportedAndDefined } from '@traent/ngx-components';
-import { BehaviorSubject, combineLatest, firstValueFrom, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { Thread, ThreadReferenceSnapshot, Document, LogItemImage } from '@viewer/models';
-import { getProjectParticipantId, redactedClass, redactedValue, snapshotContent, snapshotParticipantLabel } from '@viewer/utils';
-import { ThreadService, DocumentService, ProjectParticipantService } from '@viewer/services';
 import { ThreadReferenceV0 } from '@ledger-objects';
+import { isExportedAndDefined } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { Thread, ThreadReferenceSnapshot, Document, LogItemImage } from '@viewer/models';
+import { ThreadService, DocumentService, ProjectParticipantService } from '@viewer/services';
+import { getProjectParticipantId, redactedClass, redactedValue, snapshotContent, snapshotParticipantLabel } from '@viewer/utils';
+import { BehaviorSubject, combineLatest, firstValueFrom, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { DocumentLogDialogComponent } from '../../document-log-dialog/document-log-dialog.component';
 import { ThreadLogDialogComponent } from '../../thread-log-dialog/thread-log-dialog.component';
@@ -18,6 +18,14 @@ import { ThreadLogDialogComponent } from '../../thread-log-dialog/thread-log-dia
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThreadReferenceLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
   private readonly snapshot$ = new BehaviorSubject<ThreadReferenceSnapshot | null>(null);
   @Input() set snapshot(value: ThreadReferenceSnapshot | null) {
     this.snapshot$.next(value);
@@ -31,32 +39,35 @@ export class ThreadReferenceLogItemComponent {
     map((_) => ({
       type: 'icon',
       icon: { custom: 'thread-reference' },
-      bgColor: 'opal-bg-ottanio-100',
-      textColor: 'opal-text-ottanio-600',
+      bgColor: 'tw-bg-cyan-100',
+      textColor: 'tw-text-cyan-600',
     })),
   );
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([
+    this.ledgerId$,
     this.snapshot$.pipe(isNotNullOrUndefined()),
     this.projectParticipant$,
   ]).pipe(
-    switchMap(async ([snapshot, member]) => {
-      const thread = await this.getThread(snapshot);
+    switchMap(async ([ledgerId, snapshot, member]) => {
+      const thread = await this.getThread(snapshot, ledgerId);
       const threadName = redactedValue(thread?.name);
       const threadStyle = redactedClass(thread?.name, 'pointer');
 
-      const document = await this.getDocument(snapshot);
+      const document = await this.getDocument(snapshot, ledgerId);
       const documentName = redactedValue(document?.name);
       const documentStyle = redactedClass(document?.name, 'pointer');
 
@@ -78,34 +89,42 @@ export class ThreadReferenceLogItemComponent {
     private readonly threadService: ThreadService,
   ) { }
 
-  async clickHandler(pointerClasses: string, snapshot: ThreadReferenceSnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: ThreadReferenceSnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'thread' && snapshot) {
-      const data = await this.getThread(snapshot);
-      if (!data) {
+      const thread = await this.getThread(snapshot, ledgerId);
+      if (!thread) {
         return;
       }
 
-      await firstValueFrom(this.dialog.open(ThreadLogDialogComponent, { data, panelClass: 'opal-w-600px' }).afterClosed());
+      await firstValueFrom(this.dialog.open(ThreadLogDialogComponent, {
+        data: { ledgerId, thread },
+        panelClass: 'tw-w-[600px]',
+      }).afterClosed());
     }
     if (pointerClasses === 'document' && snapshot) {
-      const data = await this.getDocument(snapshot);
-      if (!data) {
+      const document = await this.getDocument(snapshot, ledgerId);
+      if (!document) {
         return;
       }
 
-      await firstValueFrom(this.dialog.open(DocumentLogDialogComponent, { data, panelClass: 'opal-w-600px' }).afterClosed());
+      await firstValueFrom(this.dialog.open(DocumentLogDialogComponent, {
+        data: { ledgerId, document },
+        panelClass: 'tw-w-[600px]',
+      }).afterClosed());
     }
   }
 
-  private async getThread(snapshot: ThreadReferenceSnapshot): Promise<Thread | undefined> {
+  private async getThread(snapshot: ThreadReferenceSnapshot, ledgerId: string | undefined): Promise<Thread | undefined> {
     const threadId = snapshotContent<ThreadReferenceV0>(snapshot).threadId;
-    return isExportedAndDefined(threadId) ? this.threadService.getThread(threadId, snapshot.updatedInBlock.index) : undefined;
+    return isExportedAndDefined(threadId) ?
+      this.threadService.getThread({ ledgerId, id: threadId, blockIndex: snapshot.updatedInBlock.index })
+      : undefined;
   }
 
-  private async getDocument(snapshot: ThreadReferenceSnapshot): Promise<Document | undefined> {
+  private async getDocument(snapshot: ThreadReferenceSnapshot, ledgerId: string | undefined): Promise<Document | undefined> {
     const documentId = snapshotContent<ThreadReferenceV0>(snapshot).documentId;
     return isExportedAndDefined(documentId)
-      ? this.documentService.getDocument(documentId, snapshot.updatedInBlock.index)
+      ? this.documentService.getDocument({ ledgerId, id: documentId, blockIndex: snapshot.updatedInBlock.index })
       : undefined;
   }
 }

@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { isExported } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { StreamEntry } from '@viewer/models';
-import { ProjectParticipantService, ThreadService, AcknowledgementService, TagService } from '@viewer/services';
+import { ProjectParticipantService, ThreadService, TagService, LedgerAccessorService } from '@viewer/services';
 import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
 import { getStreamTypeIcon } from '@viewer/utils';
-import { isExported } from '@traent/ngx-components';
-import { BehaviorSubject, switchMap, filter, combineLatest, of } from 'rxjs';
-import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { BehaviorSubject, switchMap, filter } from 'rxjs';
 
 @Component({
   selector: 'app-stream-overview',
@@ -30,18 +30,21 @@ export class StreamOverviewComponent {
       page: 1,
       taggedResourceId: stream.id,
     })),
-    switchMap(({ items }) => items.length > 0 ? combineLatest(items.map((tagEntry) => tagEntry.tag())) : of([])),
+    switchMap(({ items }) => Promise.all(items.map((te) => te.tagId)
+      .filter(isExported)
+      .map((tagId) => this.tagService.getTag({ id: tagId }))),
+    ),
   );
 
   readonly blockAcknowledgementsInfo$ = this.stream$.pipe(
     filter((stream): stream is StreamEntry => stream !== null),
-    switchMap((stream) => this.acknowledgementService.getAcknowledgementStatus(stream.updatedInBlock.index)),
+    switchMap((stream) => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(stream.updatedInBlock.index)),
   );
 
   readonly participant$ = this.stream$.pipe(
     filter((stream): stream is StreamEntry => stream !== null),
     switchMap(async (stream) => isExported(stream.updaterId)
-      ? this.projectParticipantService.getProjectParticipant(stream.updaterId)
+      ? this.projectParticipantService.getProjectParticipant({ id: stream.updaterId })
       : undefined,
     ),
   );
@@ -53,7 +56,7 @@ export class StreamOverviewComponent {
   readonly getStreamTypeIcon = getStreamTypeIcon;
 
   constructor(
-    private readonly acknowledgementService: AcknowledgementService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
     private readonly tagService: TagService,
     readonly dialog: MatDialog,

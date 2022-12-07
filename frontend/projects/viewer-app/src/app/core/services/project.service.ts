@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Project } from '@viewer/models';
 
-import { LedgerObjectsService, LedgerState } from './ledger-objects.service';
-import { transformerFrom } from '../utils';
+import { LedgerAccessorService } from './ledger-accessor.service';
+import { LedgerState } from './ledger-objects.service';
+import { parseUid, transformerFrom } from '../utils';
 
 export const PROJECT_LABEL = 'ProjectV0';
 
@@ -12,11 +13,22 @@ const extractProjectsFromState = (state: LedgerState): Project[] =>
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  constructor(private readonly ledgerObjectService: LedgerObjectsService) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 
-  async getLedgerProject(): Promise<Project | undefined> {
-    const objects = await this.ledgerObjectService.getObjects();
+  async getLedgerProject(ledgerId?: string): Promise<Project | undefined> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const objects = await ledger.getObjects();
     const collection = extractProjectsFromState(objects);
-    return collection.length ? collection[0] : undefined;
+    return collection[0];
+  }
+
+  async findProjectByUid(uid: string) {
+    const { ledgerId, resourceId } = parseUid(uid);
+    let project: Project | undefined;
+    try {
+      project = await this.getLedgerProject(ledgerId);
+    } catch { }
+
+    return project?.id === resourceId ? project : undefined;
   }
 }

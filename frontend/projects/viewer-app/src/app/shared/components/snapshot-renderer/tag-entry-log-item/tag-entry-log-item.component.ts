@@ -1,9 +1,8 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { switchMap } from 'rxjs/operators';
-import { isExportedAndDefined, isRedactedOrUndefined, Redactable } from '@traent/ngx-components';
-import { BehaviorSubject, firstValueFrom, combineLatest } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { TagType, TagEntryV0 } from '@ledger-objects';
+import { isExportedAndDefined, isRedactedOrUndefined, Redactable } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { TagEntrySnapshot, WorkflowParticipantID } from '@viewer/models';
 import { StreamService, DocumentService, TagService, ProjectParticipantService } from '@viewer/services';
 import {
@@ -12,10 +11,12 @@ import {
   getTagTypeLabel,
   redactedClass,
   redactedValue,
+  ResourceParams,
   snapshotContent,
   snapshotParticipantLabel,
 } from '@viewer/utils';
-import { TagType, TagEntryV0 } from '@ledger-objects';
+import { BehaviorSubject, firstValueFrom, combineLatest } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { DocumentLogDialogComponent } from '../../document-log-dialog/document-log-dialog.component';
 import { StreamLogDialogComponent } from '../../stream-log-dialog/stream-log-dialog.component';
@@ -35,52 +36,64 @@ const getResourceClass = (type?: Redactable<TagType>) => {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagEntryLogItemComponent {
-  private readonly snapshot$ = new BehaviorSubject<TagEntrySnapshot | null>(null);
-  @Input() set snapshot(value: TagEntrySnapshot | null){
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
+  readonly snapshot$ = new BehaviorSubject<TagEntrySnapshot | null>(null);
+  @Input() set snapshot(value: TagEntrySnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
     return this.snapshot$.value;
   }
 
-
-  readonly itemImage$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  readonly itemImage$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const tagEntry = snapshotContent<TagEntryV0>(snapshot);
       const tag = isExportedAndDefined(tagEntry.tagId)
-        ? await this.tagService.getTag(tagEntry.tagId, snapshot.updatedInBlock.index)
+        ? await this.tagService.getTag({ ledgerId, id: tagEntry.tagId, blockIndex: snapshot.updatedInBlock.index })
         : undefined;
       return getTagImage(tag?.type);
     }),
   );
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([
+    this.ledgerId$,
     this.snapshot$.pipe(isNotNullOrUndefined()),
     this.projectParticipant$,
   ]).pipe(
-    switchMap(async ([snapshot, member]) => {
+    switchMap(async ([ledgerId, snapshot, member]) => {
       const tagEntry = snapshotContent<TagEntryV0>(snapshot);
       const tag = isExportedAndDefined(tagEntry.tagId)
-        ? await this.tagService.getTag(tagEntry.tagId, snapshot.updatedInBlock.index)
+        ? await this.tagService.getTag({ ledgerId, id: tagEntry.tagId, blockIndex: snapshot.updatedInBlock.index })
         : undefined;
 
       const tagTypeLabel = getTagTypeLabel(tag?.type);
       const tagStyle = redactedClass(tag?.name);
 
       const resource = tag && isExportedAndDefined(tag.type) && isExportedAndDefined(tagEntry.taggedResourceId)
-        ? await this.getTaggedResource(tagEntry.taggedResourceId, tag?.type, snapshot.updatedInBlock.index)
+        ? await this.getTaggedResource(tag?.type, { ledgerId, id: tagEntry.taggedResourceId, blockIndex: snapshot.updatedInBlock.index })
         : undefined;
 
       return {
@@ -88,7 +101,7 @@ export class TagEntryLogItemComponent {
         member,
         operation: snapshot.operation,
         resourceName: redactedValue(resource?.name),
-        resourceClass: redactedClass(resource?.class),
+        resourceClass: resource?.class ?? 'redacted',
         resourceType: getResourceClass(tag?.type),
         tag,
         tagNameValue: redactedValue(tag?.name),
@@ -108,10 +121,10 @@ export class TagEntryLogItemComponent {
     private readonly tagService: TagService,
   ) { }
 
-  private async getTaggedResource(id: string, type: TagType, blockIndex: number) {
+  private async getTaggedResource(type: TagType, params: ResourceParams) {
     switch (type) {
       case TagType.Stream:
-        const stream = await this.streamService.getStream(id, blockIndex);
+        const stream = await this.streamService.getStream(params);
         return {
           type: 'stream',
           id: stream.id,
@@ -120,7 +133,7 @@ export class TagEntryLogItemComponent {
           object: stream,
         };
       case TagType.Document:
-        const document = await this.documentService.getDocument(id, blockIndex);
+        const document = await this.documentService.getDocument(params);
         return {
           type: 'document',
           id: document.id,
@@ -129,7 +142,7 @@ export class TagEntryLogItemComponent {
           object: document,
         };
       case TagType.Participant:
-        const participant = await this.projectParticipantService.getProjectParticipant(id, blockIndex)
+        const participant = await this.projectParticipantService.getProjectParticipant(params)
           .then((p) => firstValueFrom(snapshotParticipantLabel(p)));
         return {
           type: 'participant',
@@ -141,25 +154,32 @@ export class TagEntryLogItemComponent {
     }
   }
 
-  async clickHandler(pointerClasses: string, snapshot: TagEntrySnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: TagEntrySnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'resource' && snapshot) {
       const tagEntry = snapshotContent<TagEntryV0>(snapshot);
       if (isRedactedOrUndefined(tagEntry.taggedResourceId)) {
         return;
       }
 
+      const resourceParams = { ledgerId, id: tagEntry.taggedResourceId, blockIndex: snapshot.updatedInBlock.index };
       const tag = isExportedAndDefined(tagEntry.tagId)
-        ? await this.tagService.getTag(tagEntry.tagId, snapshot.updatedInBlock.index)
+        ? await this.tagService.getTag({ ledgerId, id: tagEntry.tagId, blockIndex: snapshot.updatedInBlock.index })
         : undefined;
 
       if (tag && tag.type === TagType.Document) {
-        const data = await this.documentService.getDocument(tagEntry.taggedResourceId, snapshot.updatedInBlock.index);
-        await firstValueFrom(this.dialog.open(DocumentLogDialogComponent, { data, panelClass: 'opal-w-600px' }).afterClosed());
+        const document = await this.documentService.getDocument(resourceParams);
+        await firstValueFrom(this.dialog.open(DocumentLogDialogComponent, {
+          data: { ledgerId, document },
+          panelClass: 'tw-w-[600px]',
+        }).afterClosed());
       }
 
       if (tag && tag.type === TagType.Stream) {
-        const data = await this.streamService.getStream(tagEntry.taggedResourceId, snapshot.updatedInBlock.index);
-        await firstValueFrom(this.dialog.open(StreamLogDialogComponent, { data, panelClass: 'opal-w-600px' }).afterClosed());
+        const stream = await this.streamService.getStream(resourceParams);
+        await firstValueFrom(this.dialog.open(StreamLogDialogComponent, {
+          data: { ledgerId, stream },
+          panelClass: 'tw-w-[600px]',
+        }).afterClosed());
       }
     }
   }

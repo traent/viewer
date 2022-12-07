@@ -9,15 +9,15 @@
     <div
       *ngIf="viewMode === 'current'"
       class="tw-flex tw-flex-row tw-justify-between tw-h-[68px] tw-box-border tw-border-b tw-border-neutral-200 tw-z-10 tw-sticky tw-block tw-px-12 tw-py-3">
-      <div class="tw-flex-grow-1 tw-flex tw-flex-row tw-justify-between tw-items-center">
-        <h3 class="tw-m-0 tw-pl-2">{{ resolved.viewDocumentForm.uiDocumentForm.name }}</h3>
+      <div class="tw-flex-grow-1 tw-flex tw-flex-row tw-justify-between tw-items-center tw-min-w-0 tw-min-h-0">
+        <h3 class="tw-m-0 tw-pl-2 tw-truncate">{{ resolved.viewDocumentForm.uiDocumentForm.name }}</h3>
       </div>
     </div>
 
-    <div class="tw-flex tw-flex-col tw-justify-between tw-items-center tw-mt-12">
+    <div class="tw-mt-12">
       <div
         *ngFor="let item of resolved.viewDocumentForm.uiDocumentForm.items; trackBy: trackById"
-        class="form-item-list">
+        class="form-item-list tw-grow tw-mx-auto tw-px-12 tw-box-border tw-max-w-5xl">
 
         <ng-container *ngIf="item.kind === 'content'">
           <ngx-t3-form-item-heading

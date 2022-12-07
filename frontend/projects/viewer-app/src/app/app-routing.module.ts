@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { LedgerSelectedGuard } from './core/guards/ledger-selected.guard';
 import { LedgerStoredGuard } from './core/guards/ledger-stored.guard';
+import { UiRefreshPageComponent } from './pages/ui-refresh-page/ui-refresh-page.component';
 
 const routes: Routes = [
   {
@@ -10,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'explorer',
-    canActivate: [LedgerStoredGuard],
+    canActivate: [LedgerStoredGuard, LedgerSelectedGuard],
     loadChildren: () => import('./pages/explorer/explorer.module').then((m) => m.ExplorerPageModule),
   },
   {
@@ -22,6 +24,11 @@ const routes: Routes = [
     path: 'view/:ledgerId/doc/:id',
     canActivate: [LedgerStoredGuard],
     loadChildren: () => import('./pages/view-doc/view-doc.module').then((m) => m.ViewDocModule),
+  },
+  {
+    path: 'ui-refresh',
+    canActivate: [LedgerStoredGuard, LedgerSelectedGuard],
+    component: UiRefreshPageComponent,
   },
   {
     path: '**',

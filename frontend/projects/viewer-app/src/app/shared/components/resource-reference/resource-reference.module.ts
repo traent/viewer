@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplyModule, NoValueLabelModule, RedactedModule, SkeletonModule } from '@traent/ngx-components';
 

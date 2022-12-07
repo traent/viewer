@@ -1,55 +1,53 @@
-<div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+<div class="tw-flex tw-flex-col tw-h-full !tw-rounded-lg tw-border tw-border-neutral-200">
 
-  <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-radius-8 opal-pos-rel">
-    <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
-      <div class="opal-w-45 opal-fx-justify-start opal-pl-4 opal-border-box">
+  <div class="tw-flex tw-flex-col tw-overflow-y-auto tw-grow tw-basis-0 tw-bg-white !tw-rounded-lg tw-relative">
+    <div class="table-header tw-sticky tw-z-10 tw-bg-white tw-inset-t-0">
+      <div class="tw-w-1/3 tw-justify-start tw-pl-4 tw-box-border tw-mr-2">
         {{ 'i18n.Explorer.notary' | translate }}
       </div>
-      <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-10">
+      <div class="tw-grow tw-basis-0 tw-justify-start">
         {{ 'i18n.Explorer.merkleTreeRoot' | translate }}
       </div>
     </div>
     <cdk-accordion-item
       *ngFor="let notaryItem of notaryItems"
       #accordionItem="cdkAccordionItem"
-      class="opal-border-b-1 opal-d-block opal-border-grey-200 opal-pointer"
+      class="tw-border-b tw-block tw-border-neutral-200 tw-cursor-pointer"
       (click)="accordionItem.toggle()">
       <ng-container *ngIf="notaryItem.json$ | async as jsonData">
         <div
           *ngIf="notaryItem"
-          class="opal-fx-row opal-fx-align-center opal-py-3 opal-body-2 opal-pos-rel"
+          class="tw-flex tw-flex-row tw-items-center tw-py-3 tw-text-sm tw-relative"
           matRipple>
-          <mat-icon
-            class="opal-pos-abs opal-my-auto opal-inset-l-4 opal-s-4 opal-text-grey-400"
-            [class.opal-rotate-90]="accordionItem.expanded">
-            chevron_right
-          </mat-icon>
-          <div class="opal-w-45 opal-fx-center">
-            {{ notaryItem.name }}
+          <div class="tw-w-1/3 tw-inline-flex tw-items-center tw-px-1">
+            <mat-icon
+              class="tw-w-4 tw-h-4 tw-text-neutral-400 tw-px-3"
+              [class.tw-rotate-90]="accordionItem.expanded">
+              chevron_right
+            </mat-icon>
+            <div>{{ notaryItem.name }}</div>
           </div>
           <div
             *ngIf="jsonData.merkleRoot as merkleRoot"
-            class="opal-pl-10 opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            class="tw-grow tw-basis-0 tw-flex tw-flex-row tw-justify-start tw-items-center tw-truncate">
             <ngx-t3-copy-to-clipboard
-              class="opal-w-full"
+              class="tw-w-full"
               position="left"
               [textToCopy]="merkleRoot"
               (click)="$event.stopImmediatePropagation()">
               <div
-                class="opal-body-2 opal-ellipsed opal-mr-1">
+                class="tw-text-sm tw-truncate tw-mr-1">
                 {{ merkleRoot }}
               </div>
             </ngx-t3-copy-to-clipboard>
           </div>
         </div>
-
-        <json-editor
+        <ngx-json-viewer
           *ngIf="accordionItem.expanded"
-          class="opal-border-none opal-d-block opal-pl-8"
-          [data]="(notaryItem.json$ | async) || {}"
-          [options]="editorOptions"
-          (click)="$event.stopPropagation()">
-        </json-editor>
+          class="tw-border-0 tw-block tw-pl-8"
+          [expanded]=false
+          [json]="(notaryItem.json$ | async) || {}"
+          (click)="$event.stopPropagation()"></ngx-json-viewer>
       </ng-container>
     </cdk-accordion-item>
   </div>

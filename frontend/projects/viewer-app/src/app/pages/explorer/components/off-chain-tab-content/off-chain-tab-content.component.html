@@ -1,27 +1,27 @@
-<div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
+<div class="tw-flex tw-flex-col tw-h-full !tw-rounded-lg tw-border tw-border-neutral-200">
 
-  <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
-    <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
-      <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-4 opal-border-box">
+  <div class="tw-flex tw-flex-col tw-overflow-y-auto tw-grow tw-basis-0 tw-bg-white tw-relative !tw-rounded-t-lg">
+    <div class="table-header tw-sticky tw-z-10 tw-bg-white tw-inset-t-0">
+      <div class="tw-grow tw-basis-0 tw-justify-start tw-pl-4 tw-box-border">
         {{ 'i18n.Explorer.hash' | translate }}
       </div>
-      <div class="sm-col-width opal-px-3 opal-border-box">
+      <div class="sm-col-width tw-px-3 tw-box-border">
         {{ 'i18n.Explorer.size' | translate }}
       </div>
-      <div class="sm-col-width opal-px-3 opal-border-box">
+      <div class="sm-col-width tw-px-3 tw-box-border">
         {{ 'i18n.Explorer.key' | translate }}
       </div>
     </div>
     <cdk-accordion-item
       *ngFor="let offChainItem of offChainItems$ | async"
       #accordionItem="cdkAccordionItem"
-      class="opal-border-b-1 opal-d-block opal-border-grey-200"
+      class="tw-border-b tw-block tw-border-neutral-200"
       (click)="accordionItem.toggle()">
       <app-off-chain-row-item
-        class="opal-inset-t-0 opal-pos-sticky opal-d-block opal-z-index-4 opal-pointer"
+        class="tw-inset-t-0 tw-sticky tw-block tw-z-[4] tw-cursor-pointer"
         [ngClass]="{
-          'opal-bg-white': !accordionItem.expanded,
-          'opal-bg-grey-100': accordionItem.expanded
+          'tw-bg-white': !accordionItem.expanded,
+          'tw-bg-neutral-100': accordionItem.expanded
         }"
         [value]="offChainItem"
         [isOpen]="accordionItem.expanded"
@@ -38,7 +38,7 @@
 
   <ngx-t3-table-paginator
     *ngIf="totalOffChainItems"
-    class="opal-radius-b-8"
+    class="!tw-rounded-b-lg"
     [pageSize]="pageEvent$.value.pageSize"
     [length]="(offChainItems$ | async)?.length || 0"
     [total]="totalOffChainItems"

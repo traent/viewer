@@ -25,7 +25,7 @@
     ],
     // We need to have aliases on root `tsconfig.json` because specific `tsconfig.app.json` does not allow VSCode to resolve them correctly
     // `tsconfig.app.json` working fine on `ng` commands
-    "paths":{
+    "paths": {
       "@api/*": ["projects/viewer-app/src/app/connector/*"],
       "@ledger-objects": ["projects/viewer-app/src/app/ledger-objects/models"],
       "@viewer/models": ["projects/viewer-app/src/app/core/models"],

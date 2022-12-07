@@ -1,43 +1,44 @@
 import { Injectable } from '@angular/core';
+import { isExported, isExportedAndDefined } from '@traent/ngx-components';
+import { Page } from '@traent/ngx-paginator';
 import {
   LedgerProjectParticipant,
   Organization,
-  OrganizationCollectionParams,
   ProjectParticipant,
   ProjectParticipantParams,
   WorkflowParticipant,
   WorkflowParticipantID,
 } from '@viewer/models';
-import { isExported, isExportedAndDefined } from '@traent/ngx-components';
-import { Page } from '@traent/ngx-paginator';
 import { Observable, of } from 'rxjs';
 
-import { LedgerObjectsService } from './ledger-objects.service';
-import { MemberService } from './member.service';
+import { AgentService } from './agent.service';
+import { LedgerAccessorService } from './ledger-accessor.service';
 import { OrganizationService } from './organization.service';
-import { collectionSort, collectionToPage, transformerFrom } from '../utils';
+import { collectionSort, collectionToPage, ResourceParams, transformerFrom } from '../utils';
 
 export const PROJECT_PARTICIPANT_LABEL = 'ProjectParticipantV0';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectParticipantService {
   constructor(
-    private readonly ledgerObjectService: LedgerObjectsService,
-    private readonly memberService: MemberService,
+    private readonly agentService: AgentService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly organizationService: OrganizationService,
   ) { }
 
-  async getProjectParticipant(id: string, blockIndex?: number): Promise<ProjectParticipant> {
+  async getProjectParticipant({ id, blockIndex, ledgerId }: ResourceParams): Promise<ProjectParticipant> {
     if (id === WorkflowParticipantID) {
       return WorkflowParticipant;
     }
 
-    const obj = await this.ledgerObjectService.getObject(PROJECT_PARTICIPANT_LABEL, id, blockIndex);
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const obj = await ledger.getObject(PROJECT_PARTICIPANT_LABEL, id, blockIndex);
     return this.parseProjectParticipant(obj);
   }
 
   async getProjectParticipantCollection(params?: ProjectParticipantParams): Promise<Page<LedgerProjectParticipant>> {
-    const currentState = await this.ledgerObjectService.getObjects(params?.blockIndex);
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     let collection = this.extractProjectParticipantsFromState(currentState);
 
     if (params?.organizationId) {
@@ -56,10 +57,9 @@ export class ProjectParticipantService {
     );
   }
 
-  async getOrganizationCollection(params?: OrganizationCollectionParams): Promise<Page<Observable<Organization | undefined>>> {
-    const currentState = await this.ledgerObjectService.getObjects(params?.blockIndex);
-
-    const collection = this.extractProjectParticipantsFromState(currentState)
+  async getOrganizationCollection(params?: ProjectParticipantParams): Promise<Page<Observable<Organization | undefined>>> {
+    const participants = await this.getProjectParticipantCollection(params);
+    const collection = participants.items
       .map(({ organizationId }) => organizationId)
       .filter((organizationId): organizationId is string => organizationId !== undefined)
       .reduce((p, c) => !p.includes(c) ? [...p, c] : p, [] as string[])
@@ -76,8 +76,8 @@ export class ProjectParticipantService {
     const projectParticipant = obj;
     return {
       ...projectParticipant,
-      member$: isExported(projectParticipant.memberId)
-        ? this.memberService.getMember(projectParticipant.id, projectParticipant.memberId)
+      agent$: isExported(projectParticipant.memberId)
+        ? this.agentService.getAgent(projectParticipant.id, projectParticipant.memberId)
         : of(undefined),
       organization$: isExportedAndDefined(projectParticipant.organizationId)
         ? this.organizationService.getOrganization(projectParticipant.organizationId)

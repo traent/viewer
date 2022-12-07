@@ -1,17 +1,39 @@
 import { Injectable } from '@angular/core';
 
-interface Validator {
-  evaluate(rawBlock?: DotNet.InputByteArray, rawReceipt?: DotNet.InputByteArray): Ledger.Validator.EvaluationResult;
-  dispose(): void;
+class Validator {
+  constructor(private readonly state: Ledger.Validator.StateHandle) { }
+
+  evaluate(rawBlock?: DotNet.InputByteArray, rawReceipt?: DotNet.InputByteArray) {
+    return this.state.invokeMethod('Evaluate', rawBlock, rawReceipt);
+  }
+
+  dispose() {
+    this.state.dispose();
+  }
 }
 
-interface NotaryChecker {
-  getExpectedDigest(): Uint8Array | undefined;
-  getMerkleRoot(): Uint8Array | undefined;
-  checkConsistencyStep(path: DotNet.InputByteArray[], merkleConsistencyProof: DotNet.InputByteArray): string[];
-  finishConsistencyCheck(): string[];
+class NotaryChecker {
+  constructor(private readonly state: Ledger.Validator.NotaryChecker) { }
 
-  dispose(): void;
+  getExpectedDigest() {
+    return this.state.invokeMethod('GetExpectedDigest');
+  }
+
+  getMerkleRoot() {
+    return this.state.invokeMethod('GetMerkleRoot');
+  }
+
+  checkConsistencyStep(path: DotNet.InputByteArray[], merkleConsistencyProof: DotNet.InputByteArray) {
+    return this.state.invokeMethod('CheckConsistencyStep', path, merkleConsistencyProof);
+  }
+
+  finishConsistencyCheck() {
+    return this.state.invokeMethod('FinishConsistencyCheck');
+  }
+
+  dispose() {
+    return this.state.dispose();
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -64,32 +86,11 @@ export class DotNetWrapperService {
 
   async makeValidator(ledgerId: DotNet.InputByteArray): Promise<Validator> {
     await this.ready$;
-    const state = DotNet.invokeMethod('Ledger.Wasm.Container', 'CreateValidator', ledgerId);
-
-    const evaluate = (rawBlock?: DotNet.InputByteArray, rawReceipt?: DotNet.InputByteArray) =>
-      state.invokeMethod('Evaluate', rawBlock, rawReceipt);
-
-    const dispose = () => state.dispose();
-
-    return { evaluate, dispose };
+    return new Validator(DotNet.invokeMethod('Ledger.Wasm.Container', 'CreateValidator', ledgerId));
   }
 
   async makeNotaryChecker(ledgerId: DotNet.InputByteArray): Promise<NotaryChecker> {
     await this.ready$;
-    const state = DotNet.invokeMethod('Ledger.Wasm.Container', 'CreateNotaryChecker', ledgerId);
-
-    return {
-      getExpectedDigest: () => state.invokeMethod('GetExpectedDigest'),
-      getMerkleRoot: () => state.invokeMethod('GetMerkleRoot'),
-      checkConsistencyStep: (path, merkleConsistencyProof) =>
-        state.invokeMethod('CheckConsistencyStep', path, merkleConsistencyProof),
-      finishConsistencyCheck: () => state.invokeMethod('FinishConsistencyCheck'),
-      dispose: () => state.dispose(),
-    };
-  }
-
-  async compuleLedgerId(publicLedgerKey: DotNet.InputByteArray): Promise<Uint8Array> {
-    await this.ready$;
-    return DotNet.invokeMethod('Ledger.Wasm.Container', 'ComputeLedgerId', publicLedgerKey);
+    return new NotaryChecker(DotNet.invokeMethod('Ledger.Wasm.Container', 'CreateNotaryChecker', ledgerId));
   }
 }

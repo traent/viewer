@@ -12,5 +12,6 @@ export interface ViewerAgent {
   lastName?: null | string;
   name?: null | string;
   organizationId: string;
+  type?: null | string;
   userValidationState?: ProfileValidationState;
 }

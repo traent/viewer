@@ -5,14 +5,16 @@ import {
   Thread,
   ThreadMessage,
   ThreadMessageEntity,
+  ThreadMessageEntityParams,
   ThreadMessageParams,
   ThreadParams,
   ThreadReference,
   ThreadReferenceParams,
 } from '@viewer/models';
 
-import { LedgerObjectsService, LedgerState } from './ledger-objects.service';
-import { collectionSort, collectionToPage, transformerFrom } from '../utils';
+import { LedgerAccessorService } from './ledger-accessor.service';
+import { LedgerState } from './ledger-objects.service';
+import { collectionSort, collectionToPage, ResourceParams, transformerFrom } from '../utils';
 
 export const THREAD_LABEL = 'ThreadV0';
 export const THREAD_REFERENCE_LABEL = 'ThreadReferenceV0';
@@ -20,27 +22,28 @@ export const THREAD_MESSAGE_LABEL = 'ThreadMessageV0';
 export const THREAD_MESSAGE_ENTITY_LABEL = 'ThreadMessageEntityV0';
 
 export const parseThread = (obj: any): Thread => ({ ...obj });
-
-const extractThreadsFromState = (state: LedgerState): Thread[] =>
-  transformerFrom(parseThread)(state[THREAD_LABEL]);
+const extractThreadsFromState = (state: LedgerState): Thread[] => transformerFrom(parseThread)(state[THREAD_LABEL]);
 
 const parseThreadReference = (obj: any): ThreadReference => ({ ...obj });
-
 const extractThreadReferencesFromState = (state: LedgerState): ThreadReference[] =>
   transformerFrom(parseThreadReference)(state[THREAD_REFERENCE_LABEL]);
 
 const parseThreadMessageEntities = (obj: any): ThreadMessageEntity => ({ ...obj });
-
 const extractThreadMessageEntitiesFromState = (state: LedgerState): ThreadMessageEntity[] =>
   transformerFrom(parseThreadMessageEntities)(state[THREAD_MESSAGE_ENTITY_LABEL]);
+
+const parseThreadMessage = (obj: any): ThreadMessage => obj as ThreadMessage;
+export const extractThreadMessagesFromState = (state: LedgerState): ThreadMessage[] =>
+  transformerFrom(parseThreadMessage)(state[THREAD_MESSAGE_LABEL]);
 
 @Injectable({ providedIn: 'root' })
 export class ThreadService {
 
-  constructor(private readonly ledgerObjectService: LedgerObjectsService) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 
   async getThreads(params?: ThreadParams): Promise<Page<Thread>> {
-    const currentState = await this.ledgerObjectService.getObjects();
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     let collection = extractThreadsFromState(currentState);
 
     if (params?.isResolved !== undefined) {
@@ -62,19 +65,22 @@ export class ThreadService {
     );
   }
 
-  async getThread(threadId: string, blockIndex?: number): Promise<Thread> {
-    const object = await this.ledgerObjectService.getObject(THREAD_LABEL, threadId, blockIndex);
+  async getThread({ id, blockIndex, ledgerId }: ResourceParams): Promise<Thread> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(THREAD_LABEL, id, blockIndex);
     return parseThread(object);
   }
 
-  async getThreadMessage(threadMessageId: string, blockIndex?: number): Promise<ThreadMessage> {
-    const object = await this.ledgerObjectService.getObject(THREAD_MESSAGE_LABEL, threadMessageId, blockIndex);
-    return this.parseThreadMessage(object);
+  async getThreadMessage({ id, blockIndex, ledgerId }: ResourceParams): Promise<ThreadMessage> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(THREAD_MESSAGE_LABEL, id, blockIndex);
+    return parseThreadMessage(object);
   }
 
   async getThreadMessages(params?: ThreadMessageParams): Promise<Page<ThreadMessage>> {
-    const currentState = await this.ledgerObjectService.getObjects();
-    let collection = this.extractThreadMessagesFromState(currentState);
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
+    let collection = extractThreadMessagesFromState(currentState);
 
     if (params?.threadId) {
       collection = collection.filter((threadMessage) => threadMessage?.threadId === params.threadId);
@@ -88,7 +94,8 @@ export class ThreadService {
   }
 
   async getThreadReferences(params?: ThreadReferenceParams): Promise<Page<ThreadReference>> {
-    const currentState = await this.ledgerObjectService.getObjects();
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     let collection = extractThreadReferencesFromState(currentState);
 
     if (params?.threadId) {
@@ -103,23 +110,15 @@ export class ThreadService {
     );
   }
 
-  async getThreadMessageEntities(threadMessageId: string): Promise<ThreadMessageEntity[]> {
-    const currentState = await this.ledgerObjectService.getObjects();
-    const collection = extractThreadMessageEntitiesFromState(currentState);
+  async getThreadMessageEntities(params?: ThreadMessageEntityParams): Promise<ThreadMessageEntity[]> {
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
+    let collection = extractThreadMessageEntitiesFromState(currentState);
 
-    return collection.filter((threadReference) => threadReference?.threadMessageId === threadMessageId);
+    if (params?.threadMessageId) {
+      collection = collection.filter((threadReference) => threadReference.threadMessageId === params.threadMessageId);
+    }
+
+    return collectionSort(collection, params?.sortBy || 'updatedAt', params?.sortOrder);
   }
-
-  extractThreadMessagesFromState(state: LedgerState): ThreadMessage[] {
-    return transformerFrom(this.parseThreadMessage.bind(this))(state[THREAD_MESSAGE_LABEL]);
-  }
-
-  private parseThreadMessage(obj: any): ThreadMessage {
-    let entities$: Promise<ThreadMessageEntity[]>;
-    const message = obj;
-    return {
-      ...message,
-      threadMessageEntities: () => entities$ ??= this.getThreadMessageEntities(message.id),
-    };
-  };
 }

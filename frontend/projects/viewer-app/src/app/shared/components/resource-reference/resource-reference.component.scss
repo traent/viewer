@@ -2,15 +2,15 @@
   display: block;
 
   &.has-top-divider {
-    border-top: 1px solid theme("colors.grey.200");
+    border-top: 1px solid var(--tw-neutral-200);
   }
   &.has-bottom-divider {
-    border-bottom: 1px solid theme("colors.grey.200");
+    border-bottom: 1px solid var(--tw-neutral-200);
   }
 }
 
 .gray-on-hover {
   &:hover {
-    background-color: theme("colors.grey.100");
+    background-color: var(--tw-neutral-100);
   }
 }

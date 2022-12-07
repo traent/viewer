@@ -4,12 +4,13 @@
     --ngx-t3-thread-message-bg-color: rgba(255, 255, 255, 0.6);
     --ngx-t3-thread-message-min-height: none;
     padding-bottom: 8px;
+    background-color: var(--tw-transparent);
   }
 }
 
 ngx-t3-thread-message {
-  --ngx-t3-thread-message-code-block-bg-color: rgba(var(--opal-black-500-rgb), 0.1) !important;
-  --ngx-t3-thread-message-bg-color: theme("colors.grey.100");
+  --ngx-t3-thread-message-code-block-bg-color: rgba(var(--tw-black),  0.1) !important;
+  --ngx-t3-thread-message-bg-color: var(--tw-neutral-100);
 
   width: 100%;
   margin-bottom: 10px;

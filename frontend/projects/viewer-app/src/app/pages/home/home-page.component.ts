@@ -2,21 +2,19 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { InvalidLedgerKeysError, LedgerError, NoAvailableDecryptionKeyError } from '@viewer/models';
-import { DocumentService, LedgerService, StorageService } from '@viewer/services';
-import {
-  extractNavigationValuesFromDefaultPage,
-  getHeaderControlFromRoute,
-  getHideCancelUploadControlFromRoute,
-} from '@viewer/utils';
 import { NgxT3DialogService } from '@traent/ngx-dialog';
 import { abortableGenerator, ProcessAbortError } from '@traent/ts-utils';
+import { InvalidLedgerKeysError, LedgerError, NoAvailableDecryptionKeyError } from '@viewer/models';
+import { DocumentService, LedgerAccessorService, LedgerService, UiConfigurationService } from '@viewer/services';
+import {
+  extractNavigationValuesFromDefaultPage,
+} from '@viewer/utils';
 import { map, timer, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 
 interface LoadingLabel {
-  index: number;
+  index?: number;
   total?: number;
   message: string;
 }
@@ -94,31 +92,40 @@ export class HomePageComponent {
   process?: AsyncGenerator<LoadingLabel, void>;
   showUrlInput = false;
 
-  readonly showHeader = getHeaderControlFromRoute(this.route.snapshot);
-  readonly showCancelUpload = !getHideCancelUploadControlFromRoute(this.route.snapshot);
+  readonly showHeader = this.uiConfigurationService.header;
+
+  get showCancelUpload() {
+    return !this.uiConfigurationService.hideCancelUpload;
+  }
 
   constructor(
     private readonly dialogService: NgxT3DialogService,
     private readonly documentService: DocumentService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly storageService: StorageService,
+    private readonly uiConfigurationService: UiConfigurationService,
     readonly ledgerService: LedgerService,
     readonly translateService: TranslateService,
   ) {
+    this.reset();
   }
 
   async loadData(data: File | string, withNavigation = true): Promise<void> {
-    if (typeof data === 'string') {
-      this.fileName = decodeURI(data.split('/').pop() || '');
-    } else {
-      this.fileName = data.name;
+    let fileName = typeof data === 'string'
+      ? new URL(data).pathname.split('/').pop()
+      : data.name;
+
+    if (!fileName) {
+      console.warn(`Unexpected empty ledger name ${fileName}`);
+      fileName = '';
     }
 
+    this.fileName = fileName;
     this.abortController = new AbortController();
 
     try {
-      this.process = abortableGenerator(this.loadingProcess(data), this.abortController.signal);
+      this.process = abortableGenerator(this.loadingProcess(data, fileName), this.abortController.signal);
       for await (const message of this.process) {
         this.loadingMessage = message;
       }
@@ -181,7 +188,7 @@ export class HomePageComponent {
       description: this.translateService.instant('i18n.Home.invalidLedger.subtitle'),
       primaryLabel: this.translateService.instant('i18n.Home.invalidLedger.understandRisk'),
       secondaryLabel: this.translateService.instant('i18n.Common.goBack'),
-      classes: ['danger', 'opal-w-500px'],
+      classes: ['danger', 'tw-w-[500px]'],
     });
     if (!proceed) {
       return;
@@ -190,36 +197,50 @@ export class HomePageComponent {
     this.navigateMainPage();
   }
 
-  private async *loadingProcess(data: string | Blob): AsyncGenerator<LoadingLabel, void> {
-    yield {
-      index: 1,
-      message: 'i18n.Home.loadingData',
-    };
+  private async *loadingProcess(data: string | Blob, exportName: string): AsyncGenerator<LoadingLabel, void> {
+    yield { message: 'i18n.Home.loadingData' };
 
-    for await (const progress of this.ledgerService.load(data)) {
-      const index = progress.checkedBlocks + 1;
+    for await (const progress of this.ledgerService.load(data, exportName)) {
+      const message = progress.checkedBlocks === progress.totalBlocks
+        ? this.translateService.instant('i18n.Home.finalizingLedgerEvaluation')
+        : this.translateService.instant('i18n.Home.evaluatingLedgerBlock', {
+          index: progress.checkedBlocks + 1,
+          totalBlocks: progress.totalBlocks,
+        });
+
       yield {
-        index: index + 1,
+        index: progress.checkedBlocks,
         total: progress.totalBlocks,
-        message: this.translateService.instant('i18n.Home.evaluatingLedgerBlock', { index, totalBlocks: progress.totalBlocks }),
+        message,
       };
     }
   }
 
   private async navigateMainPage() {
-    const exReq = await this.storageService.getLedger().getExportRequest();
+    if (this.ledgerAccessorService.selectedLedgerId === undefined) {
+      await this.router.navigate(['project', 'select'], { queryParamsHandling: 'preserve' });
+      return;
+    }
+
+    const exReq = await this.ledgerAccessorService.getBlockLedger().getExportRequest();
 
     if (exReq?.defaultPage) {
       const options = extractNavigationValuesFromDefaultPage(exReq.defaultPage);
       if (options?.baseUrlWithoutQueryParams) {
         await this.router.navigate(
           [options.baseUrlWithoutQueryParams],
-          { queryParams: options.queryParams, queryParamsHandling: 'merge' },
+          {
+            queryParams: {
+              ...options.queryParams,
+              ...this.route.snapshot.queryParams,
+            },
+            queryParamsHandling: 'merge',
+          },
         );
         return;
       }
     }
 
-    await this.router.navigate(['project', { queryParamsHandling: 'preserve' }]);
+    await this.router.navigate(['project'], { queryParamsHandling: 'preserve' });
   }
 }

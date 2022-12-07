@@ -1,12 +1,10 @@
 import { StreamEntryV0, StreamReferenceV0 } from '@ledger-objects';
-import { SortableResource } from '@viewer/utils';
 import { Redactable } from '@traent/ngx-components';
-import { UIPaginationParams } from '@traent/ngx-paginator';
+import { ResourceCollectionParams } from '@viewer/utils';
 
 import { LedgerResource, RedactableBox } from './ledger-resource';
 
 export type StreamEntryType =
-  | 'approval'
   | 'date'
   | 'number'
   | 'multi-select'
@@ -27,13 +25,11 @@ export type StreamEntry = RedactableBox<StreamEntryV0> & {
 export type StreamParams = Partial<{
   uiType: StreamEntryType;
   documentId: string;
-}> & SortableResource<StreamEntry> & UIPaginationParams;
+}> & ResourceCollectionParams<StreamEntry>;
 
-export type StreamReference = RedactableBox<StreamReferenceV0> & {
-  streamEntry: () => Promise<StreamEntry | undefined>;
-} & LedgerResource;
+export type StreamReference = RedactableBox<StreamReferenceV0> & LedgerResource;
 export type StreamReferenceParams = Partial<{
   documentId: string;
   isLocallyReferenced: boolean;
   streamEntryId: string;
-}> & SortableResource<StreamReference> & UIPaginationParams;
+}> & ResourceCollectionParams<StreamReference>;

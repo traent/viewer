@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectParticipantService, ThreadService } from '@viewer/services';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { ProjectParticipantService, ThreadService } from '@viewer/services';
 import { map, filter, switchMap, shareReplay } from 'rxjs';
 
 const THREAD_MESSAGES_LIMIT = 15;
@@ -17,7 +17,7 @@ export class DocumentSideThreadMessagesComponent {
     map((params) => params.threadId),
     // FIXME: this should be replaced with `isNullOrUndefined` when the `rxjs` versions will be compatible
     filter((id): id is string => id !== undefined && id !== null),
-    switchMap((threadId) => this.threadService.getThread(threadId)),
+    switchMap((threadId) => this.threadService.getThread({ id: threadId })),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

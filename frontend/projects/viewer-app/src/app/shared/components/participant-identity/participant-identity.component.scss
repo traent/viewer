@@ -1,3 +1,11 @@
 :host {
   display: block;
 }
+
+// Probably going to be fixed by @russoalberto PR #4566
+::ng-deep ngx-t3-thing-inline-type {
+  mat-icon {
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
+}

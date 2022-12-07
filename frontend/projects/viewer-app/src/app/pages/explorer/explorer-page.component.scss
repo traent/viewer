@@ -1,30 +1,39 @@
 :host {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  @apply tw-block tw-w-full tw-h-full tw-overflow-x-auto tw-overflow-y-hidden;
   > * {
-    min-width: 800px;
+    min-width: 320px;
   }
 }
 
 .layout-content {
-  background-color: theme("colors.grey.100");
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  @apply tw-bg-neutral-100 tw-box-border tw-flex tw-flex-col;
+
+  & > .main-content {
+    @apply tw-p-2 md:tw-p-6 md:tw-pt-2;
+  }
+
+  & > .top-content {
+    @apply tw-px-2 tw-py-2 md:tw-py-2 md:tw-px-6 tw-gap-2;
+
+    & > * {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+
+  ngx-t3-tabs.top-content {
+    flex-wrap: nowrap !important;
+
+    & > * {
+      @apply tw-border tw-border-black/10 tw-rounded tw-flex-shrink-0;
+    }
+  }
 }
 
-.back-to-viewer {
-  line-height: 36px;
-  font-size: 13px;
-}
-
-.layout-content > .top-content {
-  padding: 9px 48px;
-}
-
-.layout-content > .main-content {
-  padding: 24px 48px;
+// Prevents unreadable tables (especially blocks' one)
+::ng-deep {
+  .table-header,
+  cdk-accordion-item {
+    min-width: 700px;
+  }
 }

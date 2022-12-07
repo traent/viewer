@@ -2,27 +2,28 @@
   blockAcknowledgementsInfo: blockAcknowledgementsInfo$ | async,
   editor: editor$ | async,
   workflow: workflow$ | async,
+  workflowStateLabel: workflowStateLabel$ | async,
   organizations: organizations$ | async,
   participants: participants$ | async
 } as resolved">
   <h2
     mat-dialog-title
-    class="opal-mb-0">
+    class="tw-mb-0">
     {{ 'i18n.Common.projectDetails' | translate }}
   </h2>
 
   <div
-    class="opal-my-6"
+    class="tw-my-6"
     mat-dialog-content>
-    <ngx-t3-descriptions class="opal-border-1 opal-radius-4 opal-border-grey-200">
+    <ngx-t3-descriptions class="tw-border !tw-rounded tw-border-neutral-200">
       <ng-template #redacted>
-        <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
+        <div class="redacted">
+          {{ 'i18n.Common.redacted' | translate }}
+        </div>
       </ng-template>
 
       <ngx-t3-description-item label="project name">
-        <ng-container *ngIf="project.name | exported; else redacted">
-          {{ project.name | noValueLabel }}
-        </ng-container>
+        <ng-container *ngIf="project.name | exported; else redacted">{{ project.name | noValueLabel }}</ng-container>
       </ngx-t3-description-item>
 
       <ngx-t3-description-item
@@ -41,7 +42,7 @@
         *ngIf="resolved.organizations && resolved.organizations.length > 0"
         [label]="'i18n.Common.organizations' | translate"
         [multiline]="true">
-        <div class="opal-fx-col">
+        <div class="tw-flex tw-flex-col">
           <ng-container *ngFor="let organization$ of resolved.organizations">
             <ngx-t3-organization-identity
               *ngIf="{ value: organization$ | async } as organization"
@@ -59,7 +60,7 @@
         *ngIf="resolved.participants && resolved.participants.length > 0"
         [label]="'i18n.Common.participants' | translate"
         [multiline]="true">
-        <div class="opal-fx-col">
+        <div class="tw-flex tw-flex-col">
           <app-participant-identity
             *ngFor="let participant of resolved.participants"
             [participant]="participant"></app-participant-identity>
@@ -73,19 +74,19 @@
       </ngx-t3-description-item>
 
       <ngx-t3-description-item
-        *ngIf="resolved.workflow"
+        *ngIf="resolved.workflow && resolved.workflowStateLabel !== null"
         [label]="'i18n.Common.state' | translate">
-        <div *ngIf="resolved.workflow.lastState | exported; else redacted">
-          {{ resolved.workflow.lastState | noValueLabel }}
+        <div *ngIf="resolved.workflowStateLabel | exported; else redacted">
+          {{ resolved.workflowStateLabel | noValueLabel }}
         </div>
       </ngx-t3-description-item>
 
       <ngx-t3-description-item [label]="'i18n.Common.linkHash' | translate">
         <ngx-t3-copy-to-clipboard
-          class="opal-d-block opal-ellipsed"
+          class="tw-block tw-truncate"
           position="left"
           [textToCopy]="project.updatedInBlock.linkHash | uint8">
-          <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+          <div class="tw-text-sm tw-truncate tw-font-code tw-underline tw-mr-1">
             {{ project.updatedInBlock.linkHash | uint8 }}
           </div>
         </ngx-t3-copy-to-clipboard>
@@ -94,7 +95,7 @@
       <ngx-t3-description-item
         [label]="'i18n.Common.acks' | translate"
         [hasDivider]="false">
-        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+        <span class="tw-text-sm tw-block tw-truncate tw-font-code tw-underline">
           <app-acks-status
             [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
             (click)="openAcknowledgementsDialog(project.updatedInBlock)"></app-acks-status>

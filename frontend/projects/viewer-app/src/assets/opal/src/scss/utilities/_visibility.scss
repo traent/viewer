@@ -1,7 +1,0 @@
-// Display
-@each $visibility in (visible, hidden, collapse) {
-  // .opal-visibility-hidden, .opal-visibility-visible...
-  .opal-visibility-#{$visibility} {
-    visibility: $visibility !important;
-  }
-}

@@ -10,11 +10,3 @@ export type LedgerCommandRaw = [
   operation: LedgerOperation,
   fields: Record<string, Uint8Array>,
 ];
-
-export interface LedgerCommand {
-  type: string;
-  id: string;
-  operation: 'Add' | 'Update' | 'Remove';
-  fields: Record<string, Uint8Array>;
-  getFields(): Promise<Record<string, unknown>>;
-}

@@ -11,17 +11,17 @@
 }
 
 .form-item-list {
-  width: 800px;
+  min-width: 800px;
 }
 
 .form-item-box {
   margin: 24px 0px;
-  border: solid 1px theme("colors.neutral.200");
+  border: solid 1px var(--tw-neutral-200);
   border-radius: 8px;
   background: white;
 
   .heading {
-    heigth: 30px;
+    height: 30px;
   }
 
   .description {

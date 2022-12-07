@@ -32,18 +32,18 @@
               "projects/viewer-app/src/assets",
               {
                 "glob": "*",
-                "input": "./node_modules/opal/icons",
-                "output": "assets/opal/icons"
+                "input": "./node_modules/@traent/design-system/icons",
+                "output": "assets/@traent/design-system/icons"
               },
               {
                 "glob": "*",
-                "input": "./node_modules/opal/images",
-                "output": "assets/opal/images"
+                "input": "./node_modules/@traent/design-system/images",
+                "output": "assets/@traent/design-system/images"
               },
               {
                 "glob": "*",
-                "input": "./node_modules/opal/fonts",
-                "output": "assets/opal/fonts"
+                "input": "./node_modules/@traent/design-system/fonts",
+                "output": "assets/@traent/design-system/fonts"
               },
               {
                 "glob": "**/*",
@@ -57,7 +57,6 @@
               }
             ],
             "styles": [
-              "./node_modules/jsoneditor/dist/jsoneditor.min.css",
               "projects/viewer-app/src/styles.scss"
             ],
             "scripts": [],

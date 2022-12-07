@@ -6,16 +6,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  AcknowledgmentsDialogModule,
-  AcksIconModule,
-  RedactableTagModule,
-  ResourceReferenceModule,
-  StreamOverviewModule,
-  StreamReferencesModule,
-  StreamSnapshotDetailModule,
-  Uint8PipeModule,
-} from '@viewer/shared';
-import {
   ApplyModule,
   CopyToClipboardModule,
   DescriptionsModule,
@@ -32,6 +22,16 @@ import {
   TagModule,
 } from '@traent/ngx-components';
 import { NgxT3PaginatorModule } from '@traent/ngx-paginator';
+import {
+  AcknowledgmentsDialogModule,
+  AcksIconModule,
+  RedactableTagModule,
+  ResourceReferenceModule,
+  StreamOverviewModule,
+  StreamReferencesModule,
+  StreamSnapshotDetailModule,
+  Uint8PipeModule,
+} from '@viewer/shared';
 
 import { StreamSideLogComponent } from './stream-side-log/stream-side-log.component';
 import { StreamSideOverviewComponent } from './stream-side-overview/stream-side-overview.component';

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BehaviorSubject, shareReplay, switchMap } from 'rxjs';
 import { TablePaginatorData, tableOffset } from '@traent/ngx-components';
-import { StorageService } from '@viewer/services';
+import { LedgerAccessorService } from '@viewer/services';
+import { BehaviorSubject, shareReplay, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-off-chain-keys-tab-content',
@@ -22,9 +22,9 @@ export class OffChainKeysTabContentComponent {
   }
 
   readonly offchainKeys$ = this.offchainKeysPageEvent$.pipe(
-    switchMap((pageEvent) => this.storageService.getLedger().getOffchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
+    switchMap((pageEvent) => this.ledgerAccessorService.getBlockLedger().getOffchainKeys(tableOffset(pageEvent), pageEvent.pageSize)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  constructor(readonly storageService: StorageService) { }
+  constructor(readonly ledgerAccessorService: LedgerAccessorService) { }
 }

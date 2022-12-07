@@ -1,10 +1,10 @@
+import { base64ToU8 } from './uint8';
 import {
   InvalidEntryNameError,
   KeyPair,
   LedgerInfo,
   ZipEntry,
 } from '../models';
-import { base64ToU8 } from './uint8';
 
 const exportLedgerFilename = 'ledger.json';
 const exportInchainSharedKeysPrefix = 'sharedkeys/blocks/';

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocumentService, ThreadService } from '@viewer/services';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { DocumentService, ThreadService } from '@viewer/services';
 import { map } from 'rxjs';
 
 const THREAD_REFERENCES_LIMIT = 15;

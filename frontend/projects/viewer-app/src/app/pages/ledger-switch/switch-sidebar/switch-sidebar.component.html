@@ -1,0 +1,30 @@
+<ngx-t3-tabs
+  *ngIf="{ ledgerSelected: ledgerSelected$ | async } as resolved"
+  class="tw-my-3 tw-mx-4 tw-capitalize">
+  <ngx-t3-tab-item
+    class="tw-grow tw-basis-0"
+    value="info"
+    routerLinkActive="active"
+    [class.active]="resolved.ledgerSelected === false"
+    [routerLink]="!!resolved.ledgerSelected ? 'info' : null">
+    <mat-icon class="tw-h-4 tw-w-4 tw-mr-1">info</mat-icon>
+    {{ 'i18n.Common.info' | translate }}
+  </ngx-t3-tab-item>
+  <ngx-t3-tab-item
+    class="tw-grow tw-basis-0"
+    value="log"
+    routerLinkActive="active"
+    [routerLink]="!!resolved.ledgerSelected ? 'log' : null"
+    [disabled]="!resolved.ledgerSelected"
+    [matTooltip]="'i18n.LedgerSwitch.SwitchSidebar.tabDisabledLogTooltip' | translate"
+    [matTooltipDisabled]="!!resolved.ledgerSelected">
+    <mat-icon class="tw-h-4 tw-w-4 tw-mr-1">list</mat-icon>
+    {{ 'i18n.Common.log' | translate }}
+  </ngx-t3-tab-item>
+</ngx-t3-tabs>
+
+<div class="tw-border-b tw-border-neutral-200"></div>
+
+<div class="tw-grow tw-overflow-hidden">
+  <router-outlet></router-outlet>
+</div>

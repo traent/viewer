@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { LogItemImage } from '@viewer/models';
+import { LogItemImage, isCustomIcon, isString } from '@viewer/models';
 
 @Component({
   selector: 'app-image-icon',
@@ -8,4 +8,7 @@ import { LogItemImage } from '@viewer/models';
 })
 export class ImageIconComponent {
   @Input() image: LogItemImage | null = null;
+
+  readonly isCustomIcon = isCustomIcon;
+  readonly isString = isString;
 }

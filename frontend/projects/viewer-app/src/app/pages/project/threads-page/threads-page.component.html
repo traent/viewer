@@ -2,8 +2,8 @@
     threads: threads$ | async,
     threadSelected: threadIdSelected$ | async
   } as resolved"
-  class="opal-s-full opal-fx-row">
-  <div class="opal-max-w-80 opal-min-w-80 opal-mr-6 opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-fx-col">
+  class="tw-w-full tw-h-full tw-flex tw-flex-row">
+  <div class="tw-max-w-[320px] tw-min-w-[320px] tw-mr-6 tw-bg-white !tw-rounded-lg tw-border tw-border-neutral-200 tw-flex tw-flex-col">
     <app-thread-list
       [tab]="categorySelection"
       [paginator]="resolved.threads"
@@ -15,17 +15,17 @@
   </div>
   <div
     *ngIf="resolved.threadSelected; else missingThreadsOrThreadSelection"
-    class="opal-w-full opal-fx-col opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-overflow-hidden">
+    class="tw-w-full tw-flex tw-flex-col tw-bg-white !tw-rounded-lg tw-border tw-border-neutral-200 tw-overflow-hidden">
     <router-outlet></router-outlet>
   </div>
 
   <ng-template #missingThreadsOrThreadSelection>
-    <div class="opal-fx-col opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-border-1 opal-border-grey-200 opal-radius-8">
+    <div class="tw-flex tw-flex-col tw-flex tw-items-center tw-justify-center tw-grow tw-basis-0 tw-bg-white tw-border tw-border-neutral-200 !tw-rounded-lg">
       <img
         src="/assets/images/no-messages.svg"
         alt="there are no messages"
-        class="opal-mb-3">
-      <div class="opal-body-1 opal-text-grey-400 opal-text-center">
+        class="tw-mb-3">
+      <div class="tw-text-base tw-text-neutral-400 tw-text-center">
         <ng-container *ngIf="resolved.threads?.total?.value === 0 && !resolved.threads?.loading?.value; else missingSelection">
           <ng-container *ngIf="categorySelection === 'all'; else missingSomeThreadCategories">
             No threads in this project

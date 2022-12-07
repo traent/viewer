@@ -1,7 +1,7 @@
-import { shareReplay } from 'rxjs/operators';
 import { Component, Input } from '@angular/core';
-import { BehaviorSubject, switchMap } from 'rxjs';
 import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 interface UIDataBlock {
   hasKey: boolean;

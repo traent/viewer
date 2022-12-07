@@ -29,10 +29,6 @@ declare namespace Blazor {
 declare namespace DotNet {
   type InputByteArray = string | Uint8Array;
 
-  function invokeMethod(namespace: 'Ledger.Wasm.Container', method: 'ComputeLedgerId',
-    ledgerPublicKey: InputByteArray,
-  ): Uint8Array;
-
   function invokeMethod(namespace: 'Ledger.Wasm.Container', method: 'ComputeSharedKeyFromBox',
     box: InputByteArray,
     secretSignatureKey: InputByteArray,
@@ -50,14 +46,6 @@ declare namespace DotNet {
     algorithm: string,
     message: InputByteArray,
   ): Uint8Array;
-
-  function invokeMethod(namespace: 'Ledger.Wasm.Container', method: 'IsValidSignature',
-    ledgerId: InputByteArray,
-    algorithm: string,
-    publicKey: InputByteArray,
-    message: InputByteArray,
-    signature: InputByteArray,
-  ): boolean;
 
   function invokeMethod(namespace: 'Ledger.Wasm.Container', method: 'Parse', data: InputByteArray): Ledger.Parser.Block;
 

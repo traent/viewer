@@ -1,14 +1,14 @@
 <div
   *ngIf="!paginator?.loading?.value; else skeleton"
-  class="opal-overflow-y-auto opal-h-full">
+  class="tw-overflow-y-auto tw-h-full">
 
-  <div class="opal-fx-row opal-mx-4 opal-body-2">
+  <div class="tw-flex tw-flex-row tw-mx-4 tw-text-sm">
     {{ 'i18n.Project.ThreadReferences.subTitle' | translate }}
   </div>
 
   <ngx-t3-paginator-list
     *ngIf="paginator"
-    class="opal-mt-7 opal-d-block"
+    class="tw-mt-7 tw-block"
     [paginator]="paginator">
 
     <ng-container *ngFor="let reference of paginator?.items?.value; let first = first">
@@ -29,5 +29,5 @@
 </div>
 
 <ng-template #skeleton>
-  <ngx-t3-skeleton class="opal-h-4 opal-w-full opal-mx-n-4 opal-py-3 opal-mx-n-4"></ngx-t3-skeleton>
+  <ngx-t3-skeleton class="tw-h-4 tw-w-full tw--mx-4 tw-py-3 tw--mx-4"></ngx-t3-skeleton>
 </ng-template>

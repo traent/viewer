@@ -1,65 +1,85 @@
-<div
-  *ngIf="snapshot$ | async as snapshot"
-  class="opal-fx-col opal-pt-3 opal-px-4 opal-pb-2 opal-border-b-1 opal-border-grey-200">
-  <app-document-log-item
-    *ngIf="snapshot.type === 'DocumentV0'"
-    [snapshot]="snapshot">
-  </app-document-log-item>
-  <app-project-log-item
-    *ngIf="snapshot.type === 'ProjectV0'"
-    [snapshot]="snapshot">
-  </app-project-log-item>
-  <app-participant-log-item
-    *ngIf="snapshot.type === 'ProjectParticipantV0'"
-    [snapshot]="snapshot">
-  </app-participant-log-item>
-  <app-stream-entry-log-item
-    *ngIf="snapshot.type === 'StreamEntryV0'"
-    [snapshot]="snapshot">
-  </app-stream-entry-log-item>
-  <app-stream-reference-log-item
-    *ngIf="snapshot.type === 'StreamReferenceV0'"
-    [snapshot]="snapshot">
-  </app-stream-reference-log-item>
-  <app-tag-entry-log-item
-    *ngIf="snapshot.type === 'TagEntryV0'"
-    [snapshot]="snapshot">
-  </app-tag-entry-log-item>
-  <app-tag-log-item
-    *ngIf="snapshot.type === 'TagV0'"
-    [snapshot]="snapshot">
-  </app-tag-log-item>
-  <app-thread-log-item
-    *ngIf="snapshot.type === 'ThreadV0'"
-    [snapshot]="snapshot">
-  </app-thread-log-item>
-  <app-thread-message-log-item
-    *ngIf="snapshot.type === 'ThreadMessageV0'"
-    [snapshot]="snapshot">
-  </app-thread-message-log-item>
-  <app-thread-reference-log-item
-    *ngIf="snapshot.type === 'ThreadReferenceV0'"
-    [snapshot]="snapshot">
-  </app-thread-reference-log-item>
-  <app-workflow-log-item
-    *ngIf="snapshot.type === 'WorkflowV0'"
-    [snapshot]="snapshot">
-  </app-workflow-log-item>
-
+<ng-container *ngIf="{
+  ledgerId: ledgerId$ | async,
+  snapshot: snapshot$ | async
+} as resolved">
   <div
-    *ngIf="{
-      updatedInBlock: snapshot.updatedInBlock,
-      acknowledgementStatus: (snapshot | apply : getAcknowledgementStatus) | async
+    *ngIf="resolved.ledgerId !== null && resolved.snapshot"
+    class="tw-flex tw-flex-col tw-pt-3 tw-px-4 tw-pb-2 tw-border-b tw-border-neutral-200">
+
+    <app-cross-project-reference-log-item
+      *ngIf="resolved.snapshot.type === 'CrossProjectReferenceV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot"></app-cross-project-reference-log-item>
+    <app-document-log-item
+      *ngIf="resolved.snapshot.type === 'DocumentV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-document-log-item>
+    <app-project-log-item
+      *ngIf="resolved.snapshot.type === 'ProjectV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-project-log-item>
+    <app-participant-log-item
+      *ngIf="resolved.snapshot.type === 'ProjectParticipantV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-participant-log-item>
+    <app-stream-entry-log-item
+      *ngIf="resolved.snapshot.type === 'StreamEntryV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-stream-entry-log-item>
+    <app-stream-reference-log-item
+      *ngIf="resolved.snapshot.type === 'StreamReferenceV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-stream-reference-log-item>
+    <app-tag-entry-log-item
+      *ngIf="resolved.snapshot.type === 'TagEntryV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-tag-entry-log-item>
+    <app-tag-log-item
+      *ngIf="resolved.snapshot.type === 'TagV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-tag-log-item>
+    <app-thread-log-item
+      *ngIf="resolved.snapshot.type === 'ThreadV0'"
+      [ledgerId]="resolved.ledgerId"
+      [snapshot]="resolved.snapshot">
+    </app-thread-log-item>
+    <app-thread-message-log-item
+      *ngIf="resolved.snapshot.type === 'ThreadMessageV0'"
+      [snapshot]="resolved.snapshot"
+      [ledgerId]="resolved.ledgerId">
+    </app-thread-message-log-item>
+    <app-thread-reference-log-item
+      *ngIf="resolved.snapshot.type === 'ThreadReferenceV0'"
+      [snapshot]="resolved.snapshot"
+      [ledgerId]="resolved.ledgerId">
+    </app-thread-reference-log-item>
+    <app-workflow-log-item
+      *ngIf="resolved.snapshot.type === 'WorkflowV0'"
+      [snapshot]="resolved.snapshot">
+    </app-workflow-log-item>
+
+    <div
+      *ngIf="{
+      updatedInBlock: resolved.snapshot.updatedInBlock,
+      acknowledgementStatus: acknowledgementStatus$ | async
     } as acksData"
-    class="opal-fx-row opal-fx-align-center">
-    <app-acks-icon
-      class="opal-ml-8 opal-mr-2"
-      [status]="acksData.acknowledgementStatus && acksData.acknowledgementStatus.status"
-      (click)="acksData.updatedInBlock && openAcknowledgementsDialog(acksData.updatedInBlock)"></app-acks-icon>
-    <small
-      *ngIf="snapshot.updatedInBlock.createdAt as date"
-      class="opal-text-grey-400 opal-body-3">
-      {{ date | date : 'dd MMM YYYY, HH:mm' }}
-    </small>
+      class="tw-flex tw-flex-row tw-items-center">
+      <app-acks-icon
+        class="tw-ml-8 tw-mr-2"
+        [status]="acksData.acknowledgementStatus && acksData.acknowledgementStatus.status"
+        (click)="acksData.updatedInBlock && openAcknowledgementsDialog(acksData.updatedInBlock, resolved.ledgerId)"></app-acks-icon>
+      <small
+        *ngIf="resolved.snapshot.updatedInBlock.createdAt as date"
+        class="tw-text-neutral-400 tw-text-xs">
+        {{ date | date : 'dd MMM YYYY, HH:mm' }}
+      </small>
+    </div>
   </div>
-</div>
+</ng-container>

@@ -7,15 +7,13 @@ import { StorageService } from '../services/storage.service';
 export class LedgerStoredGuard implements CanActivate {
 
   constructor(
-    private readonly storageService: StorageService,
     private readonly router: Router,
+    private readonly storageService: StorageService,
   ) { }
 
   async canActivate(state: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
-    try {
-      return !!(await this.storageService.getLedger().getLedgerInfo());
-    } catch {
-      return this.router.createUrlTree(['/'], { queryParams: state.queryParams });
-    }
+    return this.storageService.getLedgers().length === 0
+      ? this.router.createUrlTree(['/'], { queryParams: state.queryParams })
+      : true;
   }
 }

@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { ReferenceItem } from '@viewer/models';
 import { RedactedType } from '@traent/ngx-components';
+import { ReferenceItem } from '@viewer/models';
 
 @Component({
   selector: 'app-resource-reference',

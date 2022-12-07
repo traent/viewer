@@ -1,56 +1,57 @@
-<app-topbar class="opal-d-block"></app-topbar>
+<app-topbar class="tw-block"></app-topbar>
 
 <div class="layout-content">
-  <div class="opal-fx-row opal-fx-justify-around opal-mt-3 top-content opal-fx-align-center">
-    <div class="opal-h2 opal-mr-auto">
-      {{ 'i18n.Explorer.ledgerExplorer' | translate }}
-    </div>
+  <div class="tw-flex tw-flex-row tw-justify-around tw-my-3 top-content tw-items-center">
     <button
       *ngIf="ledgerService.archiveLoaded"
-      class="opal-fx-center opal-border-grey-200 opal-border-1 back-to-viewer opal-bg-transparent"
-      mat-flat-button
+      class="material-symbols-outlined tw-mr-2"
       queryParamsHandling="merge"
-      [routerLink]="['/project']">
-      {{ 'i18n.Explorer.back' | translate }}
+      [routerLink]="['/project']"
+      [matTooltip]="'i18n.Explorer.back' | translate">
+      chevron_left
     </button>
+    <div class="tw-h2 tw-mr-auto">
+      {{ 'i18n.Explorer.ledgerExplorer' | translate }}
+    </div>
   </div>
 
   <div
     *ngIf="ledgerInfo$ | async as ledgerInfo"
-    class="opal-fx-row opal-fx-justify-around top-content">
-    <div class="opal-fx-row opal-fx-align-center opal-p-3 opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-fx-g-1 opal-fx-justify-start opal-ellipsed">
-      <span class="opal-min-w-35 opal-overline">
+    class="tw-flex tw-flex-row tw-justify-around top-content !tw-p-2 tw-mx-2 md:tw-mx-6 tw-bg-white !tw-rounded-lg tw-border tw-border-neutral-200">
+
+    <div class="tw-flex tw-flex-col tw-gap-1 tw-grow tw-justify-start tw-truncate">
+      <span class="tw-min-w-[140px] tw-t3-text-overline">
         {{ 'i18n.Explorer.address' | translate }}
       </span>
       <div
         *ngIf="ledgerInfo.address | uint8 as address"
-        class="opal-px-3 opal-border-box opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+        class="tw-pr-3 tw-box-border tw-grow tw-basis-0 tw-flex tw-flex-row tw-justify-start tw-items-center tw-truncate">
         <ngx-t3-copy-to-clipboard
-          class="opal-w-full"
+          class="tw-w-full"
           position="left"
           [copiedTooltip]="'i18n.Common.copied' | translate"
           [tooltip]="'i18n.Common.clitToCopy' | translate"
           [textToCopy]="address">
-          <div class="opal-ellipsed opal-body-1 opal-text-mono opal-mr-1">{{ address }}</div>
+          <div class="tw-truncate tw-text-base tw-font-mono tw-mr-1">{{ address }}</div>
         </ngx-t3-copy-to-clipboard>
       </div>
     </div>
-    <div class="opal-fx-row opal-fx-align-center opal-p-3 opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200 opal-mx-3">
-      <span class="opal-w-35 opal-overline">
+    <div class="tw-flex tw-flex-col tw-gap-1">
+      <span class="tw-w-[8.75rem] tw-t3-text-overline">
         {{'i18n.Explorer.headIndex' | translate}}
       </span>
-      <span class="opal-body-1">{{ ledgerInfo.headIndex }}</span>
+      <span class="tw-text-base">{{ ledgerInfo.headIndex }}</span>
     </div>
-    <div class="opal-fx-row opal-fx-align-center opal-p-3 opal-bg-white opal-radius-8 opal-border-1 opal-border-grey-200">
-      <span class="opal-w-35 opal-overline">
+    <div class="tw-flex tw-flex-col tw-gap-1">
+      <span class="tw-w-[8.75rem] tw-t3-text-overline">
         {{ 'i18n.Explorer.version' | translate }}
       </span>
-      <span class="opal-body-1">{{ ledgerInfo.version }}</span>
+      <span class="tw-text-base">{{ ledgerInfo.version }}</span>
     </div>
   </div>
 
   <ngx-t3-tabs
-    class="opal-text-capitalize top-content"
+    class="tw-capitalize top-content tw-overflow-x-auto tw-shrink-0 tw-border-b tw-border-b-neutral-200 tw-justify-between"
     [(value)]="tagLabel">
     <ngx-t3-tab-item value="block">{{ 'i18n.Explorer.block' | translate }}</ngx-t3-tab-item>
     <ngx-t3-tab-item value="off chain data">
@@ -67,8 +68,6 @@
     </ngx-t3-tab-item>
     <ngx-t3-tab-item value="miscellaneous">{{ 'i18n.Explorer.misc' | translate }}</ngx-t3-tab-item>
   </ngx-t3-tabs>
-
-  <div class="opal-border-b-1 opal-border-grey-200"></div>
 
   <app-block-tab-content
     *ngIf="tagLabel === 'block'"
@@ -97,6 +96,6 @@
 
   <app-miscellaneous-tab-content
     *ngIf="tagLabel === 'miscellaneous'"
-    class="opal-fx-col opal-overflow-y-auto main-content">
+    class="tw-flex tw-flex-col tw-overflow-y-auto main-content">
   </app-miscellaneous-tab-content>
 </div>

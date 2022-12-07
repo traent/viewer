@@ -1,26 +1,26 @@
 import { Injectable } from '@angular/core';
-import { ProjectParticipant, ThreadParticipantParams, WorkflowParticipant, WorkflowParticipantID } from '@viewer/models';
-import { collectionToPage } from '@viewer/utils';
 import { isExported } from '@traent/ngx-components';
 import { Page } from '@traent/ngx-paginator';
+import { ProjectParticipant, ThreadParticipantParams, WorkflowParticipant, WorkflowParticipantID } from '@viewer/models';
+import { collectionToPage } from '@viewer/utils';
 
-import { LedgerObjectsService } from './ledger-objects.service';
+import { LedgerAccessorService } from './ledger-accessor.service';
 import { ProjectParticipantService, PROJECT_PARTICIPANT_LABEL } from './project-participant.service';
-import { parseThread, ThreadService, THREAD_LABEL } from './thread.service';
+import { extractThreadMessagesFromState, parseThread, THREAD_LABEL } from './thread.service';
 
 @Injectable({ providedIn: 'root' })
 export class ThreadParticipantService {
   constructor(
-    private readonly ledgerObjectService: LedgerObjectsService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
-    private readonly threadService: ThreadService,
   ) { }
 
   async getThreadParticipantCollection(threadId: string, params?: ThreadParticipantParams): Promise<Page<ProjectParticipant>> {
-    const currentState = await this.ledgerObjectService.getObjects(params?.blockIndex);
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     const thread = parseThread(currentState[THREAD_LABEL][threadId]);
 
-    const messagesAuthorIds = this.threadService.extractThreadMessagesFromState(currentState)
+    const messagesAuthorIds = extractThreadMessagesFromState(currentState)
       .filter((m) => isExported(m.threadId) && m.threadId === threadId)
       .map((message) => message.authorId)
       .filter((id): id is string => isExported(id));

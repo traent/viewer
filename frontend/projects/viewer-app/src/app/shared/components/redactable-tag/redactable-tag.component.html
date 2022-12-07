@@ -1,13 +1,27 @@
 <ngx-t3-tag
-  class="opal-no-pointer"
+  *ngIf="color | exportedAndDefined; else redactedColor"
+  class="tw-cursor-default tw-inline-block tw-align-middle"
   [ngClass]="innerClasses || []"
   [chip]="true"
   [matTooltip]="tooltipLabel"
-  [matTooltipShowDelay]="600">
-  <ng-container *ngIf="tagName | exported; else redactedTag">
-    {{ tagName | noValueLabel }}
-  </ng-container>
-  <ng-template #redactedTag>
-    <small class="redacted">{{ 'i18n.Common.redacted' | translate }}</small>
-  </ng-template>
+  [matTooltipShowDelay]="600"
+  [style.background-color]="color">
+  <ng-container *ngIf="tagName | exported; else redactedTag">{{ tagName | noValueLabel }}</ng-container>
 </ngx-t3-tag>
+
+<ng-template #redactedColor>
+  <ngx-t3-tag
+    class="tw-cursor-default tw-text-white tw-bg-neutral-300 tw-inline-block tw-align-middle"
+    [ngClass]="innerClasses || []"
+    [chip]="true"
+    [matTooltip]="tooltipLabel"
+    [matTooltipShowDelay]="600">
+    <ng-container *ngIf="tagName | exported; else redactedTag">{{ tagName | noValueLabel }}</ng-container>
+  </ngx-t3-tag>
+</ng-template>
+
+<ng-template #redactedTag>
+  <small class="redacted tw-inline-block tw-align-middle">
+    {{ 'i18n.Common.redacted' | translate }}
+  </small>
+</ng-template>

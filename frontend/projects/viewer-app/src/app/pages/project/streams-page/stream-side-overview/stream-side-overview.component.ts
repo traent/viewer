@@ -11,14 +11,13 @@ import { map, switchMap, tap } from 'rxjs/operators';
 export class StreamSideOverviewComponent {
 
   readonly stream$ = this.route.params.pipe(
-    map(({ id }) => id),
-    switchMap((streamId) => this.streamService.getStream(streamId)),
+    switchMap(({ id }) => this.streamService.getStream({ id })),
     tap({ error: () => this.router.navigate(['/project']) }),
   );
 
   readonly streamReferencesCount$ = this.route.params.pipe(
     map(({ id }) => id),
-    switchMap((streamId) => this.streamService.getStreamReferencesCollection( { streamEntryId: streamId, page: 1 })),
+    switchMap((streamId) => this.streamService.getStreamReferencesCollection({ streamEntryId: streamId, page: 1 })),
     map((page) => page.total),
   );
 

@@ -3,15 +3,13 @@ import { decode, encode } from 'base64-arraybuffer';
 export const emptyU8 = new Uint8Array();
 
 export const base64ToU8 = (s: string) => new Uint8Array(decode(s));
+export const u8ToU8 = (b: DotNet.InputByteArray) => typeof b === 'string' ? base64ToU8(b) : b;
 export const u8ToBase64 = (b: DotNet.InputByteArray) => typeof b === 'string' ? b : encode(b);
 export const u8ToBlob = (uint8Array: Uint8Array | null | undefined) => uint8Array && new Blob([uint8Array]);
 export const u8ToBase64Url = (b: DotNet.InputByteArray) => b64ToB64UrlEncoding(u8ToBase64(b));
 
 const textDecoder = new TextDecoder();
-export const u8ToRaw = (b: DotNet.InputByteArray) =>
-  typeof b === 'string'
-    ? textDecoder.decode(base64ToU8(b))
-    : textDecoder.decode(b);
+export const u8ToRaw = (b: DotNet.InputByteArray) => textDecoder.decode(u8ToU8(b));
 
 export const hexToU8 = (s: string) => {
   if (s.length % 2) {
@@ -34,13 +32,9 @@ const u8NumberToHex = (x: number) => {
 };
 
 export const u8ToHex = (b: DotNet.InputByteArray) => {
-  if (typeof b === 'string') {
-    b = base64ToU8(b);
-  }
-
   let r = '';
 
-  for (const x of b) {
+  for (const x of u8ToU8(b)) {
     r += u8NumberToHex(x);
   }
 

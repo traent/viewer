@@ -1,6 +1,6 @@
 # Wasm libraries
 
-FROM --platform=linux/x86_64 mcr.microsoft.com/dotnet/sdk:6.0 AS dotnet-builder
+FROM --platform=linux/x86_64 mcr.microsoft.com/dotnet/sdk:7.0 AS dotnet-builder
 RUN apt-get update && \
     apt-get install --no-install-recommends -y python3 && \
     apt-get clean && \
@@ -10,11 +10,16 @@ RUN apt-get update && \
 # WASM
 COPY ledger-dotnet /ledger-dotnet
 
-WORKDIR /viewer/frontend
+WORKDIR /ledger-dotnet/Ledger.Wasm.Container
 
-COPY viewer/frontend/build-wasm-libraries.sh ./
-RUN mkdir -p ./projects/viewer-app/src/assets/wasm-parser
-RUN sh build-wasm-libraries.sh
+RUN --mount=type=cache,sharing=locked,target=/root/.nuget/packages \
+  dotnet publish -c Release -o /publish
+
+FROM alpine AS wasm-parser
+
+COPY --from=dotnet-builder \
+  /publish/wwwroot/_framework \
+  wasm-parser
 
 FROM --platform=${BUILDPLATFORM:-linux} node:16 as node-builder
 
@@ -28,41 +33,24 @@ ARG SENTRY_CLI_VERSION=1.71.0
 RUN wget https://github.com/getsentry/sentry-cli/releases/download/${SENTRY_CLI_VERSION}/sentry-cli-Linux-x86_64 -O /usr/bin/sentry-cli
 RUN chmod +x /usr/bin/sentry-cli
 
-# App dependencies
-WORKDIR /apps
+
+# The actual Viewer
+WORKDIR /viewer/frontend
+
 ENV NODE_OPTIONS=--max_old_space_size=4096
 ARG CONFIGURATION
 ARG NPM_AUTH_TOKEN
 
-COPY apps/package.json apps/package-lock.json apps/.npmrc ./
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-RUN npm ci
-
-## opal
-COPY ./apps/projects/opal ./projects/opal
-WORKDIR /apps/projects/opal
-RUN npm ci
-RUN npm run build
-
-## opal-material
-WORKDIR /apps
-COPY ./apps/projects/traent-design-system ./projects/traent-design-system
-COPY ./apps/projects/opal-material ./projects/opal-material
-
-# The actual Viewer
-
-WORKDIR /viewer/frontend
-
-COPY viewer/frontend/projects ./projects
 COPY viewer/frontend/package.json viewer/frontend/package-lock.json viewer/frontend/.npmrc ./
 COPY viewer/frontend/angular.json apps/tsconfig.json ./
 COPY viewer/frontend/git-version.json ./
 RUN npm ci
 
-COPY --from=dotnet-builder \
-  /viewer/frontend/projects/viewer-app/src/assets/wasm-parser \
+COPY --from=wasm-parser \
+  /wasm-parser \
   ./projects/viewer-app/src/assets/wasm-parser
 
+COPY viewer/frontend/projects ./projects
 RUN npm run build -- --project=viewer-app --configuration=${CONFIGURATION}
 
 # Release to sentry using sentry-cli if sentry enviroment vars are set
