@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { LedgerService, StorageService } from '@viewer/services';
+import { LedgerAccessorService, LedgerService } from '@viewer/services';
 import { BehaviorSubject } from 'rxjs';
 
 type TagLabel = 'block' | 'off chain data' | 'proofs' | 'in chain keys' | 'off chain keys' | 'miscellaneous';
@@ -12,7 +11,7 @@ type TagLabel = 'block' | 'off chain data' | 'proofs' | 'in chain keys' | 'off c
 })
 export class ExplorerPageComponent {
 
-  readonly ledgerInfo$ = this.storageService.getLedger().getLedgerInfo();
+  readonly ledgerInfo$ = this.ledgerAccessorService.getBlockLedger().getLedgerInfo();
 
   readonly tagLabel$ = new BehaviorSubject<TagLabel>('block');
   get tagLabel(): TagLabel {
@@ -23,13 +22,7 @@ export class ExplorerPageComponent {
   }
 
   constructor(
-    private readonly storageService: StorageService,
-    private readonly router: Router,
+    readonly ledgerAccessorService: LedgerAccessorService,
     readonly ledgerService: LedgerService,
   ) { }
-
-  async closeLedger(): Promise<void> {
-    this.ledgerService.reset();
-    this.router.navigate(['/']);
-  }
 }

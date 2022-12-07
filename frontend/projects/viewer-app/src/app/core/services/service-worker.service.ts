@@ -1,12 +1,37 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { b64ToB64UrlEncoding } from '@viewer/utils';
+import { isRedacted } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { BehaviorSubject } from 'rxjs';
 
-import { AcknowledgementService } from './acknowledgement.service';
 import { DocumentService } from './document.service';
-import { LedgerObjectsService } from './ledger-objects.service';
-import { StorageService } from './storage.service';
+import { LedgerAccessorService, ObjectLedger } from './ledger-accessor.service';
+
+import { ChangeFilter, LedgerChange, LedgerObject, ObjectFilter, Page } from '*/well-known/view-v2.js';
+
+const clonableRedactedMarker = new Error('Redacted');
+
+const replaceRedacted = <T extends LedgerChange | LedgerObject>(target: T): T => {
+  let fields;
+  for (const [k, v] of Object.entries(target.fields)) {
+    if (isRedacted(v)) {
+      fields ??= { ...target.fields };
+      fields[k] = clonableRedactedMarker;
+    }
+  }
+
+  return fields ? { ...target, fields } : target;
+};
+
+const getChanges = async (ledger: ObjectLedger, filter: ChangeFilter): Promise<Page<LedgerChange>> => {
+  const { page, items } = await ledger.getChanges(filter);
+  return { page, items: items.map(replaceRedacted) };
+};
+
+const getObjects = async (ledger: ObjectLedger, filter: ObjectFilter): Promise<Page<LedgerObject>> => {
+  const { page, items } = await ledger.getObjectsV2(filter);
+  return { page, items: items.map(replaceRedacted) };
+};
 
 const invoke = <T>(worker: ServiceWorker, operation: string, payload?: any) =>
   new Promise<T>((resolve) => {
@@ -15,15 +40,24 @@ const invoke = <T>(worker: ServiceWorker, operation: string, payload?: any) =>
     worker.postMessage({ operation, payload }, [channel.port2]);
   });
 
+const retrieve = async (ledger: ObjectLedger, payload: { id: string }) => {
+  const state = await ledger.getObjects();
+  for (const collection of Object.values(state)) {
+    if (payload.id in collection) {
+      return collection[payload.id];
+    }
+  }
+  return undefined;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ServiceWorkerService {
-  readonly clientId$ = new BehaviorSubject<string | undefined>(undefined);
+  private readonly _clientId$ = new BehaviorSubject<string | undefined>(undefined);
+  readonly clientId$ = this._clientId$.pipe(isNotNullOrUndefined());
 
   constructor(
-    private readonly acknowledgementService: AcknowledgementService,
     private readonly documentService: DocumentService,
-    private readonly ledgerObjectService: LedgerObjectsService,
-    private readonly storageService: StorageService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly router: Router,
     private readonly zone: NgZone,
   ) { }
@@ -43,12 +77,12 @@ export class ServiceWorkerService {
     }
   }
 
-  async getClientId() {
+  private async getClientId() {
     const registration = await navigator.serviceWorker.ready;
     const worker = registration.active;
     if (worker) {
       const clientId = await invoke<string>(worker, 'getClientId');
-      this.clientId$.next(clientId);
+      this._clientId$.next(clientId);
     } else {
       throw new Error('Could not retrieve client id from service worker');
     }
@@ -57,9 +91,17 @@ export class ServiceWorkerService {
   async handle(operation: string, payload: any, port?: MessagePort) {
     switch (operation) {
       case 'getContextPort':
+        const { ledgerId } = payload;
+        if (typeof ledgerId !== 'string') {
+          throw new Error(`${ledgerId} is not a string`);
+        }
+
         const channel = new MessageChannel();
         channel.port1.onmessage = async (event) =>
-          event.ports[0]?.postMessage(await this.zone.run(() => this.handleContext(event.data.operation, event.data.payload)));
+          event.ports[0]?.postMessage(await this.zone.run(() => {
+            const ledger = this.ledgerAccessorService.getLedger(event.data.payload?.ledgerId ?? ledgerId);
+            return this.handleContext(ledger, event.data.operation, event.data.payload);
+          }));
         return port?.postMessage(undefined, [channel.port2]);
 
       case 'getDocument':
@@ -69,69 +111,37 @@ export class ServiceWorkerService {
     }
   }
 
-  async handleContext(operation: string, payload: any) {
+  async handleContext(ledger: ObjectLedger, operation: string, payload: any) {
     switch (operation) {
-      case 'getAcknowledgements': return this.getAcknowledgements(payload);
-      case 'getAll': return this.getAll(payload);
-      case 'getAuthorKeyId': return this.getAuthorKeyId(payload);
-      case 'getBlockIdentification': return this.getBlockIdentification(payload);
-      case 'getLatestAcknowledgements': return this.getLatestAcknowledgements();
-      case 'retrieve': return this.retrieve(payload);
+      // V2
+      case 'getChanges': return getChanges(ledger, payload.filter);
+      case 'getObjects': return getObjects(ledger, payload.filter);
+
+      // V1
+      case 'getAcknowledgements': return ledger.getAcknowledgements(payload.blockIndex);
+      case 'getAll': return Object.values(await ledger.getObjects().then((state) => state[payload.type]));
+      case 'getAuthorKeyId': return ledger.getAuthorKeyId(payload.authorId);
+      case 'getBlockIdentification': return ledger.getBlockLedger().getBlockIdentification(payload.blockIndex);
+      case 'getLatestAcknowledgements': return ledger.getLatestAcknowledgements();
+      case 'retrieve': return retrieve(ledger, payload);
       case 'navigateByUrl': return this.navigateByUrl(payload);
+
+      // fallback
       default: throw new Error(`Unsupported operation: ${operation}`);
     }
   }
 
-  private async getDocument(payload: { ledgerId: string; id: string }) {
-    await this.checkLedgerId(payload.ledgerId);
-    const document = await this.documentService.getDocument(payload.id);
+  private async getDocument({ ledgerId, id }: { ledgerId: string; id: string }) {
+    const document = await this.documentService.getDocument({ id, ledgerId });
+    const content = await this.documentService.getDocumentContent({ ledgerId, document });
 
     return {
-      content: await document.getData(),
+      content,
       contentType: document.contentType,
     };
   }
 
-  private async getAcknowledgements(payload: { blockIndex: number }) {
-    return this.acknowledgementService.getAcknowledgements(payload.blockIndex);
-  }
-
-  private async getAll(payload: { type: string }) {
-    const state = await this.ledgerObjectService.getObjects();
-    return Object.values(state[payload.type]);
-  }
-
-  private async getAuthorKeyId(payload: { authorId: string }) {
-    return this.acknowledgementService.getAuthorKeyId(payload.authorId);
-  }
-
-  private async getBlockIdentification(payload: { blockIndex: number }) {
-    return this.storageService.getLedger().getBlockIdentification(payload.blockIndex);
-  }
-
-  private async getLatestAcknowledgements() {
-    return await this.acknowledgementService.getLatestAcknowledgements();
-  }
-
   private async navigateByUrl(payload: { url: string }) {
     await this.router.navigateByUrl(payload.url);
-  }
-
-  private async retrieve(payload: { id: string }) {
-    const id = payload.id;
-    const state = await this.ledgerObjectService.getObjects();
-    for (const collection of Object.values(state)) {
-      if (id in collection) {
-        return collection[id];
-      }
-    }
-    return undefined;
-  }
-
-  private async checkLedgerId(ledgerId: string) {
-    const ledger = await this.storageService.getLedger().getLedgerInfo();
-    if (ledgerId !== b64ToB64UrlEncoding(ledger.address)) {
-      throw new Error(`Unknown ledger: ${ledgerId}`);
-    }
   }
 }

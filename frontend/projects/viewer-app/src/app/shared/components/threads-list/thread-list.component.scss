@@ -11,7 +11,7 @@
 }
 
 .active-attach-button {
-  color: theme("colors.accent.500") !important;
+  color: var(--tw-accent-500) !important;
 }
 
 ngx-t3-growing-search-bar {

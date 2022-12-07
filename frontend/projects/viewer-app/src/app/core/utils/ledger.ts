@@ -1,5 +1,8 @@
 import { last } from '@traent/ts-utils';
 
+import { LedgerStorage } from './ledger-storage';
+import { parsePolicyV1 } from './policy';
+import { base64ToU8, emptyU8, hexToU8, u8ToBase64, u8ToHex } from './uint8';
 import {
   BlockIdentification,
   BlockItem,
@@ -21,9 +24,6 @@ import {
   OffchainKeyItem,
   ZipEntry,
 } from '../models';
-import { LedgerStorage } from './ledger-storage';
-import { parsePolicyV1 } from './policy';
-import { base64ToU8, emptyU8, hexToU8, u8ToBase64, u8ToHex } from './uint8';
 
 interface Block {
   linkHash: string;
@@ -56,6 +56,7 @@ interface BlockParser {
 }
 
 interface LedgerProps {
+  id: string;
   cryptoProvider: CryptoProvider;
   blockParser: BlockParser;
   ledgerStorage: LedgerStorage;
@@ -64,16 +65,31 @@ interface LedgerProps {
 const vaultKeyLength = 32;
 const vaultSignatureLength = 64;
 
+export const parseUid = (uid: string): { ledgerId: string; resourceId: string } => {
+  /**
+   * Note: `uid` is in the format of `<ledgerId>.<resourceId>`
+   */
+  const [ledgerId, resourceId] = uid.split('.');
+
+  if (!ledgerId || !resourceId) {
+    throw new Error(`Unexpected uid ${uid}`);
+  }
+
+  return { ledgerId, resourceId };
+};
+
 /**
  * Class that processes the information contained inside a specific `LedgerStorage`
  * in order to expose them to the outside.
  */
 export class Ledger {
+  readonly id: string;
   private readonly cryptoProvider: CryptoProvider;
   private readonly blockParser: BlockParser;
   private readonly ledgerStorage: LedgerStorage;
 
-  constructor({ cryptoProvider, blockParser, ledgerStorage }: LedgerProps) {
+  constructor({ id, cryptoProvider, blockParser, ledgerStorage }: LedgerProps) {
+    this.id = id;
     this.cryptoProvider = cryptoProvider;
     this.blockParser = blockParser;
     this.ledgerStorage = ledgerStorage;

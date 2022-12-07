@@ -1,26 +1,23 @@
 <div
   *ngIf="name !== null && references !== null; else skeletonTemplate"
-  class="opal-px-4 opal-fx-row opal-fx-align-center opal-h-9"
+  class="tw-px-4 tw-flex tw-flex-row tw-items-center tw-h-9"
   [ngClass]="{
     'pointer': isExpandable,
-    'opal-hover-container': !isExpandable
+    'tw-t3-hover-container': !isExpandable
   }"
   (click)="isExpandable && (isExpanded = !isExpanded)">
-  <ng-template #redacted>
-    <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
-  </ng-template>
 
-  <mat-icon class="opal-s-4">
+  <mat-icon class="tw-w-4 tw-h-4">
     insert_drive_file
   </mat-icon>
   <span
     *ngIf="name | exported; else redacted"
-    class="opal-body-2 opal-ml-2 opal-ellipsed">
+    class="tw-text-sm tw-ml-2 tw-truncate">
     {{ name | noValueLabel }}
   </span>
   <ng-container *ngIf="isExpandable">
-    <span class="opal-text-left opal-text-grey-400 opal-body-2 opal-ml-auto opal-mr-2 opal-pl-2">{{ references.length }}</span>
-    <mat-icon class="opal-pointer opal-s-4 opal-text-grey-400">
+    <span class="tw-text-left tw-text-neutral-400 tw-text-sm tw-ml-auto tw-mr-2 tw-pl-2">{{ references.length }}</span>
+    <mat-icon class="tw-cursor-pointer tw-w-4 tw-h-4 tw-text-neutral-400">
       {{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     </mat-icon>
   </ng-container>
@@ -28,15 +25,23 @@
 <ng-container *ngIf="isExpanded">
   <div
     *ngFor="let reference of references"
-    class="opal-h-9 opal-pl-8 opal-pr-4 opal-fx-row opal-fx-align-center opal-hover-container gray-on-hover">
-    <span class="opal-body-2 opal-ml-2 opal-ellipsed">
-      {{ reference.anchor?.pageNumber || 'Redacted' }}
+    class="tw-h-9 tw-pl-8 tw-pr-4 tw-flex tw-flex-row tw-items-center tw-t3-hover-container gray-on-hover">
+    <span class="tw-text-sm tw-ml-2 tw-truncate">
+      <ng-container *ngIf="reference.anchor | exported; else redacted">
+        {{ !reference.anchor ? ('i18n.Common.global' | translate) : reference.anchor.pageNumber }}
+      </ng-container>
     </span>
   </div>
 </ng-container>
 
+<ng-template #redacted>
+  <div class="redacted">
+    {{ 'i18n.Common.redacted' | translate }}
+  </div>
+</ng-template>
+
 <ng-template #skeletonTemplate>
-  <div class="opal-w-full opal-h-9 opal-px-4 opal-py-2 opal-border-box">
-    <ngx-t3-skeleton class="opal-s-full"></ngx-t3-skeleton>
+  <div class="tw-w-full tw-h-9 tw-px-4 tw-py-2 tw-box-border">
+    <ngx-t3-skeleton class="tw-w-full tw-h-full"></ngx-t3-skeleton>
   </div>
 </ng-template>

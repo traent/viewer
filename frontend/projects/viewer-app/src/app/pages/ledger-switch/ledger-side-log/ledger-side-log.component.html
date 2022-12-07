@@ -1,0 +1,11 @@
+<ngx-t3-sidebar-header
+  class="tw-t3-sidebar-header-container"
+  [label]="'i18n.Common.organizations' | translate"
+  [backToLabel]="'i18n.LedgerSwitch.ProjectSideInfo.backLedgerInfo' | translate"
+  (backTo)="router.navigate(['../..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
+</ngx-t3-sidebar-header>
+
+<app-project-side-log-list
+  *ngIf="ledgerId$ | async as ledgerId"
+  [ledgerId]="ledgerId"></app-project-side-log-list>
+

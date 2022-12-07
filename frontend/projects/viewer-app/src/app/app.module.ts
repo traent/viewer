@@ -9,34 +9,37 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiModule } from '@api/api.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AuthModule } from 'angular-auth-oidc-client';
 import { NgxT3DialogModule } from '@traent/ngx-dialog';
 import { NgxT3ToastModule } from '@traent/ngx-toast';
+import { AuthModule } from 'angular-auth-oidc-client';
 
-import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ApiOauthInterceptor } from './core/interceptors';
 import { ServiceWorkerService } from './core/services/service-worker.service';
+import { environment } from '../environments/environment';
 
 const registerServiceWorkerFactory = (sws: ServiceWorkerService) => () => sws.init();
 
 const icons = [
   // Icons registry
-  ['ack-error', 'assets/opal/icons/ack-error.svg'],
-  ['ack-incomplete', 'assets/opal/icons/ack-incomplete.svg'],
-  ['ack-ok', 'assets/opal/icons/ack-ok.svg'],
-  ['checkbox', 'assets/opal/icons/checkbox.svg'],
-  ['code', 'assets/opal/icons/code.svg'],
-  ['document-remove', 'assets/opal/icons/document-remove.svg'],
-  ['document-upload', 'assets/opal/icons/document-upload.svg'],
-  ['download', 'assets/opal/icons/download.svg'],
-  ['project-log', 'assets/opal/icons/project-log.svg'],
-  ['projects', 'assets/opal/icons/projects.svg'],
-  ['stream-overview', 'assets/opal/icons/stream-overview.svg'],
-  ['thread-reference', 'assets/opal/icons/thread-reference-icon.svg'],
-  ['version-new', 'assets/opal/icons/version-new.svg'],
-  ['workflow', 'assets/opal/icons/workflow.svg'],
+  ['ack-error', 'assets/@traent/design-system/icons/ack-error.svg'],
+  ['ack-incomplete', 'assets/@traent/design-system/icons/ack-incomplete.svg'],
+  ['ack-ok', 'assets/@traent/design-system/icons/ack-ok.svg'],
+  ['agreements', 'assets/@traent/design-system/icons/agreements.svg'],
+  ['checkbox', 'assets/@traent/design-system/icons/checkbox.svg'],
+  ['code', 'assets/@traent/design-system/icons/code.svg'],
+  ['document-remove', 'assets/@traent/design-system/icons/document-remove.svg'],
+  ['document-upload', 'assets/@traent/design-system/icons/document-upload.svg'],
+  ['download', 'assets/@traent/design-system/icons/download.svg'],
+  ['iot', 'assets/@traent/design-system/icons/iot.svg'],
+  ['project-log', 'assets/@traent/design-system/icons/project-log.svg'],
+  ['projects', 'assets/@traent/design-system/icons/projects.svg'],
+  ['stream-overview', 'assets/@traent/design-system/icons/stream-overview.svg'],
+  ['things', 'assets/@traent/design-system/icons/things.svg'],
+  ['thread-reference', 'assets/@traent/design-system/icons/thread-reference-icon.svg'],
+  ['version-new', 'assets/@traent/design-system/icons/version-new.svg'],
+  ['workflow', 'assets/@traent/design-system/icons/workflow.svg'],
 ];
 
 const HttpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');

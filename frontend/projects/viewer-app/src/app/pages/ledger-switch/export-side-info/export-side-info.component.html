@@ -1,0 +1,48 @@
+<div
+  *ngIf="{ info: info$ | async } as resolved"
+  class="tw-overflow-y-auto tw-h-full">
+  <ngx-t3-descriptions
+    *ngIf="resolved.info; else skeletonTemplate"
+    class="tw-text-sm">
+    <ng-template #redacted>
+      <div class="redacted">
+        {{ 'i18n.Common.redacted' | translate }}
+      </div>
+    </ng-template>
+
+    <ngx-t3-description-item [label]="'i18n.LedgerSwitch.ExportSideInfo.exportName' | translate">
+      {{ resolved.info.exportName | noValueLabel }}
+    </ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.LedgerSwitch.ExportSideInfo.exportDate' | translate">
+      {{ resolved.info.exportDate | date : 'dd MMM YYYY, HH:mm' }}
+    </ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.Common.size' | translate">
+      {{ resolved.info.size | apply : formatBytesSize }}
+    </ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.LedgerSwitch.ExportSideInfo.ledgers' | translate">{{ resolved.info.ledgersCount }}</ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.LedgerSwitch.ExportSideInfo.defaultLedger' | translate">
+      <ng-container *ngIf="!resolved.info.defaultLedger">-</ng-container>
+      <div
+        *ngIf="resolved.info.defaultLedger"
+        class="tw-cursor-pointer tw-underline"
+        (click)="openLedger(resolved.info.defaultLedger.id)">
+        <ng-container *ngIf="resolved.info.defaultLedger.name | exported; else redacted">
+          {{ resolved.info.defaultLedger.name | noValueLabel }}
+        </ng-container>
+      </div>
+    </ngx-t3-description-item>
+  </ngx-t3-descriptions>
+
+  <ng-template #skeletonTemplate>
+    <div class="tw-flex tw-flex-col tw-justify-center !tw-ml-3 tw-grow">
+      <ngx-t3-skeleton class="tw-h-8 tw-mb-7 tw-w-3/4"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
+    </div>
+  </ng-template>
+</div>

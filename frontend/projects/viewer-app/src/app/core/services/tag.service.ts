@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { isExportedAndDefined } from '@traent/ngx-components';
 import { Page } from '@traent/ngx-paginator';
 
+import { LedgerAccessorService } from './ledger-accessor.service';
+import { LedgerState } from './ledger-objects.service';
 import { Tag, TagEntry, TagEntryParams, TagParams } from '../models';
-import { collectionSort, collectionToPage, transformerFrom } from '../utils';
-import { LedgerObjectsService, LedgerState } from './ledger-objects.service';
+import { collectionSort, collectionToPage, ResourceParams, transformerFrom } from '../utils';
 
 export const TAG_LABEL = 'TagV0';
 export const TAG_ENTRY_LABEL = 'TagEntryV0';
@@ -12,17 +13,22 @@ export const TAG_ENTRY_LABEL = 'TagEntryV0';
 const parseTag = (obj: any): Tag => ({ ...obj });
 const extractTagsFromState = (state: LedgerState): Tag[] => transformerFrom(parseTag)(state[TAG_LABEL]);
 
+const parseTagEntry = (obj: any): TagEntry => obj as TagEntry;
+const extractTagEntriesFromState = (state: LedgerState): TagEntry[] => transformerFrom(parseTagEntry)(state[TAG_ENTRY_LABEL]);
+
 @Injectable({ providedIn: 'root' })
 export class TagService {
-  constructor(private readonly ledgerObjectService: LedgerObjectsService) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 
-  async getTag(id: string, blockIndex?: number): Promise<Tag> {
-    const object = await this.ledgerObjectService.getObject(TAG_LABEL, id, blockIndex);
+  async getTag({ id, blockIndex, ledgerId }: ResourceParams): Promise<Tag> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(TAG_LABEL, id, blockIndex);
     return parseTag(object);
   }
 
   async getTagCollection(params?: TagParams): Promise<Page<Tag>> {
-    const currentState = await this.ledgerObjectService.getObjects();
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     let collection = extractTagsFromState(currentState);
 
     if (params?.name) {
@@ -52,14 +58,16 @@ export class TagService {
     );
   }
 
-  async getTagEntry(id: string): Promise<TagEntry> {
-    const object = await this.ledgerObjectService.getObject(TAG_ENTRY_LABEL, id);
-    return this.parseTagEntry(object);
+  async getTagEntry({ ledgerId, id, blockIndex }: ResourceParams): Promise<TagEntry> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(TAG_ENTRY_LABEL, id, blockIndex);
+    return parseTagEntry(object);
   }
 
-  async getTagEntryCollection(params?: TagEntryParams, state?: LedgerState): Promise<Page<TagEntry>> {
-    const currentState = state || await this.ledgerObjectService.getObjects(params?.blockIndex);
-    let collection = this.extractTagEntriesFromState(currentState);
+  async getTagEntryCollection(params?: TagEntryParams): Promise<Page<TagEntry>> {
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
+    let collection = extractTagEntriesFromState(currentState);
 
     if (params?.tagId) {
       const tagId = params.tagId;
@@ -78,19 +86,5 @@ export class TagService {
       params?.page,
       params?.limit,
     );
-  }
-
-  private parseTagEntry(obj: any): TagEntry {
-    const tagEntry = obj;
-    return {
-      ...tagEntry,
-      tag: async () => isExportedAndDefined(tagEntry.tagId)
-        ? await this.getTag(tagEntry.tagId)
-        : undefined,
-    };
-  }
-
-  private extractTagEntriesFromState(state: LedgerState): TagEntry[] {
-    return transformerFrom(this.parseTagEntry.bind(this))(state[TAG_ENTRY_LABEL]);
   }
 }

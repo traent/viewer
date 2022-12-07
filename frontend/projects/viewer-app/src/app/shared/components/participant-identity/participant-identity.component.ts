@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ProjectParticipant } from '@viewer/models';
+import { ViewerAgentType } from '@api/models';
 import { IdentitySize, IdentityValidationSize, WorkflowAvatar } from '@traent/ngx-components';
+import { ProjectParticipant } from '@viewer/models';
 import { BehaviorSubject } from 'rxjs';
 
+import { getThingTypeInfo } from '../../../core/models/ui-things';
 
 @Component({
   selector: 'app-participant-identity',
@@ -21,6 +23,8 @@ export class ParticipantIdentityComponent {
   @Input() size: IdentitySize = 'xxs';
   @Input() validationSize: IdentityValidationSize = 'xs';
 
+  readonly getThingInfo = getThingTypeInfo;
+  readonly ViewerAgentType = ViewerAgentType;
   readonly WorkflowAvatar = WorkflowAvatar;
 
   get showSecondLine(): boolean {

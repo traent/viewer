@@ -1,6 +1,6 @@
 import { TagType } from '@ledger-objects';
-import { LogItemImage } from '@viewer/models';
 import { Redactable } from '@traent/ngx-components';
+import { LogItemImage } from '@viewer/models';
 
 export const getTagTypeLabel = (type?: Redactable<TagType>): string => {
   switch (type) {
@@ -16,13 +16,13 @@ export const getTagImage = (type?: Redactable<TagType>): LogItemImage => type ==
   ? {
     type: 'icon',
     icon: { custom: 'stream-overview' },
-    bgColor: 'opal-bg-blue-100',
-    textColor: 'opal-text-blue-600',
+    bgColor: 'tw-bg-blue-100',
+    textColor: 'tw-text-blue-600',
   }
   : {
     type: 'icon',
-    bgColor: 'opal-bg-grey-100',
-    textColor: 'opal-text-grey-500',
+    bgColor: 'tw-bg-neutral-100',
+    textColor: 'tw-text-neutral-500',
     icon: type === TagType.Document
       ? { material: 'insert_drive_file' }
       : type === TagType.Participant

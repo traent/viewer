@@ -11,3 +11,17 @@ export const emptyIdentityExtractorPaginator = <T>(fetch: (page: number) => Prom
   (oldItems, newItems) => [...oldItems.filter((i) => !!i), ...newItems],
   (x) => x,
 );
+
+export const memoize = <K, V>(f: (key: K) => V) => {
+  const map = new Map<K, V>();
+  return (key: K) => {
+    const found = map.get(key);
+    if (found) {
+      return found;
+    } else {
+      const created = f(key);
+      map.set(key, created);
+      return created;
+    }
+  };
+};

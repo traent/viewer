@@ -1,6 +1,6 @@
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { getStreamTypeTranslationKey } from '@viewer/utils';
 import { DocumentFormStreamItem, DocumentFormContentItem, Redactable, getStreamTypeIcon } from '@traent/ngx-components';
+import { getStreamTypeTranslationKey } from '@viewer/utils';
 
 import { RedactableBox } from './ledger-resource';
 import { StreamEntry, StreamReference } from './stream';

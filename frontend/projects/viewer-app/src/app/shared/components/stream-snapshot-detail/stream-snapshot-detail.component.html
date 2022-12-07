@@ -7,18 +7,18 @@
       description: streamContent.description,
       editor: editor$ | async
     } as stream">
-    <ngx-t3-descriptions class="opal-body-2">
+    <ngx-t3-descriptions class="tw-text-sm">
       <ng-template #redacted>
         <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
       </ng-template>
 
       <ngx-t3-description-item
-        class="opal-bg-grey-100 opal-mx-2 opal-px-2 opal-radius-4"
+        class="tw-bg-neutral-100 tw-mx-2 tw-px-2 !tw-rounded"
         [label]="'i18n.Common.edited' | translate"
         [hasDivider]="false">
         <span
           *ngIf="streamSnapshot.updatedInBlock.createdAt !== undefined; else redacted"
-          class="opal-body-2 opal-w-full">
+          class="tw-text-sm tw-w-full">
           {{ streamSnapshot.updatedInBlock.createdAt | date: 'dd LLL yyyy, HH:mm' }}
         </span>
       </ngx-t3-description-item>
@@ -28,7 +28,7 @@
         [class.changed]="streamSnapshot | apply : hasPropertyChanged : 'value'"
         [hasDivider]="false">
         <ngx-t3-stream-value-renderer
-          class="opal-body-2 opal-w-full"
+          class="tw-text-sm tw-w-full"
           [value]="stream.value"
           [type]="stream.type"
           [configuration]="stream.configuration"
@@ -43,7 +43,7 @@
       <ngx-t3-description-item
         [label]="'i18n.Common.editor' | translate"
         [hasDivider]="false">
-        <div class="opal-fx-row opal-fx-align-center pointer">
+        <div class="tw-flex tw-flex-row tw-items-center pointer">
           <app-participant-identity [participant]="stream.editor"></app-participant-identity>
         </div>
       </ngx-t3-description-item>
@@ -55,7 +55,7 @@
           [class.changed]="streamSnapshot | apply : hasPropertyChanged : 'name'">
           <p
             *ngIf="stream.name | exported; else redacted"
-            class="opal-body-2 opal-text-break-word opal-w-full opal-m-0"
+            class="tw-text-sm tw-break-words tw-w-full tw-m-0"
             [matTooltip]="stream.name || ''">
             {{ stream.name | noValueLabel }}
           </p>
@@ -67,9 +67,9 @@
           [class.changed]="streamSnapshot | apply : hasPropertyChanged : 'description'">
           <p
             *ngIf="stream.description | exported; else redacted"
-            class="opal-body-2 opal-text-break-word opal-w-full opal-m-0"
+            class="tw-text-sm tw-break-words tw-w-full tw-m-0"
             [matTooltip]="stream.description || ''"
-            [class.opal-text-style-italic]="!stream.description">
+            [class.tw-italic]="!stream.description">
             {{ stream.description | noValueLabel }}
           </p>
         </ngx-t3-description-item>
@@ -78,10 +78,10 @@
           [label]="'i18n.Common.hash' | translate"
           [hasDivider]="false">
           <ngx-t3-copy-to-clipboard
-            class="opal-d-block opal-ellipsed"
+            class="tw-block tw-truncate"
             position="left"
             [textToCopy]="streamSnapshot.updatedInBlock.linkHash | uint8">
-            <div class="opal-body-2 opal-ellipsed opal-text-code opal-mr-1">
+            <div class="tw-text-sm tw-truncate tw-font-code tw-mr-1">
               {{ streamSnapshot.updatedInBlock.linkHash | uint8 }}
             </div>
           </ngx-t3-copy-to-clipboard>
@@ -91,22 +91,22 @@
           [label]="'i18n.Common.raw' | translate"
           [hasDivider]="false">
           <ngx-t3-copy-to-clipboard
-            class="opal-d-block opal-ellipsed"
+            class="tw-block tw-truncate"
             position="left"
             [textToCopy]="streamSnapshot | json">
-            <div class="opal-body-2 opal-ellipsed opal-text-code opal-mr-1">{{ streamSnapshot | json }}</div>
+            <div class="tw-text-sm tw-truncate tw-font-code tw-mr-1">{{ streamSnapshot | json }}</div>
           </ngx-t3-copy-to-clipboard>
         </ngx-t3-description-item>
       </ng-container>
 
       <ngx-t3-description-item
-        class="opal-text-grey-400"
+        class="tw-text-neutral-400"
         [label]="(expanded ? 'i18n.Common.showLess' : 'i18n.Common.showMore') | translate"
         [class.changed]="hasMoreChanged(expanded, streamSnapshot)">
         <mat-icon
-          class="pointer opal-ml-n-1"
+          class="pointer tw--ml-1"
           [matTooltip]="expanded ? 'Click to collapse' : 'Click to expand'"
-          [class.opal-rotate-180]="expanded"
+          [class.tw-rotate-180]="expanded"
           (click)="expanded = !expanded">
           arrow_drop_down
         </mat-icon>
@@ -117,11 +117,11 @@
 </ng-container>
 
 <ng-template #skeleton>
-  <div class="opal-fx-row opal-pt-3 opal-px-5 opal-pb-2">
-    <ngx-t3-skeleton class="opal-h-4 opal-w-12 opal-mr-3"></ngx-t3-skeleton>
-    <div class="opal-fx-g-1">
-      <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
-      <ngx-t3-skeleton class="opal-h-3 opal-w-6p opal-mt-1"></ngx-t3-skeleton>
+  <div class="tw-flex tw-flex-row tw-pt-3 tw-px-5 tw-pb-2">
+    <ngx-t3-skeleton class="tw-h-4 tw-w-12 tw-mr-3"></ngx-t3-skeleton>
+    <div class="tw-grow">
+      <ngx-t3-skeleton class="tw-h-4"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-w-1/2 tw-mt-1"></ngx-t3-skeleton>
     </div>
   </div>
 </ng-template>

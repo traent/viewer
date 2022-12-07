@@ -5,14 +5,14 @@
 } as resolved">
   <h2
     mat-dialog-title
-    class="opal-mb-0">
+    class="tw-mb-0">
     {{ 'i18n.Common.streamDetails' | translate }}
   </h2>
 
   <div
-    class="opal-my-6"
+    class="tw-my-6"
     mat-dialog-content>
-    <ngx-t3-descriptions class="opal-border-1 opal-radius-4 opal-border-grey-200">
+    <ngx-t3-descriptions class="tw-border !tw-rounded tw-border-neutral-200">
       <ng-template #redacted>
         <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
       </ng-template>
@@ -28,10 +28,10 @@
       <ngx-t3-description-item [label]="'i18n.Common.type' | translate">
         <div
           *ngIf="stream.uiType | exported; else redacted"
-          class="opal-fx-row opal-fx-align-center">
+          class="tw-flex tw-flex-row tw-items-center">
           <ngx-t3-icon
-            class="opal-mr-2"
-            iconClass="opal-s-4"
+            class="tw-mr-2"
+            iconClass="tw-w-4 tw-h-4"
             [icon]="stream.uiType | apply : getStreamTypeIcon">
           </ngx-t3-icon>
           {{ stream.uiType | titlecase | noValueLabel }}
@@ -72,12 +72,13 @@
         *ngIf="resolved.streamClasses && resolved.streamClasses.length > 0"
         [label]="'i18n.Common.classes' | translate"
         [multiline]="true">
-        <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+        <ngx-t3-tag-group class="tw-flex-wrap tw-flex tw-flex-row tw-grow-0 tw-overflow-hidden tw-gap-1">
           <app-redactable-tag
             *ngFor="let class of resolved.streamClasses"
             innerClasses="bg-grey-100"
-            class="t3-tag-like opal-mb-1"
-            [tagName]="class?.name"></app-redactable-tag>
+            class="t3-tag-like tw-mb-1"
+            [tagName]="class?.name"
+            [color]="class?.color"></app-redactable-tag>
         </ngx-t3-tag-group>
       </ngx-t3-description-item>
 
@@ -93,10 +94,10 @@
 
       <ngx-t3-description-item [label]="'i18n.Common.linkHash' | translate">
         <ngx-t3-copy-to-clipboard
-          class="opal-d-block opal-ellipsed"
+          class="tw-block tw-truncate"
           position="left"
           [textToCopy]="stream.updatedInBlock.linkHash | uint8">
-          <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+          <div class="tw-text-sm tw-truncate tw-font-code tw-underline tw-mr-1">
             {{ stream.updatedInBlock.linkHash | uint8 }}
           </div>
         </ngx-t3-copy-to-clipboard>
@@ -105,7 +106,7 @@
       <ngx-t3-description-item
         [label]="'i18n.Common.acks' | translate"
         [hasDivider]="false">
-        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+        <span class="tw-text-sm tw-block tw-truncate tw-font-code tw-underline">
           <app-acks-status
             [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
             (click)="openAcknowledgementsDialog(stream.updatedInBlock)"></app-acks-status>

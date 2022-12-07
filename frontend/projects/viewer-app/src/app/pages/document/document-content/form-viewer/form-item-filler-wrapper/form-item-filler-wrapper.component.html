@@ -14,8 +14,18 @@
       [required]="resolved.formFillItem.required">
 
       <div
+        *ngIf="resolved.formFillItem.lastEditor$ as lastEditor"
+        class="tw-pr-2.5"
+        form-editor>
+        <app-participant-avatar-group
+          *ngIf="lastEditor | exportedAndDefined"
+          size="xs"
+          [participant]="lastEditor | async"></app-participant-avatar-group>
+      </div>
+
+      <div
         form-value
-        class="tw-ml-3">
+        class="!tw-ml-3">
         <ngx-t3-stream-value-renderer
           *ngIf="resolved.formFillItem.value !== undefined; else notDefined"
           rendererType="default"
@@ -24,7 +34,7 @@
           [configuration]="resolved.formFillItem.configuration"></ngx-t3-stream-value-renderer>
 
         <ng-template #notDefined>
-          <em class="body-2 tw-text-grey-500">No Value</em>
+          <em class="body-2 tw-text-neutral-500">No Value</em>
         </ng-template>
       </div>
 

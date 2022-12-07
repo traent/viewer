@@ -1,6 +1,6 @@
 export class LedgerError extends Error {
-  constructor(readonly problems: string[]) {
-    super(`${problems.length} problems detected while validating the ledger`);
+  constructor() {
+    super(`Problems detected while validating the ledger`);
   }
 }
 

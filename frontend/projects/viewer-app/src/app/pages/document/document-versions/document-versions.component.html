@@ -11,17 +11,17 @@
   compareDocProxy: compareDocProxy$ | async
 } as resolved">
   <ng-container sidebar>
-    <div class="opal-px-4">
+    <div class="tw-px-4">
       <div
-        class="back-to opal-h5"
+        class="back-to tw-h5"
         (click)="location.back()">
         <span
-          class="opal-ellipsed opal-text-grey-400"
+          class="tw-truncate tw-text-neutral-400"
           matTooltip="Go back">
           {{ 'i18n.Common.back' | translate }}
         </span>
       </div>
-      <h1 class="opal-h3 opal-my-3">{{ 'i18n.Document.DocumentVersion.versions' | translate }}</h1>
+      <h1 class="tw-h3 tw-my-3">{{ 'i18n.Document.DocumentVersion.versions' | translate }}</h1>
     </div>
 
     <hr>
@@ -35,7 +35,9 @@
           [disabled]="!resolved.versions || resolved.versions.length < 2"
           (change)="resolved.versions && toggleCompareMode(resolved.versions)">
         </mat-slide-toggle>
-        <span class="tw-text-neutral-500">{{ 'i18n.Document.DocumentVersion.compare' | translate }}</span>
+        <span class="tw-text-neutral-500">
+          {{ 'i18n.Document.DocumentVersion.compare' | translate }}
+        </span>
       </div>
     </div>
 
@@ -44,16 +46,16 @@
     <ng-container *ngIf="resolved.versions; else versionsSkeleton">
       <mat-radio-group
         *ngIf="!compareMode"
-        class="opal-fx-col"
+        class="tw-flex tw-flex-col"
         [value]="vMain !== undefined
           ? resolved.versions.length - (vMain - 1)
           : resolved.versions[0] && resolved.versions[0].version">
         <div
           *ngFor="let version of resolved.versions; let index = index; let last = last"
-          class="version-item opal-fx-row opal-fx-align-center opal-fx-justify-center opal-pointer"
+          class="version-item tw-flex tw-flex-row tw-items-center tw-justify-center tw-cursor-pointer"
           [ngClass]="{
-            'opal-bg-grey-100': vMain === resolved.versions.length - index,
-            'opal-mb-6': last
+            'tw-bg-neutral-100': vMain === resolved.versions.length - index,
+            'tw-mb-6': last
           }"
           (click)="vMain = resolved.versions.length - index">
           <div class="version-action">
@@ -64,24 +66,24 @@
             </mat-radio-button>
           </div>
           <div
-            class="opal-mr-3"
-            [class.opal-text-bold]="vMain === resolved.versions.length - index">
+            class="tw-mr-3"
+            [class.tw-font-bold]="vMain === resolved.versions.length - index">
             {{ version?.version }}
           </div>
           <div
-            class="opal-fx-row opal-fx-align-center opal-fx-justify-between opal-s-full"
+            class="tw-flex tw-flex-row tw-items-center tw-justify-between tw-w-full tw-h-full"
             [class.bottom-line]="!last">
             <div
               *ngIf="version.updatedAt as updatedAt"
-              class="opal-body-1"
+              class="tw-text-base"
               [ngClass]="{
-                'opal-text-black': vMain === resolved.versions.length - index,
-                'opal-text-grey-400': vMain !== resolved.versions.length - index
+                'tw-text-black': vMain === resolved.versions.length - index,
+                'tw-text-neutral-400': vMain !== resolved.versions.length - index
               }">
               {{ updatedAt | ago : undefined : 'middle' | titlecase }}
             </div>
             <app-acks-icon
-              class="opal-mx-3"
+              class="tw-mx-3"
               [status]="version.ackStatus$ | async"
               (click)="openAcknowledgementsDialog(version.updatedInBlock)"></app-acks-icon>
           </div>
@@ -90,14 +92,15 @@
 
       <div
         *ngIf="compareMode"
-        class="versions opal-fx-col"
+        class="versions tw-flex tw-flex-col"
         [class.moving]="startDragY"
-        (mouseleave)="stopDrag()">
+        (mouseleave)="stopDrag()"
+        (mouseup)="stopDrag()">
         <div
           *ngFor="let version of resolved.versions; let index = index; let first = first; let last = last"
-          class="version-item opal-fx-row opal-fx-align-center"
-          [class.opal-bg-grey-100]="vMain === resolved.versions.length - index || vCompare === resolved.versions.length - index"
-          [class.opal-mb-6]="last"
+          class="version-item tw-flex tw-flex-row tw-items-center"
+          [class.tw-bg-neutral-100]="vMain === resolved.versions.length - index || vCompare === resolved.versions.length - index"
+          [class.tw-mb-6]="last"
           (mousedown)="startDrag(resolved.versions.length - index, $event, resolved.versions.length)"
           (mousemove)="handleDrag($event, resolved.versions.length)"
           (mouseup)="stopDrag()">
@@ -112,23 +115,23 @@
               <div class="circle-toggle"></div>
             </div>
             <div
-              class="opal-mr-3"
-              [class.opal-text-bold]="versionSelected.value">
+              class="tw-mr-3"
+              [class.tw-font-bold]="versionSelected.value">
               {{ version?.version }}
             </div>
             <div
-              class="opal-fx-row opal-fx-align-center opal-fx-justify-between opal-s-full"
+              class="tw-flex tw-flex-row tw-items-center tw-justify-between tw-w-full tw-h-full"
               [class.bottom-line]="!last">
               <div
                 *ngIf="version?.updatedAt || version?.createdAt as updatedAt"
                 [ngClass]="{
-                  'opal-text-grey-400': !versionSelected.value,
-                  'opal-text-black': versionSelected.value
+                  'tw-text-neutral-400': !versionSelected.value,
+                  'tw-text-black': versionSelected.value
                 }">
                 {{ updatedAt | ago : undefined : 'middle' | titlecase }}
               </div>
               <app-acks-icon
-                class="opal-mx-3"
+                class="tw-mx-3"
                 [status]="version.ackStatus$ | async"
                 (click)="openAcknowledgementsDialog(version.updatedInBlock)"></app-acks-icon>
             </div>
@@ -139,59 +142,59 @@
     <ng-template #versionsSkeleton>
       <ngx-t3-skeleton
         *ngFor="let _ of [1, 2, 3, 4, 5]"
-        class="opal-w-full opal-h-10 opal-mt-1"></ngx-t3-skeleton>
+        class="tw-w-full tw-h-10 tw-mt-1"></ngx-t3-skeleton>
     </ng-template>
   </ng-container>
 
-  <div class="opal-fx-row opal-pos-rel opal-s-full opal-z-index-1 ">
+  <div class="tw-flex tw-flex-row tw-relative tw-w-full tw-h-full tw-z-[1] ">
     <!-- Left VIEWER (Compare) -->
     <div
       *ngIf="resolved.compareDoc"
-      class="opal-fx-col opal-fx-g-1 opal-fx-b-0 opal-overflow-hidden"
+      class="tw-flex tw-flex-col tw-grow tw-basis-0 tw-overflow-hidden"
       [class.right-line]="compareMode">
       <div
         header
-        class="topbar opal-py-6 opal-glass-3 opal-border-b-1 opal-border-grey-200"
+        class="topbar tw-py-6 tw-backdrop-blur-xl tw-border-b tw-border-neutral-200"
         [ngClass]="{
-          'opal-px-12': !compareMode,
-          'opal-px-4': compareMode
+          'tw-px-12': !compareMode,
+          'tw-px-4': compareMode
         }">
-        <div class="name-container opal-ellipsed opal-pr-5">
+        <div class="name-container tw-truncate tw-pr-5">
           <div class="version-chip">
             {{ resolved.compareDoc.version | apply : versionChipLabel }}
           </div>
-          <div class="opal-ellipsed opal-h3 opal-ml-3">
+          <div class="tw-truncate tw-h3 !tw-ml-3">
             {{ resolved.compareDoc.name || 'Redacted' }}
           </div>
         </div>
-        <div class="opal-fx-row opal-fx-s-0 opal-fx-align-center">
+        <div class="tw-flex tw-flex-row tw-shrink-0 tw-items-center">
           <div
             *ngIf="resolved.compareDoc.updatedAt as updatedAt"
-            class="opal-text-grey-400 opal-body-1 opal-mr-4">
+            class="tw-text-neutral-400 tw-text-base tw-mr-4">
             {{ updatedAt | ago : undefined : 'middle' | titlecase }}
           </div>
           <app-participant-avatar-group
-            class="opal-border-grey"
+            class="tw-border-neutral"
             size="xs"
             [participant]="resolved.compareDocUpdater"></app-participant-avatar-group>
           <button
             mat-icon-button
-            class="opal-ml-2"
+            class="tw-ml-2"
             (click)="openAcknowledgementsDialog(resolved.compareDoc.updatedInBlock)">
             <app-acks-icon [status]="resolved.compareDoc.ackStatus$ | async"></app-acks-icon>
           </button>
           <button
-            ngxT3ClickToCopy="{{ resolved.compareDoc.updatedInBlock.linkHash | uint8 }}"
             mat-icon-button
-            matTooltip="Copy last link hash">
-            <mat-icon class="opal-text-grey-400">fingerprint</mat-icon>
+            matTooltip="Copy last link hash"
+            ngxT3ClickToCopy="{{ resolved.compareDoc.updatedInBlock.linkHash | uint8 }}">
+            <mat-icon class="tw-text-neutral-400">fingerprint</mat-icon>
           </button>
           <button
             mat-icon-button
             [matTooltip]="resolved.compareDoc | apply : documentDownloadTooltip"
-            (click)="downloadDocument(resolved.compareDoc)">
+            (click)="resolved.compareDocContent && downloadDocument(resolved.compareDoc, resolved.compareDocContent)">
             <mat-icon
-              class="opal-text-grey-400"
+              class="tw-text-neutral-400"
               svgIcon="download"></mat-icon>
           </button>
         </div>
@@ -201,14 +204,14 @@
         <ng-container *ngIf="resolved.compareDoc.uiType === DocumentContentType.PDF && resolved.compareDocProxy">
           <ngx-t3-pdf-viewer
             #compareDocViewer
-            class="opal-fx-g-1 opal-fx-b-0 opal-overflow-hidden"
+            class="tw-grow tw-basis-0 tw-overflow-hidden"
             [data]="resolved.compareDocProxy"
             [zoom]="zoomCompare"
             [annotationsRendering]="false">
 
             <ngx-t3-viewer-toolbar
               toolbar
-              class="opal-mx-auto"
+              class="tw-mx-auto"
               [data]="resolved.compareDocProxy"
               [page]="compareDocViewer.getCurrentPage() && compareDocViewer.getCurrentPage() | async"
               [showAnchors]="false"
@@ -221,7 +224,7 @@
 
         <app-form-viewer
           *ngIf="resolved.compareDoc && resolved.compareDoc.uiType === DocumentContentType.FORM"
-          class="tw-w-full tw-h-full tw-overflow-auto tw-p-5 tw-border-box"
+          class="tw-w-full tw-h-full tw-overflow-auto tw-border-box"
           viewMode="historic"
           [documentId]="resolved.compareDoc.id"
           [data]="resolved.compareDocContent | apply : u8ToBlob"
@@ -231,7 +234,7 @@
         <!-- Image Content -->
         <ngx-t3-image-viewer
           *ngIf="resolved.compareDoc.uiType === DocumentContentType.Image"
-          class="opal-s-full"
+          class="tw-w-full tw-h-full"
           [data]="resolved.compareDocContent | apply : u8ToBlob"
           [zoom]="zoomCompare">
           <ngx-t3-viewer-toolbar
@@ -244,11 +247,11 @@
         <!-- Generic Content -->
         <ngx-t3-generic-viewer
           *ngIf="resolved.compareDoc.uiType === DocumentContentType.Generic"
-          class="opal-fx-g-1 opal-mx-12 opal-my-4 opal-bg-white opal-radius-8 opal-bg-white opal-bg-opacity-60"
+          class="tw-grow tw-mx-12 tw-my-4 tw-bg-white !tw-rounded-lg tw-bg-opacity-60"
           [name]="resolved.compareDoc.name"
           [fileTypeIcon]="resolved.compareDoc.contentType | apply : getPlaceholderPath"
           [fileTypeExtension]="resolved.compareDoc.extension"
-          (download)="downloadDocument(resolved.compareDoc)">
+          (download)="resolved.compareDocContent && downloadDocument(resolved.compareDoc, resolved.compareDocContent)">
         </ngx-t3-generic-viewer>
       </ng-container>
     </div>
@@ -256,50 +259,50 @@
     <!-- Right VIEWER (Main) -->
     <div
       *ngIf="resolved.mainDoc"
-      class="opal-fx-col opal-fx-g-1 opal-fx-b-0 opal-overflow-hidden">
+      class="tw-flex tw-flex-col tw-grow tw-basis-0 tw-overflow-hidden">
       <div
         header
-        class="topbar opal-py-6 opal-glass-3 opal-border-b-1 opal-border-grey-200"
+        class="topbar tw-py-6 tw-backdrop-blur-xl tw-border-b tw-border-neutral-200"
         [ngClass]="{
-          'opal-px-12': !compareMode,
-          'opal-px-4': compareMode
+          'tw-px-12': !compareMode,
+          'tw-px-4': compareMode
         }">
-        <div class="name-container opal-ellipsed opal-pr-5">
+        <div class="name-container tw-truncate tw-pr-5">
           <div class="version-chip">
             {{ resolved.mainDoc.version | apply : versionChipLabel }}
           </div>
-          <div class="opal-ellipsed opal-h3 opal-ml-3">
+          <div class="tw-truncate tw-h3 !tw-ml-3">
             {{ resolved.mainDoc.name || 'Redacted' }}
           </div>
         </div>
-        <div class="opal-fx-row opal-fx-s-0 opal-fx-align-center">
+        <div class="tw-flex tw-flex-row tw-shrink-0 tw-items-center">
           <div
             *ngIf="resolved.mainDoc.updatedAt as updatedAt"
-            class="opal-text-grey-400 opal-body-1 opal-mr-4">
+            class="tw-text-neutral-400 tw-text-base tw-mr-4">
             {{ updatedAt | ago : undefined : 'middle' | titlecase }}
           </div>
           <app-participant-avatar-group
-            class="opal-border-grey"
+            class="tw-border-neutral"
             size="xs"
             [participant]="resolved.mainDocUpdater"></app-participant-avatar-group>
           <button
             mat-icon-button
-            class="opal-ml-2"
+            class="tw-ml-2"
             (click)="openAcknowledgementsDialog(resolved.mainDoc.updatedInBlock)">
             <app-acks-icon [status]="resolved.mainDoc.ackStatus$ | async"></app-acks-icon>
           </button>
           <button
-            ngxT3ClickToCopy="{{ resolved.mainDoc.updatedInBlock.linkHash | uint8 }}"
             mat-icon-button
+            ngxT3ClickToCopy="{{ resolved.mainDoc.updatedInBlock.linkHash | uint8 }}"
             [matTooltip]="'i18n.Document.DocumentVersion.copyLastLinkHash' | translate">
-            <mat-icon class="opal-text-grey-400">fingerprint</mat-icon>
+            <mat-icon class="tw-text-neutral-400">fingerprint</mat-icon>
           </button>
           <button
             mat-icon-button
             [matTooltip]="resolved.mainDoc | apply : documentDownloadTooltip"
-            (click)="downloadDocument(resolved.mainDoc)">
+            (click)="resolved.mainDocContent && downloadDocument(resolved.mainDoc, resolved.mainDocContent)">
             <mat-icon
-              class="opal-text-grey-400"
+              class="tw-text-neutral-400"
               svgIcon="download"></mat-icon>
           </button>
         </div>
@@ -309,14 +312,14 @@
         <ng-container *ngIf="resolved.mainDoc.uiType === DocumentContentType.PDF && resolved.mainDocProxy">
           <ngx-t3-pdf-viewer
             #mainDocViewer
-            class="opal-fx-g-1 opal-fx-b-0 opal-overflow-hidden"
+            class="tw-grow tw-basis-0 tw-overflow-hidden"
             [data]="resolved.mainDocProxy"
             [zoom]="zoomMain"
             [annotationsRendering]="false">
 
             <ngx-t3-viewer-toolbar
               toolbar
-              class="opal-mx-auto"
+              class="tw-mx-auto"
               [data]="resolved.mainDocProxy"
               [page]="mainDocViewer.getCurrentPage() && mainDocViewer.getCurrentPage() | async"
               [showAnchors]="false"
@@ -330,7 +333,7 @@
         <!-- Form Content -->
         <app-form-viewer
           *ngIf="resolved.mainDoc && resolved.mainDoc.uiType === DocumentContentType.FORM"
-          class="tw-w-full tw-h-full tw-overflow-auto tw-p-5 tw-border-box"
+          class="tw-w-full tw-h-full tw-overflow-auto tw-border-box"
           viewMode="historic"
           [documentId]="resolved.mainDoc.id"
           [data]="resolved.mainDocContent | apply : u8ToBlob"
@@ -340,7 +343,7 @@
         <!-- Image Content -->
         <ngx-t3-image-viewer
           *ngIf="resolved.mainDoc.uiType === DocumentContentType.Image"
-          class="opal-s-full"
+          class="tw-w-full tw-h-full"
           [data]="resolved.mainDocContent | apply : u8ToBlob"
           [zoom]="zoomMain">
           <ngx-t3-viewer-toolbar
@@ -353,11 +356,11 @@
         <!-- Generic Content -->
         <ngx-t3-generic-viewer
           *ngIf="resolved.mainDoc.uiType === DocumentContentType.Generic"
-          class="opal-fx-g-1 opal-mx-12 opal-my-4 opal-bg-white opal-radius-8 opal-bg-white opal-bg-opacity-60"
+          class="tw-grow tw-mx-12 tw-my-4 tw-bg-white !tw-rounded-lg tw-bg-opacity-60"
           [name]="resolved.mainDoc.name"
           [fileTypeIcon]="resolved.mainDoc.contentType | apply : getPlaceholderPath"
           [fileTypeExtension]="resolved.mainDoc.extension"
-          (download)="downloadDocument(resolved.mainDoc)">
+          (download)="resolved.mainDocContent && downloadDocument(resolved.mainDoc, resolved.mainDocContent)">
         </ngx-t3-generic-viewer>
       </ng-container>
     </div>

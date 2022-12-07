@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,25 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  ApplyModule,
+  AvatarModule,
+  ClickToCopyModule,
+  CopyToClipboardModule,
+  DocumentViewerModule,
+  IdentityModule,
+  RedactedModule,
+  RightSidebarModule,
+  SidebarHeaderModule,
+  SkeletonModule,
+  StreamModule,
+  TabsModule,
+  TagModule,
+  TimeAgoPipeModule,
+  WithSidebarModule,
+} from '@traent/ngx-components';
+import { NgxT3PaginatorModule } from '@traent/ngx-paginator';
+import { NgxT3SpinnerModule } from '@traent/ngx-spinner';
 import {
   AcknowledgmentsDialogModule,
   AcksIconModule,
@@ -26,34 +45,8 @@ import {
   ThreadReferencesModule,
   Uint8PipeModule,
 } from '@viewer/shared';
-import {
-  ApplyModule,
-  AvatarModule,
-  ClickToCopyModule,
-  CopyToClipboardModule,
-  DocumentViewerModule,
-  IdentityModule,
-  RedactedModule,
-  RightSidebarModule,
-  SidebarHeaderModule,
-  SkeletonModule,
-  StreamModule,
-  TabsModule,
-  TagModule,
-  TimeAgoPipeModule,
-  WithSidebarModule,
-} from '@traent/ngx-components';
-import { NgxT3SpinnerModule } from '@traent/ngx-spinner';
-import { NgxT3PaginatorModule } from '@traent/ngx-paginator';
 import { GlobalWorkerOptions } from 'pdfjs-dist';
 
-import { FormViewerComponent } from './document-content/form-viewer/form-viewer.component';
-import { DocumentRoutingModule } from './document-routing.module';
-import {
-  FormItemFillerWrapperComponent,
-} from './document-content/form-viewer/form-item-filler-wrapper/form-item-filler-wrapper.component';
-import { DocumentComponent } from './document.component';
-import { DocumentVersionsComponent } from './document-versions/document-versions.component';
 import { DocumentContentComponent } from './document-content/document-content.component';
 import { DocumentSideAnchorsListComponent } from './document-content/document-side-anchors-list/document-side-anchors-list.component';
 import { DocumentSideLogComponent } from './document-content/document-side-log/document-side-log.component';
@@ -81,6 +74,14 @@ import {
 import {
   DocumentSideThreadReferencesComponent,
 } from './document-content/document-side-thread-references/document-side-thread-references.component';
+import {
+  FormItemFillerWrapperComponent,
+} from './document-content/form-viewer/form-item-filler-wrapper/form-item-filler-wrapper.component';
+import { FormViewerComponent } from './document-content/form-viewer/form-viewer.component';
+import { ViewViewerComponent } from './document-content/view-viewer/view-viewer.component';
+import { DocumentRoutingModule } from './document-routing.module';
+import { DocumentVersionsComponent } from './document-versions/document-versions.component';
+import { DocumentComponent } from './document.component';
 
 GlobalWorkerOptions.workerSrc = './pdfjs-dist/pdf.worker.min.js';
 
@@ -150,6 +151,7 @@ GlobalWorkerOptions.workerSrc = './pdfjs-dist/pdf.worker.min.js';
     TimeAgoPipeModule.forRoot({}),
     TranslateModule,
     Uint8PipeModule,
+    ViewViewerComponent,
     WithSidebarModule,
   ],
 })

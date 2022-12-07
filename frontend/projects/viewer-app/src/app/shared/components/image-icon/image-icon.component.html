@@ -1,40 +1,58 @@
 <div
   *ngIf="image; else skeleton"
-  class="opal-fx-row">
+  class="tw-flex tw-flex-row">
   <div
     *ngIf="image.type === 'icon'"
-    class="opal-fx-center opal-fx-s-0 opal-s-6 opal-radius-4"
+    class="tw-flex tw-items-center tw-justify-center tw-shrink-0 tw-w-6 tw-h-6 !tw-rounded"
     [ngClass]="image.bgColor">
     <ngx-t3-icon
-      iconClass="opal-s-4"
+      iconClass="tw-w-4 tw-h-4"
       [icon]="image.icon"
       [ngClass]="image.textColor"></ngx-t3-icon>
   </div>
 
   <div
     *ngIf="image.type === 'avatar'"
-    class="opal-fx-s-0">
+    class="tw-shrink-0">
+    <div
+      *ngIf="isCustomIcon(image.src)"
+      class="icon tw-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-pink-100 tw-h-6 tw-w-6">
+      <ngx-t3-icon
+        iconClass="!tw-text-pink-600 tw-m-0 tw-h-4 tw-w-4"
+        [icon]="image.src"></ngx-t3-icon>
+    </div>
+
     <ngx-t3-avatar
+      *ngIf="!image.src || isString(image.src)"
       size="xs"
-      class="opal-d-block"
+      class="tw-block"
       [src]="image.src">
     </ngx-t3-avatar>
   </div>
 
   <div
     *ngIf="image.type === 'doubleAvatar'"
-    class="opal-fx-s-0">
-    <div class="opal-h-fit opal-pos-rel">
+    class="tw-shrink-0">
+    <div class="tw-h-fit tw-relative">
+      <div
+        *ngIf="isCustomIcon(image.src)"
+        class="icon tw-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-pink-100 tw-h-6 tw-w-6">
+        <ngx-t3-icon
+          iconClass="!tw-text-pink-600 tw-m-0 tw-h-4 tw-w-4"
+          [icon]="image.src"></ngx-t3-icon>
+      </div>
+
       <ngx-t3-avatar
+        *ngIf="!image.src || isString(image.src)"
         size="xs"
-        class="opal-d-block"
+        class="tw-block"
         [src]="image.src">
       </ngx-t3-avatar>
       <div
-        class="avatar-icon opal-fx-center"
+        class="avatar-icon tw-flex tw-items-center tw-justify-center"
         [ngClass]="image.bgColor">
         <ngx-t3-icon
-          iconClass="opal-s-2"
+          iconClass="tw-w-2 tw-h-2"
           [icon]="image.icon"
           [ngClass]="image.textColor"></ngx-t3-icon>
       </div>
@@ -44,7 +62,7 @@
 
 <ng-template #skeleton>
   <ngx-t3-avatar
-    class="opal-mr-3"
+    class="tw-mr-3"
     size="xs"
     [src]="null"></ngx-t3-avatar>
 </ng-template>

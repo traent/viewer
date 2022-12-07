@@ -1,9 +1,9 @@
-import { MatDialog } from '@angular/material/dialog';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ProjectV0 } from '@ledger-objects';
 import { isNotNullOrUndefined } from '@traent/ts-utils';
-import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { LogItemImage, ProjectSnapshot } from '@viewer/models';
+import { parseProject, ProjectParticipantService } from '@viewer/services';
 import {
   snapshotParticipantLabel,
   getChanges,
@@ -12,8 +12,8 @@ import {
   redactedValue,
   snapshotContent,
 } from '@viewer/utils';
-import { ProjectV0 } from '@ledger-objects';
-import { parseProject, ProjectParticipantService } from '@viewer/services';
+import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { ProjectLogDialogComponent } from '../../project-log-dialog/project-log-dialog.component';
 
@@ -42,8 +42,16 @@ const getProjectUpdateLabel = (type: 'name' | 'description' | 'generic'): string
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
   private readonly snapshot$ = new BehaviorSubject<ProjectSnapshot | null>(null);
-  @Input() set snapshot(value: ProjectSnapshot | null){
+  @Input() set snapshot(value: ProjectSnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
@@ -53,19 +61,21 @@ export class ProjectLogItemComponent {
   readonly itemImage: LogItemImage = {
     type: 'icon',
     icon: { custom: 'project-log' },
-    bgColor: 'opal-bg-grey-100',
-    textColor: 'opal-text-grey-500',
+    bgColor: 'tw-bg-neutral-100',
+    textColor: 'tw-text-neutral-500',
   };
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([
@@ -94,11 +104,12 @@ export class ProjectLogItemComponent {
     private readonly projectParticipantService: ProjectParticipantService,
   ) { }
 
-  async clickHandler(pointerClasses: string, snapshot: ProjectSnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: ProjectSnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'member' && snapshot) {
+      const project = parseProject(snapshotContent<ProjectV0>(snapshot));
       await firstValueFrom(this.dialog.open(ProjectLogDialogComponent, {
-        data: parseProject(snapshotContent<ProjectV0>(snapshot)),
-        panelClass: 'opal-w-600px',
+        data: { ledgerId, project },
+        panelClass: 'tw-w-[600px]',
       }).afterClosed());
     }
   };

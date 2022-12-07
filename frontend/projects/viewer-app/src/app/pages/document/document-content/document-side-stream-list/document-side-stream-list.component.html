@@ -2,9 +2,9 @@
   *ngIf="{
     streams: streams$ | async
   } as resolved"
-  class="opal-h-full opal-fx-col">
+  class="tw-h-full tw-flex tw-flex-col">
   <app-stream-list
-    class="opal-pointer"
+    class="tw-cursor-pointer"
     [paginator]="resolved.streams"
     (itemClick)="openStream($event)">
   </app-stream-list>

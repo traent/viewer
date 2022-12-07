@@ -4,6 +4,7 @@ import { WorkflowFormat } from './workflow-format';
 export interface WorkflowV0 {
   creatorId: string;
   definition?: string;
+  displayName?: string;
   format: WorkflowFormat;
   isActive: boolean;
   projectId: string;

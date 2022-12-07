@@ -4,9 +4,9 @@
     participant: participant$ | async,
     streamClasses: streamClasses$ | async
   } as resolved"
-  class="opal-overflow-y-auto opal-fx-g-1">
+  class="tw-overflow-y-auto tw-grow">
   <ng-container *ngIf="stream; else skeletonTemplate">
-    <ngx-t3-descriptions class="opal-body-2">
+    <ngx-t3-descriptions class="tw-text-sm">
       <ngx-t3-description-item
         [label]="'i18n.Common.name' | translate"
         [multiline]="true">
@@ -16,10 +16,10 @@
       <ngx-t3-description-item [label]="'i18n.Common.type' | translate">
         <div
           *ngIf="stream.uiType | exported; else redacted"
-          class="opal-fx-row opal-fx-align-center">
+          class="tw-flex tw-flex-row tw-items-center">
           <ngx-t3-icon
-            class="opal-mr-2"
-            iconClass="opal-s-4"
+            class="tw-mr-2"
+            iconClass="tw-w-4 tw-h-4"
             [icon]="stream.uiType | apply : getStreamTypeIcon">
           </ngx-t3-icon>
           {{
@@ -56,12 +56,13 @@
         *ngIf="resolved.streamClasses && resolved.streamClasses.length > 0"
         [label]="'i18n.Common.classes' | translate"
         [multiline]="true">
-        <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+        <ngx-t3-tag-group class="tw-flex-wrap tw-flex tw-flex-row tw-grow-0 tw-overflow-hidden tw-gap-1">
           <app-redactable-tag
             *ngFor="let class of resolved.streamClasses"
             innerClasses="bg-grey-100"
-            class="t3-tag-like opal-mb-1"
-            [tagName]="class?.name"></app-redactable-tag>
+            class="t3-tag-like tw-mb-1"
+            [tagName]="class?.name"
+            [color]="class?.color"></app-redactable-tag>
         </ngx-t3-tag-group>
       </ngx-t3-description-item>
 
@@ -69,15 +70,15 @@
         *ngIf="referencesCount !== undefined"
         [label]="'i18n.Common.refd' | translate">
         <span
-          class="opal-body-2"
-          (click)="referencesClick.emit()"
-          [ngClass]="{ 'opal-text-underline opal-pointer': referencesCount }">
+          class="tw-text-sm"
+          [ngClass]="{ 'tw-underline tw-cursor-pointer': referencesCount }"
+          (click)="referencesClick.emit()">
           {{ referencesCount }} {{ referencesCount === 1 ? 'time' : 'times' }}
         </span>
         <mat-icon
           *ngIf="referencesCount"
           end
-          class="opal-text-grey-400 opal-s-4 opal-pointer"
+          class="tw-text-neutral-400 tw-w-4 tw-h-4 tw-cursor-pointer"
           (click)="referencesClick.emit()">
           arrow_forward
         </mat-icon>
@@ -89,25 +90,25 @@
 
       <ngx-t3-description-item [label]="'i18n.Common.lastEdit' | translate">
         <span
-          class="opal-body-2"
-          *ngIf="stream.updatedAt; else redacted">
+          *ngIf="stream.updatedAt; else redacted"
+          class="tw-text-sm">
           {{ stream.updatedAt | date: 'dd LLL yyyy, h:mm a' }}
         </span>
       </ngx-t3-description-item>
 
       <ngx-t3-description-item [label]="'i18n.Common.lastLinkHash' | translate">
         <ngx-t3-copy-to-clipboard
-          class="opal-d-block opal-ellipsed"
+          class="tw-block tw-truncate"
           position="left"
           [textToCopy]="stream.updatedInBlock.linkHash | uint8">
-          <div class="opal-body-2 opal-ellipsed opal-text-code opal-mr-1">
+          <div class="tw-text-sm tw-truncate tw-font-code tw-mr-1">
             {{ stream.updatedInBlock.linkHash | uint8 }}
           </div>
         </ngx-t3-copy-to-clipboard>
       </ngx-t3-description-item>
 
       <ngx-t3-description-item [label]="'i18n.Common.acks' | translate">
-        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-underline">
+        <span class="tw-text-sm tw-block tw-truncate tw-underline">
           <app-acks-status
             [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
             (click)="openAcknowledgementsDialog(stream.updatedInBlock)">
@@ -119,16 +120,16 @@
   </ng-container>
 
   <ng-template #skeletonTemplate>
-    <div class="opal-fx-col opal-fx-justify-center opal-ml-3 opal-fx-g-1">
-      <ngx-t3-skeleton class="opal-h-8 opal-mb-7 opal-w-9p"></ngx-t3-skeleton>
-      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
-      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
-      <ngx-t3-skeleton class="opal-h-3 opal-mb-2 opal-w-5p"></ngx-t3-skeleton>
+    <div class="tw-flex tw-flex-col tw-justify-center !tw-ml-3 tw-grow">
+      <ngx-t3-skeleton class="tw-h-8 tw-mb-7 tw-w-3/4"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
+      <ngx-t3-skeleton class="tw-h-3 tw-mb-2 tw-w-[41.67%]"></ngx-t3-skeleton>
     </div>
   </ng-template>
 
   <ng-template #redacted>
-    <div class="redacted opal-body-2">
+    <div class="redacted tw-text-sm">
       {{ 'i18n.Common.redacted' | translate }}
     </div>
   </ng-template>

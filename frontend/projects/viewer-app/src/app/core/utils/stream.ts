@@ -1,7 +1,7 @@
-import { StreamEntryType } from '@viewer/models';
 import { MaterialOrCustomIcon } from '@traent/ngx-components';
+import { StreamEntryType } from '@viewer/models';
 
-export const printableStreamTypes: Record<Exclude<StreamEntryType, 'approval' | 'custom'>, string> = {
+export const printableStreamTypes: Record<Exclude<StreamEntryType, 'custom'>, string> = {
   ['boolean']: 'checkbox',
   currency: 'currency',
   date: 'date',
@@ -38,7 +38,6 @@ export const getStreamTypeIcon = (type: StreamEntryType): MaterialOrCustomIcon =
 };
 
 export const streamLabelTranslationKeyMap: Record<StreamEntryType, string> = {
-  approval: 'i18n.StreamEntryType.approval',
   ['boolean']: 'i18n.StreamEntryType.boolean',
   currency: 'i18n.StreamEntryType.currency',
   custom: 'i18n.StreamEntryType.custom',

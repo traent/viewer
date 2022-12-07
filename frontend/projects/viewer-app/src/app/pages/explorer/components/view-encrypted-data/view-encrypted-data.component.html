@@ -1,15 +1,15 @@
 <div
   *ngIf="uiDataBlock$ | async as uiDataBlock"
-  class="opal-fx-col"
+  class="tw-flex tw-flex-col"
   (click)="$event.stopPropagation()">
-  <div class="opal-text-capitalize opal-p-3 opal-pl-10 opal-bg-grey-100 opal-h5 opal-ellipsed opal-fx-row opal-fx-align-center">
+  <div class="tw-capitalize tw-p-3 tw-pl-10 tw-bg-neutral-100 tw-h5 tw-truncate tw-flex tw-flex-row tw-items-center">
     <button
       *ngIf="{ value: !uiDataBlock.hasKey && !hasKeyPair } as keyMissing"
       mat-icon-button
       [matTooltip]="keyMissing.value ? '' : decryptedViewMode ? 'Encrypt' : 'Decrypt'"
       [disabled]="keyMissing.value"
       (click)="decryptedViewMode = !decryptedViewMode">
-      <mat-icon class="opal-s-4">
+      <mat-icon class="tw-w-4 tw-h-4">
         {{ decryptedViewMode ? 'lock_open' : 'lock' }}
       </mat-icon>
     </button>
@@ -20,30 +20,30 @@
       position="right"
       [tooltip]="decryptedViewMode ? 'Click to copy unencrypted data to clipboard' : 'decrypt the block to copy its content'"
       [hover]="false"
-      [additionalClasses]="decryptedViewMode ? 'opal-pointer' : 'opal-no-pointer'"
+      [additionalClasses]="decryptedViewMode ? 'tw-cursor-pointer' : 'tw-cursor-default'"
       [textToCopy]="decryptedViewMode ? decryptedData.value || undefined : undefined">
-      <span class="opal-mr-2">Data</span>
+      <span class="tw-mr-2">Data</span>
     </ngx-t3-copy-to-clipboard>
   </div>
-  <div class="opal-min-h-11">
+  <div class="tw-min-h-[44px]">
     <ng-container *ngIf="decryptedViewMode ? decryptedData$ : rawData$ as content">
       <cdk-virtual-scroll-viewport
         *ngIf="content | async as data; else loading"
         itemSize="50"
         appendOnly
-        class="opal-fx-row opal-overflow-y-auto opal-min-h-80 opal-text-monospace opal-p-3 opal-pl-20 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
-        <div *cdkVirtualFor="let row of data | apply : chunkData" class="opal-fx-row">
-          <div class="opal-fx-center opal-fx-wrap opal-p-3 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
+        class="tw-flex tw-flex-row tw-overflow-y-auto tw-min-h-[320px] tw-font-monospace tw-p-3 tw-pl-20 tw-grow tw-basis-0 tw-self-baseline">
+        <div *cdkVirtualFor="let row of data | apply : chunkData" class="tw-flex tw-flex-row">
+          <div class="tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-p-3 tw-grow tw-basis-0 tw-self-baseline">
             <div
               *ngFor="let item of row"
-              class="opal-p-1 opal-body-2 opal-text-underline opal-text-uppercase opal-s-5 opal-fx-center">
+              class="tw-p-1 tw-text-sm tw-underline tw-uppercase tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">
               {{ item | uint8 : 'hex' }}
             </div>
           </div>
-          <div class="opal-fx-center opal-fx-wrap opal-p-3 opal-fx-g-1 opal-fx-b-0 opal-fx-self-align-baseline">
+          <div class="tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-p-3 tw-grow tw-basis-0 tw-self-baseline">
             <div
               *ngFor="let item of row"
-              class="opal-p-1 opal-body-2 opal-text-underline opal-s-5 opal-fx-center">
+              class="tw-p-1 tw-text-sm tw-underline tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">
               {{ item | uint8 : 'raw' }}
             </div>
           </div>
@@ -51,9 +51,9 @@
       </cdk-virtual-scroll-viewport>
     </ng-container>
     <ng-template #loading>
-      <ngx-t3-spinner-context class="opal-my-10 opal-d-block">
+      <ngx-t3-spinner-context class="tw-my-10 tw-block">
         <p
-          class="opal-mt-10 opal-h4"
+          class="tw-mt-10 tw-h4"
           after>
           {{ 'i18n.Explorer.decrypting' | translate }}
         </p>

@@ -1,0 +1,105 @@
+<div class="tw-grow tw-flex tw-flex-row tw-overflow-hidden tw-h-full tw-w-full">
+  <div class="tw-overflow-y-hidden tw-overflow-x-auto tw-flex tw-flex-row tw-w-full">
+    <main class="tw-flex tw-flex-col tw-grow tw-bg-neutral-100 tw-overflow-y-hidden tw-overflow-x-auto">
+      <div class="tw-h2 tw-px-12 !tw-pt-5 tw-pb-4 tw-truncate">{{ exportName | noValueLabel }}</div>
+      <ng-template #titleSkeleton>
+        <ngx-t3-skeleton class="tw-mx-12 tw-mt-5 tw-mb-4 tw-h-7 tw-w-50 tw-block"></ngx-t3-skeleton>
+      </ng-template>
+
+      <div
+        *ngIf="{ ledgers: ledgers$ | async } as resolved"
+        class="tw-basis-0 tw-grow tw-px-12 tw-py-6 tw-border-t tw-border-neutral-200 tw-flex tw-flex-col tw-overflow-hidden">
+        <div class="tw-h-full tw-w-full tw-flex tw-flex-row">
+          <ngx-t3-table-container
+            *ngIf="{ dataSource: resolved.ledgers?.items || [] } as tableProps"
+            class="tw-grow"
+            [isLoading]="resolved.ledgers === null">
+            <mat-table
+              matSort
+              [dataSource]="tableProps.dataSource">
+
+              <mat-col matColumnDef="project">
+                <mat-header-cell *matHeaderCellDef>{{ 'i18n.Common.project' | translate }}</mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                  <div class="tw-flex tw-flex-row tw-items-center tw-w-full">
+                    <div
+                      *ngIf="item.projectName | exported; else redacted"
+                      class="tw-w-full tw-text-sm tw-truncate">
+                      {{ item.projectName | noValueLabel }}
+                    </div>
+                    <ng-template #redacted>
+                      <div class="redacted">
+                        {{ 'i18n.Common.redacted' | translate }}
+                      </div>
+                    </ng-template>
+                  </div>
+                </mat-cell>
+              </mat-col>
+
+              <mat-col matColumnDef="address">
+                <mat-header-cell *matHeaderCellDef>{{ 'i18n.Common.address' | translate }}</mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                  <div class="tw-w-full tw-text-sm tw-truncate">{{ item.address }}</div>
+                </mat-cell>
+              </mat-col>
+
+              <mat-col matColumnDef="createdAt">
+                <mat-header-cell *matHeaderCellDef>{{ 'i18n.Common.created' | translate }}</mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                  <div class="tw-w-full tw-text-sm tw-truncate">
+                    {{ item.createdAt | date : 'dd MMM YYYY, HH:mm' }}
+                  </div>
+                </mat-cell>
+              </mat-col>
+
+              <mat-col matColumnDef="updatedAt">
+                <mat-header-cell *matHeaderCellDef>
+                  {{ 'i18n.Common.lastEdit' | translate }}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                  <div class="tw-w-full tw-text-sm tw-truncate">
+                    {{ item.updatedAt | date : 'dd MMM YYYY, HH:mm' }}
+                  </div>
+                  <app-acks-icon
+                    class="tw-mt-1"
+                    [status]="item.ackInfo$ | async"
+                    (click)="item.openAckDialog()">
+                  </app-acks-icon>
+                </mat-cell>
+              </mat-col>
+
+              <mat-header-row
+                *matHeaderRowDef="[ 'project', 'address', 'createdAt', 'updatedAt' ]; sticky: true"
+                class="tw-w-full"></mat-header-row>
+              <mat-row
+                *matRowDef="let item; columns: [ 'project', 'address', 'createdAt', 'updatedAt' ];"
+                class="tw-cursor-pointer tw-w-full"
+                routerLinkActive="tw-bg-accent-100"
+                [routerLink]="['/project', 'select', item.id]"
+                (click)="selectLedger(item.id)"
+                (dblclick)="openLedger(item.id)">
+              </mat-row>
+            </mat-table>
+
+            <ngx-t3-table-paginator
+              [pageSize]="pageEvent$.value.pageSize"
+              [length]="resolved.ledgers?.items?.length || 0"
+              [total]="resolved.ledgers?.total"
+              [pageIndex]="pageEvent.pageIndex || 0"
+              [ofLabel]="'i18n.TablePaginator.of' | translate"
+              [pageLabel]="'i18n.TablePaginator.page' | translate"
+              [totalPageLabel]="'i18n.TablePaginator.perPage' | translate"
+              (pageChange)="pageEvent$.next($event)">
+            </ngx-t3-table-paginator>
+          </ngx-t3-table-container>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <ngx-t3-right-sidebar
+    [showHandle]="false"
+    [open]="true">
+    <router-outlet></router-outlet>
+  </ngx-t3-right-sidebar>
+</div>

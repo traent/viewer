@@ -1,7 +1,7 @@
-<div class="opal-fx-row">
+<div class="tw-flex tw-flex-row">
   <app-image-icon [image]="itemImage"></app-image-icon>
 
-  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+  <div class="log-description tw-w-full !tw-ml-3 tw-break-word">
     <ng-container *ngIf="props$ | async as props; else skeleton">
       <div
         *ngIf="{
@@ -16,7 +16,7 @@
         class="snapshot-content"
         ngxT3PointerInnerClick
         [ngSwitch]="props.operation"
-        (innerClick)="clickHandler($event, snapshot)">
+        (innerClick)="clickHandler($event, snapshot, ledgerId)">
         <span
           *ngSwitchCase="'creation'"
           [innerHtml]="'i18n.SnapshotItem.OperationLabel.Thread.creation' | translate : translateParams | safeHtml">
@@ -35,7 +35,7 @@
 </div>
 
 <ng-template #skeleton>
-  <div class="opal-fx-g-1">
-    <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+  <div class="tw-grow">
+    <ngx-t3-skeleton class="tw-h-4"></ngx-t3-skeleton>
   </div>
 </ng-template>

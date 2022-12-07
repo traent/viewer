@@ -1,9 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ThreadMessage, ThreadMessageEntity, WorkflowParticipant } from '@viewer/models';
-import { AcknowledgementService, ProjectParticipantService, ThreadService } from '@viewer/services';
-import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
+import { ViewerAgentType } from '@api/models';
 import {
   MaterialOrCustomIcon,
   MessageFragment,
@@ -13,8 +11,13 @@ import {
   isRedactedOrUndefined,
   isExported,
 } from '@traent/ngx-components';
-import { of, map, BehaviorSubject, switchMap, filter } from 'rxjs';
 import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { ThreadMessage, ThreadMessageEntity, WorkflowParticipant } from '@viewer/models';
+import { LedgerAccessorService, ProjectParticipantService, ThreadService } from '@viewer/services';
+import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
+import { of, map, BehaviorSubject, switchMap, filter } from 'rxjs';
+
+import { getThingTypeInfo } from '../../../core/models/ui-things';
 
 const mapFragmentIcon: Record<string, MaterialOrCustomIcon> = {
   StreamEntry: { custom: 'stream-overview' },
@@ -46,7 +49,7 @@ export class ThreadMessageComponent {
   readonly creator$ = this.threadMessage$.pipe(
     isNotNullOrUndefined(),
     switchMap(async (threadMessage) => isExported(threadMessage.creatorId)
-      ? this.projectParticipantService.getProjectParticipant(threadMessage.creatorId)
+      ? this.projectParticipantService.getProjectParticipant({ id: threadMessage.creatorId })
       : undefined,
     ),
   );
@@ -54,7 +57,7 @@ export class ThreadMessageComponent {
   readonly acksInfo$ = this.threadMessage$.pipe(
     map((threadMessage) => threadMessage?.updatedInBlock.index),
     isNotNullOrUndefined(),
-    switchMap((blockIndex) => this.acknowledgementService.getAcknowledgementStatus(blockIndex)),
+    switchMap((blockIndex) => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(blockIndex)),
   );
 
   readonly fragments$ = this.threadMessage$.pipe(
@@ -62,7 +65,7 @@ export class ThreadMessageComponent {
     filter((threadMessage): threadMessage is ThreadMessage & { message: string } => isExportedAndDefined(threadMessage.message)),
     switchMap(async (threadMessage) => ({
       message: threadMessage?.message,
-      entities: await threadMessage?.threadMessageEntities(),
+      entities: await this.threadService.getThreadMessageEntities({ threadMessageId: threadMessage.id }),
     })),
     switchMap(({ message, entities }) => this.getFragmentsFromMessage(message, entities)),
   );
@@ -71,15 +74,17 @@ export class ThreadMessageComponent {
     isNotNullOrUndefined(),
     map((threadMessage) => threadMessage.replyToId),
     filter((replyToId): replyToId is string => isExportedAndDefined(replyToId)),
-    switchMap((id) => this.threadService.getThreadMessage(id)),
+    switchMap((id) => this.threadService.getThreadMessage({ id })),
   );
 
-  readonly ThreadMessageStatus = ThreadMessageStatus;
+  readonly getThingTypeInfo = getThingTypeInfo;
   readonly openAcknowledgementsDialog = bindOpenAcknowledgementsDialog(this.dialog);
+  readonly ThreadMessageStatus = ThreadMessageStatus;
+  readonly ViewerAgentType = ViewerAgentType;
 
   constructor(
-    private readonly acknowledgementService: AcknowledgementService,
     private readonly dialog: MatDialog,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
     private readonly router: Router,
     readonly threadService: ThreadService,
@@ -127,7 +132,7 @@ export class ThreadMessageComponent {
         if (isExportedAndDefined(e.type)) {
           if (e.type !== 'ProjectParticipant') {
             messageFragments.push({
-              additionalData: {type: e.type},
+              additionalData: { type: e.type },
               class: mapFragmentClass[e.type],
               icon: mapFragmentIcon[e.type],
               kind: MessageFragmentType.Rich,
@@ -136,16 +141,22 @@ export class ThreadMessageComponent {
             });
           } else {
             const projectParticipant = isExportedAndDefined(e.value)
-              ? await this.projectParticipantService.getProjectParticipant(e.value)
+              ? await this.projectParticipantService.getProjectParticipant({ id: e.value })
               : undefined;
             const fullName$ = projectParticipant
-              ?  projectParticipant !== WorkflowParticipant
-                ? projectParticipant.member$.pipe(map((member) => member?.fullName), isNotNullOrUndefined())
+              ? projectParticipant !== WorkflowParticipant
+                ? projectParticipant.agent$.pipe(
+                  map((member) => member?.agentType === ViewerAgentType.Member
+                    ? member?.fullName
+                    : undefined,
+                  ),
+                  isNotNullOrUndefined(),
+                )
                 : of('Workflow')
               : of('Redacted');
 
             messageFragments.push({
-              additionalData: {type: e.type},
+              additionalData: { type: e.type },
               class: mapFragmentClass[e.type],
               icon: mapFragmentIcon[e.type],
               kind: MessageFragmentType.Rich,
@@ -158,7 +169,7 @@ export class ThreadMessageComponent {
           messageFragments.push({
             additionalData: {},
             class: 'redacted-fragment',
-            icon: { material: 'help_center'},
+            icon: { material: 'help_center' },
             kind: MessageFragmentType.Rich,
             label: of(message.substring(currentIndex, currentIndex + (e.length || 0))),
             value: '',
@@ -209,7 +220,8 @@ export class ThreadMessageComponent {
       outlets: {
         primary: [item.value],
         aside: [item.value],
-      }},
+      },
+    },
     ]);
   }
 }

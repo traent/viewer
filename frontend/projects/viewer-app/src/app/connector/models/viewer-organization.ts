@@ -3,9 +3,10 @@
 import { ProfileValidationState } from './profile-validation-state';
 export interface ViewerOrganization {
   address?: null | any;
-  businessName: string;
+  businessName?: null | string;
+  foundingLocation?: null | string;
   id: string;
-  legalName: string;
+  legalName?: null | string;
   logo?: null | any;
   validationState: ProfileValidationState;
   website?: null | string;

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { isExportedAndDefined } from '@traent/ngx-components';
 import { StreamReference } from '@viewer/models';
 import { StreamService, DocumentService } from '@viewer/services';
 import { referencesByDoc } from '@viewer/utils';
-import { isExportedAndDefined } from '@traent/ngx-components';
 import { map, filter, switchMap } from 'rxjs';
 
 @Component({
@@ -18,7 +18,7 @@ export class DocumentSideStreamReferencesComponent {
   );
 
   readonly stream$ = this.streamId$.pipe(
-    switchMap((streamId) => this.streamService.getStream(streamId)),
+    switchMap((streamId) => this.streamService.getStream({ id: streamId })),
   );
 
   readonly references$ = this.streamId$.pipe(

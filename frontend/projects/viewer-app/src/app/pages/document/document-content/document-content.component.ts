@@ -1,17 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Document, DocumentContentType, StreamReference } from '@viewer/models';
-import {
-  DocumentService,
-  getContentTypeExtension,
-  StreamService,
-  ProjectParticipantService,
-  ProjectService,
-  AcknowledgementService,
-} from '@viewer/services';
-import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
-import { downloadDocument, getDocumentProxy, u8ToBlob } from '@viewer/utils';
 import {
   DocumentZoomValue,
   isExported,
@@ -21,9 +10,20 @@ import {
   RedactedMarker,
   getPDFAcrofieldControlValue,
 } from '@traent/ngx-components';
+import { formatBytesSize, trackByIndex } from '@traent/ts-utils';
+import { Document, DocumentContentType, StreamReference } from '@viewer/models';
+import {
+  DocumentService,
+  getContentTypeExtension,
+  StreamService,
+  ProjectParticipantService,
+  ProjectService,
+  LedgerAccessorService,
+} from '@viewer/services';
+import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
+import { downloadDocument, getDocumentProxy, u8ToBlob } from '@viewer/utils';
 import { combineLatest, from, Observable, of } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { formatBytesSize, trackByIndex } from '@traent/ts-utils';
 
 const orderReferences = (references: StreamReference[]): StreamReference[] => references
   .filter((r): r is StreamReference => r.anchor)
@@ -43,13 +43,12 @@ export class DocumentContentComponent {
   );
 
   readonly document$: Observable<Document> = this.route.params.pipe(
-    map(({ id }) => id),
-    switchMap((documentId) => this.documentService.getDocument(documentId)),
+    switchMap(({ id }) => this.documentService.getDocument({ id })),
     tap({ error: () => this.router.navigate(['/project']) }),
   );
 
   readonly documentContent$ = this.document$.pipe(
-    switchMap((document) => document.getData()),
+    switchMap((document) => this.documentService.getDocumentContent({ document })),
     tap({ error: () => this.router.navigate(['/project']) }),
   );
 
@@ -78,14 +77,14 @@ export class DocumentContentComponent {
   readonly author$ = this.document$.pipe(
     map((document) => document.creatorId),
     switchMap((authorId) => authorId && !isRedacted(authorId)
-      ? this.projectParticipantService.getProjectParticipant(authorId)
+      ? this.projectParticipantService.getProjectParticipant({ id: authorId })
       : of(undefined),
     ),
   );
 
   readonly blockAcknowledgementsInfo$ = this.document$.pipe(
     filter((document): document is Document => document !== null),
-    switchMap((document) => this.acknowledgementService.getAcknowledgementStatus(document.updatedInBlock.index)),
+    switchMap((document) => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(document.updatedInBlock.index)),
   );
 
   pageRects: PageRect[] = [];
@@ -106,15 +105,15 @@ export class DocumentContentComponent {
   readonly trackByIndex = trackByIndex;
   readonly u8ToBlob = u8ToBlob;
 
-  readonly getAcknowledgementStatus = (blockIndex: number) => this.acknowledgementService.getAcknowledgementStatus(blockIndex);
+  readonly getAcknowledgementStatus = (blockIndex: number) => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(blockIndex);
   readonly deriveStreamEntry = async (reference: StreamReference) => isExported(reference.streamEntryId)
-    ? this.streamService.getStream(reference.streamEntryId)
+    ? this.streamService.getStream({ id: reference.streamEntryId })
     : undefined;
 
   constructor(
-    private readonly acknowledgementService: AcknowledgementService,
     private readonly dialog: MatDialog,
     private readonly documentService: DocumentService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
     private readonly projectService: ProjectService,
     private readonly route: ActivatedRoute,

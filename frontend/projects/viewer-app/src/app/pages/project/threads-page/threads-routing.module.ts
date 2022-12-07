@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { projectSideBarRoutes } from '../project-routing.module';
 import { ThreadMessagesPageComponent } from './thread-messages-page/thread-messages-page.component';
 import { ThreadSideLogComponent } from './thread-side-log/thread-side-log.component';
 import { ThreadSideOverviewComponent } from './thread-side-overview/thread-side-overview.component';
-import { ThreadSideReferenceComponent } from './thread-side-reference/thread-side-reference.component';
 import { ThreadSideParticipantsComponent } from './thread-side-participants/thread-side-participants.component';
+import { ThreadSideReferenceComponent } from './thread-side-reference/thread-side-reference.component';
 import { ThreadSidebarComponent } from './thread-sidebar/thread-sidebar.component';
 import { ThreadsPageComponent } from './threads-page.component';
+import { projectSideBarRoutes } from '../project-routing.module';
 
 const routes: Routes = [
   ...projectSideBarRoutes,

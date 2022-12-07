@@ -11,7 +11,7 @@ import { map, switchMap } from 'rxjs';
 export class DocumentSideStreamOverviewComponent {
 
   readonly stream$ = this.route.params.pipe(
-    switchMap(({ streamId }) => this.streamService.getStream(streamId)),
+    switchMap(({ streamId }) => this.streamService.getStream({ id: streamId })),
   );
 
   readonly streamReferencesCount$ = this.route.params.pipe(

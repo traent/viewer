@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SnapshotService } from '@viewer/services';
-import { UIPaginator } from '@traent/ngx-paginator';
+import { emptyIdentityExtractorPaginator } from '@viewer/utils';
 import { map } from 'rxjs';
 
 @Component({
@@ -16,8 +16,9 @@ export class DocumentSideLogComponent {
   );
 
   readonly paginator$ = this.documentId$.pipe(
-    map((documentId) => UIPaginator.makePlaceholderPaginator((page) =>
-      this.snapshotService.getSnapshotCollection({ limit: 10, page, id: documentId }), 10,
+    map((documentId) => emptyIdentityExtractorPaginator((page) =>
+      this.snapshotService.getSnapshotCollection({ limit: 10, page, id: documentId }),
+      10,
     )),
   );
 

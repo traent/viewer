@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { OffchainItem } from '@viewer/models';
 import { formatBytesSize } from '@traent/ts-utils';
+import { OffchainItem } from '@viewer/models';
 
 @Component({
   selector: 'app-off-chain-row-item',

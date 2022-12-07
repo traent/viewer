@@ -1,44 +1,44 @@
 <div
   *ngIf="value"
-  class="opal-fx-row opal-fx-align-center opal-py-3 opal-body-2 opal-pos-rel"
+  class="tw-flex tw-flex-row tw-items-center tw-py-3 tw-text-sm tw-relative"
   matRipple>
   <mat-icon
-    class="opal-pos-abs opal-my-auto opal-inset-l-4 opal-s-4 opal-text-grey-400"
-    [class.opal-rotate-90]="isOpen">
+    class="tw-absolute tw-my-auto tw-inset-l-4 tw-w-4 tw-h-4 tw-text-neutral-400"
+    [class.tw-rotate-90]="isOpen">
     chevron_right
   </mat-icon>
   <div
     *ngIf="value.hash | uint8 as hash"
-    class="opal-pl-12 opal-border-box opal-pr-3 opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+    class="tw-pl-12 tw-box-border tw-pr-3 tw-grow tw-basis-0 tw-flex tw-flex-row tw-justify-start tw-items-center tw-truncate">
     <ngx-t3-copy-to-clipboard
-      class="opal-w-full"
+      class="tw-w-full"
       position="left"
       [textToCopy]="hash"
       (click)="$event.stopImmediatePropagation()">
       <div
-        class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">
+        class="tw-font-mono tw-text-sm tw-truncate tw-mr-1">
         {{ hash }}
       </div>
     </ngx-t3-copy-to-clipboard>
   </div>
-  <div class="opal-px-3 opal-border-box sm-col-width opal-fx-row opal-fx-justify-start opal-fx-align-center">
+  <div class="tw-px-3 tw-box-border sm-col-width tw-flex tw-flex-row tw-justify-start tw-items-center">
     {{ value.size | apply : formatBytesSize : 2 }}
   </div>
-  <div class="opal-px-3 opal-border-box sm-col-width opal-fx-row opal-fx-justify-start opal-fx-align-center">
+  <div class="tw-px-3 tw-box-border sm-col-width tw-flex tw-flex-row tw-justify-start tw-items-center">
     <ngx-t3-tag
       *ngIf="value.hasKey"
-      class="opal-bg-violet-300"
-      [class.opal-mr-2]="hasKeyPair">
+      class="tw-bg-violet-300"
+      [class.tw-mr-2]="hasKeyPair">
       {{ 'i18n.Explorer.dataKey' | translate }}
     </ngx-t3-tag>
     <ngx-t3-tag
       *ngIf="hasKeyPair"
-      class="opal-bg-green-500">
+      class="tw-bg-green-500">
       {{ 'i18n.Explorer.keyPair' | translate }}
     </ngx-t3-tag>
     <div
       *ngIf="!value.hasKey && !hasKeyPair"
-      class="opal-body-2 opal-text-capitalize opal-text-grey-400 opal-text-style-italic">
+      class="tw-text-sm tw-capitalize tw-text-neutral-400 tw-italic">
       {{ 'i18n.Common.none' | translate }}
     </div>
   </div>

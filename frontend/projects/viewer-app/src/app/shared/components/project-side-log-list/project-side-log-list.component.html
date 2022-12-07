@@ -1,0 +1,56 @@
+<ngx-t3-growing-search-bar
+  class="tw-flex tw-flex-row tw-items-center tw-justify-center tw-box-border tw-px-4 tw-my-3 tw-h-9"
+  shape="squared"
+  [hideSearch]="true"
+  [(query)]="logQuery">
+  <ngx-t3-tabs
+    [value]="filterType"
+    (valueChange)="filterType$.next($event)">
+    <ngx-t3-tab-item
+      value="all"
+      width="square"
+      [matTooltip]="'i18n.Common.all' | translate">
+      <mat-icon class="tw-w-4 tw-h-4">list</mat-icon>
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="project"
+      width="square"
+      [matTooltip]="'i18n.Common.project' | translate">
+      <mat-icon
+        class="tw-w-4 tw-h-4"
+        svgIcon="projects"></mat-icon>
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="stream"
+      width="square"
+      [matTooltip]="'i18n.Common.stream' | translate">
+      <mat-icon
+        class="tw-w-4 tw-h-4"
+        svgIcon="stream-overview"></mat-icon>
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="threads"
+      width="square"
+      [matTooltip]="'i18n.Common.threads' | translate">
+      <mat-icon class="tw-w-4 tw-h-4 material-icons-outlined">forum</mat-icon>
+    </ngx-t3-tab-item>
+    <ngx-t3-tab-item
+      value="documents"
+      width="square"
+      [matTooltip]="'i18n.Common.docs' | translate">
+      <mat-icon class="tw-w-4 tw-h-4 material-icons-outlined">description</mat-icon>
+    </ngx-t3-tab-item>
+  </ngx-t3-tabs>
+</ngx-t3-growing-search-bar>
+
+<div class="tw-overflow-auto tw-h-full tw-pb-4">
+  <ngx-t3-paginator-list
+    *ngIf="paginator$ | async as paginator"
+    [class.tw-mt-[6.25rem]]="paginator.total.value === 0 && !paginator.loading.value"
+    [paginator]="paginator">
+    <app-snapshot-renderer
+      *ngFor="let snapshot of paginator.items.value"
+      [ledgerId]="ledgerId"
+      [snapshot]="snapshot"></app-snapshot-renderer>
+  </ngx-t3-paginator-list>
+</div>

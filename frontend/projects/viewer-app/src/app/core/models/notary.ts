@@ -24,13 +24,15 @@ export const notaryServerInfo = {
 export interface AlgorandNotaryAccessInfo {
   network: string;
   account: string;
+  minRound: number;
   token: Record<string, string>;
 }
 
-export const requiredTrustedNotaries = {
+export const requiredTrustedNotaries: Record<string, AlgorandNotaryAccessInfo> = {
   traent: {
     network: 'algorand-mainnet',
     account: 'MXIH6O3WOTPW5EGMBQ76PDGKM55OPJUENYGPSWP2AW66M7QEPYH2L4GUJU',
+    minRound: 21352745,
     token: { 'X-API-key': '1JgDy8s4GK41zwd4saktM6JavUnxDH0y8AO1Sfi8' },
   },
 };

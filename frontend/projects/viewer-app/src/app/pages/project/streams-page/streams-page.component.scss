@@ -6,7 +6,7 @@
 }
 
 ngx-t3-tabs {
-  --ngx-t3-tabs-color: theme("colors.grey.600");
+  --ngx-t3-tabs-color: var(--tw-neutral-600);
 }
 
 ngx-t3-stream-value-renderer {

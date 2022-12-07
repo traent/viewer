@@ -5,7 +5,7 @@
 
   <ngx-t3-sidebar-header
     *ngIf="resolved.threadSelected"
-    class="opal-sidebar-header-container"
+    class="tw-t3-sidebar-header-container"
     [backToLabel]="'i18n.Common.allThreads' | translate"
     [label]="(resolved.threadSelected.name | exportedAndDefined) ? resolved.threadSelected.name : 'Redacted'"
     [ellipsed]="false"
@@ -16,7 +16,7 @@
         queryParamsHandling="merge"
         [matTooltip]="'i18n.Common.threadInfo' | translate"
         [routerLink]="['../']">
-        <mat-icon class="opal-s-5 opal-text-grey-400 material-icons-outlined">info</mat-icon>
+        <mat-icon class="tw-w-5 tw-h-5 tw-text-neutral-400 material-icons-outlined">info</mat-icon>
       </button>
     </ng-container>
   </ngx-t3-sidebar-header>

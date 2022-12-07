@@ -6,14 +6,14 @@
 } as resolved">
   <h2
     mat-dialog-title
-    class="opal-mb-0">
+    class="tw-mb-0">
     {{ 'i18n.Common.documentDetails' | translate }}
   </h2>
 
   <div
-    class="opal-my-6"
+    class="tw-my-6"
     mat-dialog-content>
-    <ngx-t3-descriptions class="opal-border-1 opal-radius-4 opal-border-grey-200">
+    <ngx-t3-descriptions class="tw-border !tw-rounded tw-border-neutral-200">
       <ng-template #redacted>
         <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
       </ng-template>
@@ -39,17 +39,18 @@
       <ngx-t3-description-item
         *ngIf="resolved.documentTags && resolved.documentTags.length > 0"
         [label]="'i18n.Common.tags' | translate">
-        <ngx-t3-tag-group class="opal-fx-wrap opal-fx-row opal-fx-g-0 opal-overflow-hidden">
+        <ngx-t3-tag-group class="tw-flex-wrap tw-flex tw-flex-row tw-grow-0 tw-overflow-hidden tw-gap-1">
           <app-redactable-tag
             *ngFor="let tag of resolved.documentTags"
             innerClasses="bg-grey-100"
-            class="t3-tag-like opal-mb-1"
-            [tagName]="tag?.name"></app-redactable-tag>
+            class="t3-tag-like tw-mb-1"
+            [tagName]="tag?.name"
+            [color]="tag?.color"></app-redactable-tag>
         </ngx-t3-tag-group>
       </ngx-t3-description-item>
 
       <ngx-t3-description-item [label]="'i18n.Common.type' | translate">
-        <ngx-t3-tag class="opal-bg-accent-200 opal-mr-2 no-ellipse">
+        <ngx-t3-tag class="tw-bg-accent-200 tw-mr-2 no-ellipse">
           {{ document.extension }}
         </ngx-t3-tag>
       </ngx-t3-description-item>
@@ -66,10 +67,10 @@
 
       <ngx-t3-description-item [label]="'i18n.Common.linkHash' | translate">
         <ngx-t3-copy-to-clipboard
-          class="opal-d-block opal-ellipsed"
+          class="tw-block tw-truncate"
           position="left"
           [textToCopy]="document.updatedInBlock.linkHash | uint8">
-          <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+          <div class="tw-text-sm tw-truncate tw-font-code tw-underline tw-mr-1">
             {{ document.updatedInBlock.linkHash | uint8 }}
           </div>
         </ngx-t3-copy-to-clipboard>
@@ -78,7 +79,7 @@
       <ngx-t3-description-item
         [label]="'i18n.Common.acks' | translate"
         [hasDivider]="false">
-        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+        <span class="tw-text-sm tw-block tw-truncate tw-font-code tw-underline">
           <app-acks-status
             [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
             (click)="openAcknowledgementsDialog(document.updatedInBlock)"></app-acks-status>
@@ -92,10 +93,8 @@
       *ngIf="document.isContentReadable"
       mat-stroked-button
       mat-dialog-close
-      class="opal-mr-2"
-      queryParamsHandling="merge"
-      [routerLink]="['/project/documents/', { outlets: { primary: [document.id, 'versions'], aside: null } }]"
-      [queryParams]="(document.version | exported) ? { vMain: document.version } : null">
+      class="tw-mr-2"
+      (click)="navigateDocument()">
       {{ 'i18n.Project.DocumentLog.viewDocument' | translate }}
     </button>
     <button

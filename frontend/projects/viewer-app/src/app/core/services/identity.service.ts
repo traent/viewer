@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { UserService as UserApi } from '@api/services';
 import { UserProfileFieldName } from '@api/models';
+import { UserService as UserApi } from '@api/services';
+import { NgxT3DialogService } from '@traent/ngx-dialog';
 import { User } from '@viewer/models';
 import { OidcSecurityService, PopUpService } from 'angular-auth-oidc-client';
-import { NgxT3DialogService } from '@traent/ngx-dialog';
 import { BehaviorSubject, firstValueFrom, merge, shareReplay } from 'rxjs';
 import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 

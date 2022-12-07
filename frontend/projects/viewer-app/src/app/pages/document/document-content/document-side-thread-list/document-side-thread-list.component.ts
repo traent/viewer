@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UIPaginator } from '@traent/ngx-paginator';
 import { ThreadCategories } from '@viewer/models';
 import { ThreadService } from '@viewer/services';
-import { UIPaginator } from '@traent/ngx-paginator';
 import { map, BehaviorSubject, combineLatest } from 'rxjs';
 
 const THREAD_ITEMS_LIMIT = 15;

@@ -1,5 +1,9 @@
-@use '../opal/src/scss/utilities/text.scss' as *;
-
 .overview-resource-name {
-  @include ellipse-at-line(3, 22px);
+  // TODO Tailwind to imitate old opal "ellipse-at-line", remove after using tw line-clamp plugin
+  @apply tw-flex-shrink-0 tw-overflow-hidden tw-text-ellipsis;
+  @apply tw-leading-5 tw-max-h-16;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }

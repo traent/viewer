@@ -1,81 +1,68 @@
 <h2
   mat-dialog-title
-  class="opal-mb-0 opal-text-700">
+  class="tw-mb-0 tw-font-bold">
   {{ 'i18n.Common.acknowledgements' | translate }}
 </h2>
 
-<div
-  class="opal-my-6 opal-p-3 opal-fx-col opal-bg-grey-100 opal-radius-8">
-  <div class="opal-mb-4">
-    <h4 class="opal-m-0">{{ 'i18n.Common.blockInfo' | translate }}</h4>
+<div class="tw-my-6 tw-p-3 tw-flex tw-flex-col tw-bg-neutral-100 !tw-rounded-lg">
+  <div class="tw-mb-4">
+    <h4 class="tw-m-0">
+      {{ 'i18n.Common.blockInfo' | translate }}
+    </h4>
   </div>
 
-  <div class="block-info-row opal-fx-row">
-    <label class="opal-overline">
-      {{ 'i18n.Common.index' | translate }}
-    </label>
+  <div class="block-info-row tw-flex tw-flex-row">
+    <label class="tw-t3-text-overline">{{ 'i18n.Common.index' | translate }}</label>
     <ngx-t3-copy-to-clipboard
       position="right"
       [textToCopy]="block.index + ''">
-      <div class="opal-mr-1">
-        {{ block.index }}
-      </div>
+      <div class="tw-mr-1">{{ block.index }}</div>
     </ngx-t3-copy-to-clipboard>
   </div>
 
-  <hr class="opal-w-full opal-my-3">
+  <hr class="tw-w-full tw-my-3">
 
-  <div class="block-info-row opal-h-auto opal-fx-row">
-    <label class="opal-overline">
-      {{ 'i18n.Common.hash' | translate }}
-    </label>
+  <div class="block-info-row tw-h-auto tw-flex tw-flex-row">
+    <label class="tw-t3-text-overline">{{ 'i18n.Common.hash' | translate }}</label>
     <ngx-t3-copy-to-clipboard
       position="left"
       [textToCopy]="block.linkHash | uint8">
-      <div class="opal-text-left opal-text-code opal-break-all opal-mr-1">
-        {{ block.linkHash | uint8 }}
-      </div>
+      <div class="tw-text-left tw-font-code tw-break-all tw-mr-1">{{ block.linkHash | uint8 }}</div>
     </ngx-t3-copy-to-clipboard>
   </div>
 
-  <hr class="opal-w-full opal-my-3">
+  <hr class="tw-w-full tw-my-3">
 
-  <div class="block-info-row opal-fx-row opal-fx-align-center opal-mb-1">
-    <label class="opal-overline">
-      {{ 'i18n.Common.created' | translate }}
-    </label>
+  <div class="block-info-row tw-flex tw-flex-row tw-items-center tw-mb-1">
+    <label class="tw-t3-text-overline">{{ 'i18n.Common.created' | translate }}</label>
     <ngx-t3-copy-to-clipboard
       position="left"
       [textToCopy]="(block.createdAt | date : 'd MMM YYYY, HH:mm') || ''">
-      <div class="opal-mr-1">
+      <div class="tw-mr-1">
         {{ block.createdAt | date : 'd MMM YYYY, HH:mm' }}
       </div>
     </ngx-t3-copy-to-clipboard>
   </div>
 </div>
 
-<h4 class="opal-mt-0 opal-mb-2">
+<h4 class="tw-mt-0 tw-mb-2">
   {{ 'i18n.Common.acknowledgements' | translate }}
 </h4>
 
-<div class="opal-fx-row opal-p-2 opal-border-b-1 opal-border-grey-200">
-  <span class="org-info-col opal-overline opal-mr-2">
+<div class="tw-flex tw-flex-row tw-p-2 tw-border-b tw-border-neutral-200">
+  <span class="org-info-col tw-t3-text-overline tw-mr-2">
     {{ 'i18n.Common.organization' | translate }}
   </span>
-  <span class="hash-col opal-fx-g-1 opal-overline opal-mr-2">
-    {{ 'i18n.Common.hash' | translate }}
-  </span>
-  <span class="date-info-col opal-overline">
-    {{ 'i18n.Common.date' | translate }}
-  </span>
+  <span class="hash-col tw-grow tw-t3-text-overline tw-mr-2">{{ 'i18n.Common.hash' | translate }}</span>
+  <span class="date-info-col tw-t3-text-overline">{{ 'i18n.Common.date' | translate }}</span>
 </div>
 
 <mat-dialog-content class="ack-dialog-content">
   <ng-container *ngFor="let record of acks$ | async">
-    <div class="opal-fx-row opal-fx-align-center opal-border-grey-200 opal-border-b-1 opal-py-3 opal-px-2">
+    <div class="tw-flex tw-flex-row tw-items-center tw-border-neutral-200 tw-border-b tw-py-3 tw-px-2">
       <div
         *ngIf="{ profile: record.organization$ | async } as resolved"
-        class="org-info-col opal-fx-row opal-fx-align-center opal-mr-2">
+        class="org-info-col tw-flex tw-flex-row tw-items-center tw-mr-2">
         <ngx-t3-organization-identity
           size="xs"
           [src]="resolved.profile && resolved.profile.logo"
@@ -84,22 +71,20 @@
 
       <ng-container *ngIf="record.ack else pending">
         <ng-container *ngIf="record.block$ | async as recordBlock">
-          <div class="hash-col opal-mr-2 opal-fx-g-1 opal-fx-s-0">
+          <div class="hash-col tw-mr-2 tw-grow tw-shrink-0">
             <div
               *ngIf="recordBlock; else pending"
-              class="opal-fx-g-1 opal-fx-row opal-fx-align-center">
+              class="tw-grow tw-flex tw-flex-row tw-items-center">
               <ngx-t3-copy-to-clipboard
-                class="opal-w-full"
+                class="tw-w-full"
                 position="left"
                 [textToCopy]="recordBlock.linkHash | uint8">
-                <div class="opal-text-underline opal-ellipsed opal-mr-1">
-                  {{ recordBlock.linkHash | uint8 }}
-                </div>
+                <div class="tw-underline tw-truncate tw-mr-1">{{ recordBlock.linkHash | uint8 }}</div>
               </ngx-t3-copy-to-clipboard>
             </div>
           </div>
 
-          <div class="date-info-col opal-fx-s-0">
+          <div class="date-info-col tw-shrink-0">
             <span *ngIf="recordBlock; else pending">
               {{ recordBlock.createdAt | date : 'd MMM YYYY, HH:mm' }}
             </span>
@@ -108,20 +93,20 @@
       </ng-container>
 
       <ng-template #pending>
-        <div class="hash-col opal-mr-2 opal-fx-g-1 opal-fx-s-0 opal-text-grey-400">
-          {{ 'i18n.Common.pending' | translate }}
-        </div>
+        <div class="hash-col tw-mr-2 tw-grow tw-shrink-0 tw-text-neutral-400">{{ 'i18n.Common.pending' | translate }}</div>
       </ng-template>
     </div>
   </ng-container>
 </mat-dialog-content>
 
 <mat-dialog-actions
-  class="opal-py-6"
+  class="tw-py-6"
   align="center">
   <button
     color="accent"
     mat-dialog-close
     mat-flat-button
-    type="button">{{ 'i18n.Common.done' | translate }}</button>
+    type="button">
+    {{ 'i18n.Common.done' | translate }}
+  </button>
 </mat-dialog-actions>

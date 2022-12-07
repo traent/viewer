@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ThreadMessage } from '@viewer/models';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { ThreadMessage } from '@viewer/models';
 
 @Component({
   selector: 'app-thread-messages',

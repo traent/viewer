@@ -1,7 +1,7 @@
 import { WorkflowsDsLv0Workflow, WorkflowsDsLv1Workflow, WorkflowV0 } from '@ledger-objects';
-import { Redactable } from '@traent/ngx-components';
 
 import { LedgerResource, RedactableBox } from './ledger-resource';
+import { LedgerBlockIndex } from '../utils/ledger-objects';
 
 /**
  * The Workflow operates as a proper project participant on version 1 of workflows.
@@ -25,7 +25,6 @@ export type WorkflowDSL = {
 
 export type Workflow = RedactableBox<WorkflowV0> & LedgerResource & Partial<{
   dsl: WorkflowDSL;
-  lastState: Redactable<string>;
-}> & {
-  getStateLabel: (stateId?: Redactable<string>) => Redactable<string> | undefined;
-};
+}>;
+
+export type WorkflowStateIdParams = Partial<{ workflow: Workflow }> & LedgerBlockIndex;

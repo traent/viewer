@@ -5,14 +5,14 @@
 } as resolved">
   <h2
     mat-dialog-title
-    class="opal-mb-0">
+    class="tw-mb-0">
     {{ 'i18n.Common.threadDetails' | translate }}
   </h2>
 
   <div
-    class="opal-my-6"
+    class="tw-my-6"
     mat-dialog-content>
-    <ngx-t3-descriptions class="opal-border-1 opal-radius-4 opal-border-grey-200">
+    <ngx-t3-descriptions class="tw-border !tw-rounded tw-border-neutral-200">
       <ng-template #redacted>
         <div class="redacted">{{ 'i18n.Common.redacted' | translate }}</div>
       </ng-template>
@@ -47,10 +47,10 @@
 
       <ngx-t3-description-item [label]="'i18n.Common.linkHash' | translate">
         <ngx-t3-copy-to-clipboard
-          class="opal-d-block opal-ellipsed"
+          class="tw-block tw-truncate"
           position="left"
           [textToCopy]="thread.updatedInBlock.linkHash | uint8">
-          <div class="opal-body-2 opal-ellipsed opal-text-code opal-text-underline opal-mr-1">
+          <div class="tw-text-sm tw-truncate tw-font-code tw-underline tw-mr-1">
             {{ thread.updatedInBlock.linkHash | uint8 }}
           </div>
         </ngx-t3-copy-to-clipboard>
@@ -59,7 +59,7 @@
       <ngx-t3-description-item
         [label]="'i18n.Common.acks' | translate"
         [hasDivider]="false">
-        <span class="opal-body-2 opal-d-block opal-ellipsed opal-text-code opal-text-underline">
+        <span class="tw-text-sm tw-block tw-truncate tw-font-code tw-underline">
           <app-acks-status
             [blockAcknowledgementInfo]="resolved.blockAcknowledgementsInfo"
             (click)="openAcknowledgementsDialog(thread.updatedInBlock)"></app-acks-status>
@@ -72,9 +72,8 @@
     <button
       mat-stroked-button
       mat-dialog-close
-      class="opal-mr-2"
-      queryParamsHandling="merge"
-      [routerLink]="['/project/threads', { outlets: { primary: [thread.id], aside: [thread.id] } }]">
+      class="tw-mr-2"
+      (click)="navigateThread()">
       {{ 'i18n.Common.viewThread' | translate }}
     </button>
     <button

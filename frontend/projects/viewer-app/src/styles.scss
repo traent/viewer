@@ -3,8 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./assets/opal-material/theme.scss";
-
+@import "@traent/design-system/tw-tds";
 @import "@traent/ngx-components/assets/css/styles.min.css";
 @import "@traent/ngx-dialog/assets/styles.min";
 @import "@traent/ngx-paginator/assets/styles.min";
@@ -13,7 +12,7 @@
 @import "@traent/ngx-tooltip/assets/styles.min";
 
 
-@import "./assets/scss/json-editor";
+@import "./assets/scss/json-viewer";
 @import "./assets/scss/log-item";
 @import "./assets/scss/sidebar";
 @import "./assets/scss/snapshot";
@@ -42,47 +41,47 @@ ngx-t3-tag {
 }
 
 ngx-t3-table-container {
-  border: 1px solid theme("colors.grey.200");
+  border: 1px solid var(--tw-neutral-200);
 }
 
 .policy {
-  background: theme("colors.purple.300");
+  background: var(--tw-purple-300);
 }
 
 .author-signature {
-  background: theme("colors.green.500");
+  background: var(--tw-green-500);
 }
 
 .in-context {
-  background: theme("colors.lime.500");
+  background: var(--tw-lime-500);
 }
 
 .data {
-  background: theme("colors.red.500");
+  background: var(--tw-red-500);
 }
 
 .ack {
-  background: theme("colors.violet.300");
+  background: var(--tw-violet-300);
 }
 
 .add-authors {
-  background: theme("colors.green.500");
+  background: var(--tw-green-500);
 }
 
 .reference {
-  background: theme("colors.grey.300");
+  background: var(--tw-neutral-300);
 }
 
 .update-context {
-  background: theme("colors.ottanio.400");
+  background: var(--tw-cyan-400);
 }
 
 .previous-block {
-  background: theme("colors.orange.300");
+  background: var(--tw-orange-300);
 }
 
 .redacted {
-  color: theme("colors.grey.400");
+  color: var(--tw-neutral-400);
   font-style: italic;
   padding-right: 2px;
   cursor: default;
@@ -92,7 +91,7 @@ ngx-t3-table-container {
 .table-header {
   display: flex;
   flex-direction: row;
-  background-color: theme("colors.white.500");
+  background-color: var(--tw-white);
   border-radius: 8px 8px 0px 0px;
   padding-block: 12px;
 
@@ -101,8 +100,10 @@ ngx-t3-table-container {
   font-weight: bold;
   letter-spacing: .5px;
   text-transform: uppercase;
+  position: sticky;
+  top: 0;
 
-  border-bottom: solid 1px theme("colors.grey.200");
+  border-bottom: solid 1px var(--tw-neutral-200);
 
   > * {
     display: flex;

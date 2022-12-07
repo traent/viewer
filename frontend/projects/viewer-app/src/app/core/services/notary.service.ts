@@ -1,26 +1,27 @@
 import { Injectable } from '@angular/core';
-import type { Indexer } from 'algosdk';
 
 import { AlgorandNotaryAccessInfo, Notary, NotaryConnectionInfo, notaryServerInfo, requiredTrustedNotaries } from '../models/notary';
 
 const getBaseServer = (network: string): NotaryConnectionInfo => {
   switch (network) {
-    case 'algorand-mainnet': return notaryServerInfo['algorand-mainnet'];
-    case 'algorand-testnet': return notaryServerInfo['algorand-testnet'];
+    case 'algorand-mainnet':
+    case 'algorand-testnet':
+      return notaryServerInfo[network];
+
     default: throw new Error(`Unknown network: ${network}`);
   }
 };
 
 @Injectable({ providedIn: 'root' })
 export class NotaryService {
-  private indexerClient?: typeof Indexer;
+  private readonly algosdk$ = import('algosdk');
 
-  async getDigests(notary: Notary): Promise<[string[], string[]]> {
+  async getDigests(notary: Notary) {
     const problems: string[] = [];
 
-    const trustedNotary = requiredTrustedNotaries[notary.id as any as keyof typeof requiredTrustedNotaries];
+    const trustedNotary = requiredTrustedNotaries[notary.id];
     if (!trustedNotary) {
-      return [[], [`Untrusted notary ${notary.id}`]];
+      return { problems: [`Untrusted notary ${notary.id}`] };
     }
 
     if (trustedNotary.account !== notary.addressId) {
@@ -30,25 +31,19 @@ export class NotaryService {
       problems.push(`Invalid network: found ${notary.network}, expected ${trustedNotary.network}`);
     }
 
-    switch (trustedNotary.network) {
-      case 'algorand-mainnet':
-      case 'algorand-testnet': {
-        const [digests, digestProblems] = await this.getAlgorandDigests(trustedNotary);
-        problems.push(...digestProblems);
-        return [digests, problems];
-      }
-      default: throw new Error('Invalid trusted notaries');
-    }
+    return problems.length
+      ? { problems }
+      : this.getAlgorandDigests(trustedNotary);
   }
 
-  async getAlgorandDigests(notary: AlgorandNotaryAccessInfo): Promise<[string[], string[]]> {
-    const problems: string[] = [];
-
-    this.indexerClient ??= (await import('algosdk')).Indexer;
+  private async getAlgorandDigests(notary: AlgorandNotaryAccessInfo) {
+    const algosdk = await this.algosdk$;
 
     const notaryServer = getBaseServer(notary.network);
-    const indexerClient = new this.indexerClient(notary.token, notaryServer.address, notaryServer.port);
-    const baseQuery = indexerClient.lookupAccountTransactions(notary.account);
+    const indexerClient = new algosdk.Indexer(notary.token, notaryServer.address, notaryServer.port);
+    const baseQuery = indexerClient
+      .lookupAccountTransactions(notary.account)
+      .minRound(notary.minRound);
 
     const transactions: string[] = [];
     let nextToken: string | undefined;
@@ -57,14 +52,18 @@ export class NotaryService {
 
       try {
         const response = await pageQuery.do();
-        transactions.push(...response.transactions.filter((t: any) => t.sender === notary.account).map((t: any) => t.note));
+        const outgoingTransactions = response.transactions.filter((t: any) => t.sender === notary.account);
+        transactions.push(...outgoingTransactions.map((t: any) => t.note));
 
-        nextToken = response.transactions.length ? response['next-token'] : undefined;
+        nextToken = response['next-token'];
+        if (!outgoingTransactions.length || outgoingTransactions[outgoingTransactions.length - 1]['confirmed-round'] === notary.minRound) {
+          nextToken = undefined;
+        }
       } catch (error: any) {
-        problems.push(`Error getting transactions: ${error.message}`);
+        return { problems: [`Error getting transactions: ${error.message}`] };
       }
     } while (nextToken);
 
-    return [transactions.reverse(), problems];
+    return { digests: transactions.reverse() };
   }
 }

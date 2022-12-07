@@ -1,6 +1,6 @@
-<div class="opal-fx-row align-center opal-mx-4">
+<div class="tw-flex tw-flex-row align-center tw-mx-4">
   <ngx-t3-tabs
-    class="opal-fx-g-1"
+    class="tw-grow"
     justify="space-between">
     <ngx-t3-tab-item
       value="info"
@@ -8,7 +8,7 @@
       queryParamsHandling="merge"
       routerLinkActive="active"
       routerLink="info">
-      <mat-icon class="opal-s-4 opal-mr-1">info</mat-icon>
+      <mat-icon class="tw-w-4 tw-h-4 tw-mr-1">info</mat-icon>
       {{ 'i18n.Common.info' | translate }}
     </ngx-t3-tab-item>
     <ngx-t3-tab-item
@@ -17,12 +17,12 @@
       queryParamsHandling="merge"
       routerLinkActive="active"
       routerLink="log">
-      <mat-icon class="opal-s-4 opal-mr-1">list</mat-icon>
+      <mat-icon class="tw-w-4 tw-h-4 tw-mr-1">list</mat-icon>
       {{ 'i18n.Common.log' | translate }}
     </ngx-t3-tab-item>
   </ngx-t3-tabs>
 </div>
 
-<div class="opal-mt-3 opal-border-b-1 opal-border-grey-200"></div>
+<div class="tw-mt-3 tw-border-b tw-border-neutral-200"></div>
 
 <router-outlet></router-outlet>

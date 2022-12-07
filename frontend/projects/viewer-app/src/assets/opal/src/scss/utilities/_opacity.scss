@@ -1,8 +1,0 @@
-$opacity: 0;
-@while $opacity <= 100 {
-  .opal-opacity-#{$opacity} {
-    // opacity: math.div($opacity, 100);
-    @apply tw-opacity-#{$opacity};
-  }
-  $opacity: $opacity + 5;
-}

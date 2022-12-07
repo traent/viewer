@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { StorageService } from '@viewer/services';
+import { tableOffset, TablePaginatorData } from '@traent/ngx-components';
+import { LedgerAccessorService } from '@viewer/services';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap, shareReplay } from 'rxjs/operators';
-import { tableOffset, TablePaginatorData } from '@traent/ngx-components';
 
 @Component({
   selector: 'app-off-chain-tab-content',
@@ -12,8 +12,8 @@ import { tableOffset, TablePaginatorData } from '@traent/ngx-components';
 })
 export class OffChainTabContentComponent {
 
-  readonly totalOffChainItems = this.storageService.getLedger().getOffchainsCount();
-  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
+  readonly totalOffChainItems = this.ledgerAccessorService.getBlockLedger().getOffchainsCount();
+  readonly keyPair$ = this.ledgerAccessorService.getBlockLedger().getKeyPair();
 
   readonly pageEvent$ = new BehaviorSubject<TablePaginatorData>({
     pageIndex: 0,
@@ -21,11 +21,9 @@ export class OffChainTabContentComponent {
   });
 
   readonly offChainItems$ = this.pageEvent$.pipe(
-    switchMap((pageEvent) => this.storageService.getLedger().getOffchains(tableOffset(pageEvent), pageEvent.pageSize)),
+    switchMap((pageEvent) => this.ledgerAccessorService.getBlockLedger().getOffchains(tableOffset(pageEvent), pageEvent.pageSize)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  constructor(
-    private readonly storageService: StorageService,
-  ) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 }

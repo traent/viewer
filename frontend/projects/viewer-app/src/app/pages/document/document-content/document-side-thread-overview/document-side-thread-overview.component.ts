@@ -12,7 +12,7 @@ export class DocumentSideThreadOverviewComponent {
 
   readonly thread$ = this.route.params.pipe(
     map((params) => params.threadId),
-    switchMap((threadId) => this.threadService.getThread(threadId)),
+    switchMap((threadId) => this.threadService.getThread({ id: threadId })),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

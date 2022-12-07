@@ -10,6 +10,7 @@ iframe {
   align-items: center;
   justify-content: center;
   height: 100%;
+  background: var(--viewer-home-bg-color, var(--tw-traent-500));
 }
 
 .app-loading .spinner {
@@ -21,7 +22,7 @@ iframe {
   bottom: 0;
   left: 0;
   right: 0;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 }
 
 .app-loading .spinner .path {
@@ -29,16 +30,24 @@ iframe {
   stroke-dashoffset: 0;
   animation: dash 1.5s ease-in-out infinite;
   stroke-linecap: round;
-  stroke: #039FCE;
+  stroke: white;
+}
+
+.wait, .text {
+  color: white;
+  font-size: 1.2rem;
+  text-shadow: 0 .2rem 1rem #00000033;
 }
 
 .wait {
-  margin-bottom: 16px;
+  padding-top: 20px;
 }
 
 .text {
+  font-family: theme('fontFamily.brand');
   font-size: 30px;
   font-weight: 500;
+  line-height: 120%;
 }
 
 @keyframes rotate {
@@ -51,15 +60,18 @@ iframe {
   0% {
     stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
+    opacity: .4;
   }
 
   50% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -35px;
+    opacity: 1;
   }
 
   100% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -124px;
+    opacity: .4;
   }
 }

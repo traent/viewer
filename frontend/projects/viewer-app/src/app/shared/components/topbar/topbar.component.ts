@@ -1,8 +1,10 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IdentityService, LedgerService } from '@viewer/services';
+import { ActivatedRoute } from '@angular/router';
+import { IdentityService, LedgerService, UiConfigurationService } from '@viewer/services';
 
 import { environment } from '../../../../environments/environment';
+
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
@@ -16,6 +18,7 @@ export class TopbarComponent {
   showUserOverlay = false;
 
   readonly env = environment;
+  readonly showHeader = this.uiConfigurationService.header;
   readonly userOverlayPosition: ConnectedPosition[] = [{
     originX: 'end',
     originY: 'bottom',
@@ -26,5 +29,7 @@ export class TopbarComponent {
   constructor(
     readonly identityService: IdentityService,
     readonly ledgerService: LedgerService,
+    readonly route: ActivatedRoute,
+    private readonly uiConfigurationService: UiConfigurationService,
   ) { }
 }

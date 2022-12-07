@@ -1,10 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { StreamService } from '@viewer/services';
 import { Redactable } from '@traent/ngx-components';
+import { isNotNullOrUndefined, trackById } from '@traent/ts-utils';
+import { StreamService } from '@viewer/services';
 import { BehaviorSubject, switchMap, combineLatest, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { isNotNullOrUndefined, trackById } from '@traent/ts-utils';
 
 import { ViewDocumentFormService } from './view-document-form.service';
 

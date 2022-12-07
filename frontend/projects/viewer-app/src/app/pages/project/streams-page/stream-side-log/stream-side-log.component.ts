@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SnapshotService, STREAM_LABEL } from '@viewer/services';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { SnapshotService, STREAM_LABEL } from '@viewer/services';
 import { map } from 'rxjs/operators';
 
 @Component({
