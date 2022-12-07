@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 
 import { StorageService } from '../services/storage.service';
 
@@ -11,11 +11,11 @@ export class LedgerStoredGuard implements CanActivate {
     private readonly router: Router,
   ) { }
 
-  async canActivate(): Promise<boolean | UrlTree> {
+  async canActivate(state: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
     try {
-      return !!(await this.storageService.getLedgerInfo());
+      return !!(await this.storageService.getLedger().getLedgerInfo());
     } catch {
-      return this.router.createUrlTree(['/']);;
+      return this.router.createUrlTree(['/'], { queryParams: state.queryParams });
     }
   }
 }

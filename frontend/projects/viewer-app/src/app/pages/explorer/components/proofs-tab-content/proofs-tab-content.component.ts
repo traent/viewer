@@ -10,7 +10,7 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
 export class ProofsTabContentComponent {
 
   readonly editorOptions = new JsonEditorOptions();
-  readonly notaryItems = this.storageService.getNotaryProofs();
+  readonly notaryItems = this.storageService.getLedger().getNotaryProofs();
 
   constructor(private readonly storageService: StorageService) {
     this.editorOptions.enableTransform = false;

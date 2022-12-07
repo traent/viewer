@@ -25,7 +25,7 @@
         <mat-cell *matCellDef="let item">
           <div class="opal-fx-row opal-fx-align-center opal-overflow-hidden opal-w-full">
             <div class="opal-mr-2 opal-ellipsed opal-d-inline-flex">
-              <ngx-t3-tag class="opal-bg-blue-200 opal-mr-3 opal-fx-s-0">
+              <ngx-t3-tag class="opal-bg-blue-200 opal-mr-3 opal-fx-s-0 no-ellipse">
                 {{ item.data.extension }}
               </ngx-t3-tag>
               <span *ngIf="item.data.name | exported; else redacted" class="opal-ellipsed">
@@ -110,6 +110,7 @@
             <mat-menu #menu="matMenu">
               <button
                 mat-menu-item
+                queryParamsHandling="merge"
                 [routerLink]="item.data.id
                     ? ['/project/documents/', { outlets: { primary: [item.data.id, 'content'], aside: null } }]
                     : null">
@@ -124,6 +125,7 @@
               </button>
               <button
                 mat-menu-item
+                queryParamsHandling="merge"
                 [routerLink]="['/project/documents/', { outlets: { primary: [item.data.id, 'versions'], aside: null } }]">
                   <mat-icon>history</mat-icon>
                   <span>{{ 'i18n.Project.DocumentContent.history' | translate }}</span>
@@ -139,6 +141,7 @@
       <mat-row
         *matRowDef="let item; columns: columns;"
         class="opal-pointer opal-w-full"
+        queryParamsHandling="merge"
         routerLinkActive="bg-accent-100"
         [routerLink]="['/project', 'documents', {
             outlets: { primary: [item.data.id], aside: [item.data.id] }

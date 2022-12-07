@@ -24,5 +24,7 @@ export { UserVerificationDocument } from './models/user-verification-document';
 export { VerificationCode } from './models/verification-code';
 export { VerificationDocumentValidation } from './models/verification-document-validation';
 export { VerificationDocumentValidationState } from './models/verification-document-validation-state';
+export { ViewerAgent } from './models/viewer-agent';
+export { ViewerAgentType } from './models/viewer-agent-type';
 export { ViewerMember } from './models/viewer-member';
 export { ViewerOrganization } from './models/viewer-organization';

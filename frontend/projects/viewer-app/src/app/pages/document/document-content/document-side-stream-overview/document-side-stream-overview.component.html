@@ -2,7 +2,7 @@
   class="opal-sidebar-header-container"
   [backToLabel]="'i18n.Document.DocumentSide.streams' | translate"
   [label]="'i18n.Common.streamDetails' | translate"
-  (backTo)="router.navigate(['..'],  { relativeTo: route })">
+  (backTo)="router.navigate(['..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
 
 <div class="opal-overflow-y-auto opal-pb-3">

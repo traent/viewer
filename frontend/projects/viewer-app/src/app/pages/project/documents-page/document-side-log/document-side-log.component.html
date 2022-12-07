@@ -1,7 +1,7 @@
 <ngx-t3-sidebar-header
   class="opal-sidebar-header-container"
   [backToLabel]="'i18n.Common.projectLog' | translate"
-  (backTo)="router.navigate(['../../log'],  { relativeTo: route })">
+  (backTo)="router.navigate(['../../log'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
 
 <ng-container *ngIf="paginator$ | async as paginator">

@@ -113,7 +113,7 @@ export class LedgerObjectsService {
       getFields: async () => {
         const f: Record<string, unknown> = {};
         await Promise.all(Object.entries(fields).map(async ([name, hash]) => {
-          const offchain = await this.storageService.getOffchain(hash);
+          const offchain = await this.storageService.getLedger().getOffchain(hash);
           if (offchain) {
             /**
              * Important: every nullable ledger object field has `undefined` as initial value.
@@ -166,21 +166,26 @@ export class LedgerObjectsService {
     this.cachedState = [];
   }
 
-  async getObjects(blockIndex = this.storageService.getBlocksCount() - 1): Promise<LedgerState> {
+  async getObjects(blockIndex = this.storageService.getLedger().getBlocksCount() - 1): Promise<LedgerState> {
     return this.cachedState[blockIndex].state;
   }
 
-  async getObject(type: string, id: string, blockIndex = this.storageService.getBlocksCount() - 1): Promise<LedgerResource> {
+  async getObject(type: string, id: string, blockIndex = this.storageService.getLedger().getBlocksCount() - 1): Promise<LedgerResource> {
     return this.cachedState[blockIndex].state[type][id];
   }
 
-  async getObjectHistory(type: string, id: string, from?: number, to = this.storageService.getBlocksCount() - 1): Promise<ObjectHistory> {
+  async getObjectHistory(
+    type: string,
+    id: string,
+    from?: number,
+    to = this.storageService.getLedger().getBlocksCount() - 1,
+  ): Promise<ObjectHistory> {
     return this.cachedState.slice(from, to + 1)
       .map((block) => block.changes.find((change) => change.type === type && change.id === id))
       .filter((change): change is LedgerSnapshot => !!change);
   }
 
-  async getHistory(from = 0, to = this.storageService.getBlocksCount() - 1): Promise<LedgerHistory> {
+  async getHistory(from = 0, to = this.storageService.getLedger().getBlocksCount() - 1): Promise<LedgerHistory> {
     return this.cachedState.slice(from, to + 1).map((block) => block.changes);
   }
 }

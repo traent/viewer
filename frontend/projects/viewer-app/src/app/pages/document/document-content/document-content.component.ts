@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Document, DocumentContentType, StreamReference } from '@viewer/models';
 import {
   DocumentService,
-  getContentTypeExtention,
+  getContentTypeExtension,
   StreamService,
   ProjectParticipantService,
   ProjectService,
@@ -96,7 +96,7 @@ export class DocumentContentComponent {
   readonly DocumentContentType = DocumentContentType;
   readonly downloadDocument = downloadDocument;
   readonly formatBytesSize = formatBytesSize;
-  readonly getContentTypeExtention = getContentTypeExtention;
+  readonly getContentTypeExtension = getContentTypeExtension;
   readonly getDocumentProxy = getDocumentProxy;
   readonly getPDFAcrofieldControlValue = getPDFAcrofieldControlValue;
   readonly makeAcrofieldFromAnchor = makeAcrofieldFromAnchor;

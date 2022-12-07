@@ -8,9 +8,9 @@ import { AcknowledgementService, DocumentService, DOCUMENT_LABEL, ProjectPartici
 import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
 import { downloadDocument, getDocumentProxy, getPlaceholderPath, snapshotContent, u8ToBlob } from '@viewer/utils';
 import { DocumentZoomValue, isRedacted, Redactable } from '@traent/ngx-components';
+import { clamp, formatBytesSize, isNotNullOrUndefined } from '@traent/ts-utils';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { clamp, formatBytesSize, isNotNullOrUndefined } from '@traent/ts-utils';
 
 const toNum = (v: string | null): number | undefined => v ? +v : undefined;
 

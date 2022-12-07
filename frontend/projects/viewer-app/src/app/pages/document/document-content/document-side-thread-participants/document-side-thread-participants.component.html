@@ -3,7 +3,7 @@
     class="opal-sidebar-header-container"
     [backToLabel]="'i18n.Common.threadDetails' | translate"
     [label]="(resolved.participants?.total?.value || 0) + ' ' + (resolved.participants?.total?.value === 1 ? 'Participant' : 'Participants')"
-    (backTo)="router.navigate(['..'],  { relativeTo: route })">
+    (backTo)="router.navigate(['..'],  { relativeTo: route, queryParamsHandling: 'merge' })">
   </ngx-t3-sidebar-header>
 
   <div class="opal-overflow-y-auto opal-pb-3">

@@ -1,4 +1,10 @@
-import { NotaryProof } from '../services/index';
+export interface NotaryProof {
+  ledgerId: string;
+  iteration: number;
+  pathHistory: string[][];
+  merkleConsistencyProofs: string[];
+  merkleRoot: string;
+}
 
 export interface Notarization {
   name: string;

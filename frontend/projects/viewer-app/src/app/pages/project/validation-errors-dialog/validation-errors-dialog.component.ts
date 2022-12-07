@@ -1,5 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+interface ValidationErrorsDialogData {
+  errors: string[];
+  warnings: string[];
+}
 
 @Component({
   selector: 'app-validation-errors-dialog',
@@ -7,8 +12,5 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./validation-errors-dialog.component.scss'],
 })
 export class ValidationErrorsDialogComponent {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) readonly data: { errors: string[] },
-    private readonly dialogRef: MatDialogRef<ValidationErrorsDialogComponent>,
-  ) {}
+  constructor(@Inject(MAT_DIALOG_DATA) readonly data: ValidationErrorsDialogData) { }
 }

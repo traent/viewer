@@ -57,7 +57,6 @@
               }
             ],
             "styles": [
-              "./node_modules/@traent/ngx-components/assets/scss/styles.scss",
               "./node_modules/jsoneditor/dist/jsoneditor.min.css",
               "projects/viewer-app/src/styles.scss"
             ],

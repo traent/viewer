@@ -37,6 +37,7 @@ export const parseDocumentContentType = (mimeType: string): DocumentContentType 
       'video/webm',
       'video/x-flv',
       'video/x-m4v',
+      'video/x-matroska',
       'video/x-ms-asf',
       'video/x-ms-wmv',
       'video/x-msvideo',
@@ -58,7 +59,7 @@ export const parseDocumentContentType = (mimeType: string): DocumentContentType 
  *
  * Note: the extension is always supposed to be defined.
  */
-export const getContentTypeExtention = (contentType?: Redactable<string>): string => {
+export const getContentTypeExtension = (contentType?: Redactable<string>): string => {
   if (contentType === undefined) {
     return 'placeholder';
   }
@@ -134,7 +135,7 @@ export class DocumentService {
 
   parseDocument(document: any): Document {
     let content: Promise<Uint8Array | undefined> | undefined;
-    const isContentReadable =  isExportedAndDefined(document.length) && document.length > 0
+    const isContentReadable = isExportedAndDefined(document.length) && document.length > 0
       && isExportedAndDefined(document.offChainedBlockHashes) && document.offChainedBlockHashes.length > 0;
 
     return {
@@ -145,7 +146,7 @@ export class DocumentService {
       uiType: isExportedAndDefined(document.contentType)
         ? parseDocumentContentType(document.contentType)
         : RedactedMarker,
-      extension: getContentTypeExtention(document.contentType),
+      extension: getContentTypeExtension(document.contentType),
       isContentReadable,
     };
   };
@@ -157,7 +158,7 @@ export class DocumentService {
 
     for (const offchain of offChains) {
       const offChainAddress = base64ToU8(offchain);
-      const offChainItem = await this.storageService.getOffchain(offChainAddress);
+      const offChainItem = await this.storageService.getLedger().getOffchain(offChainAddress);
       if (!offChainItem) {
         throw new Error(`Offchain item ${offChainAddress} not found`);
       }
