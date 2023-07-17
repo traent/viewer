@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { StorageService } from '@viewer/services';
-import { JsonEditorOptions } from 'ang-jsoneditor';
+import { LedgerAccessorService } from '@viewer/services';
 
 @Component({
   selector: 'app-proofs-tab-content',
@@ -9,13 +8,7 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
 })
 export class ProofsTabContentComponent {
 
-  readonly editorOptions = new JsonEditorOptions();
-  readonly notaryItems = this.storageService.getLedger().getNotaryProofs();
+  readonly notaryItems = this.ledgerAccessorService.getBlockLedger().getNotaryProofs();
 
-  constructor(private readonly storageService: StorageService) {
-    this.editorOptions.enableTransform = false;
-    this.editorOptions.statusBar = false;
-    this.editorOptions.mode = 'view';
-    this.editorOptions.mainMenuBar = false;
-  }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 }

@@ -10,7 +10,7 @@
     padding: 16px;
     height: 50px;
     width: 374px;
-    border: 1px solid theme("colors.white.500");
+    border: 1px solid var(--tw-white);
     border-right-style: none;
     line-height: 120%;
     font-style: italic;
@@ -25,14 +25,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: theme("colors.white.500");
-    border: 1px solid theme("colors.white.500");
-    color: theme("colors.grey.400");
+    background-color: var(--tw-white);
+    border: 1px solid var(--tw-white);
+    color: var(--tw-neutral-400);
     cursor: pointer;
 
     &[disabled] {
-      background-color: theme("colors.grey.300");
-      border: 1px solid theme("colors.grey.300");
+      background-color: var(--tw-neutral-300);
+      border: 1px solid var(--tw-neutral-300);
     }
   }
 }

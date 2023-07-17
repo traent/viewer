@@ -1,0 +1,48 @@
+<div class="tw-px-4 tw-gap-y-2">
+  <ng-container *ngFor="let reference of crossProjectReferences$ | async; last as last">
+    <div
+      *ngIf="reference | redacted"
+      class="tw-p-2 tw-h-12 tw-max-h-12 tw-border-neutral-200 tw-border tw-overflow-x-hidden tw-flex tw-flex-col tw-justify-center !tw-rounded-lg tw-pointer-events-none"
+      [class.tw-mb-2]="!last">
+      <div class="tw-w-full tw-text-grey-400 tw-font-brand">
+        {{'i18n.CrossProjectReferencesList.redactedProject' | translate }}
+      </div>
+    </div>
+    <div
+      *ngIf="reference | exportedAndDefined"
+      class="tw-p-2 tw-h-12 tw-max-h-12 tw-border-neutral-200 tw-border tw-overflow-x-hidden tw-flex tw-flex-col tw-justify-center !tw-rounded-lg"
+      [class.tw-mb-2]="!last"
+      [class.tw-cursor-pointer]="reference.inExport"
+      [matTooltip]="'i18n.Common.open' | translate"
+      [matTooltipDisabled]="!reference.inExport"
+      (click)="reference.inExport && navigateLedger.emit(reference.ledgerId)">
+      <div
+        *ngIf="reference.name | exportedAndDefined; else redactedName"
+        class="tw-w-full tw-overflow-ellipsis tw-font-brand">
+        {{ reference.name }}
+      </div>
+      <ng-template #redactedName>
+        <div class="tw-w-full tw-text-grey-400 tw-front-brand">
+          {{'i18n.CrossProjectReferencesList.redactedProject' | translate }}
+        </div>
+      </ng-template>
+      <div class="tw-flex tw-items-center">
+        <ngx-t3-tag
+          *ngIf="reference.lastWorkflowState | exportedAndDefined"
+          class="!tw-rounded-lg tw-bg-accent-500 no-ellipse tw-mr-3"
+          size="md">
+          {{ reference.lastWorkflowState }}
+        </ngx-t3-tag>
+        <div
+          *ngIf="reference.updatedAt as updatedAt"
+          class="tw-text-grey-400 tw-font-normal tw-text-sm tw-mr-1">
+          {{ updatedAt | date : 'dd MMM YYYY, HH:mm' }}
+        </div>
+        <app-acks-icon
+          *ngIf="reference.ackInfo !== undefined"
+          [status]="reference.ackInfo"
+          (click)="$event.stopPropagation(); reference.openAckDialog()"></app-acks-icon>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,26 +1,26 @@
-<ngx-t3-tabs class="opal-mx-4 opal-text-capitalize">
+<ngx-t3-tabs class="tw-mx-4 tw-capitalize">
   <ngx-t3-tab-item
-    class="opal-fx-g-1 opal-fx-b-0"
+    class="tw-grow tw-basis-0"
     value="info"
     queryParamsHandling="merge"
     routerLinkActive="active"
     routerLink="info">
-    <mat-icon class="opal-s-4 opal-mr-1">info</mat-icon>
+    <mat-icon class="tw-w-4 tw-h-4 tw-mr-1">info</mat-icon>
     {{ 'i18n.Common.info' | translate }}
   </ngx-t3-tab-item>
   <ngx-t3-tab-item
-    class="opal-fx-g-1 opal-fx-b-0"
+    class="tw-grow tw-basis-0"
     value="log"
     queryParamsHandling="merge"
     routerLinkActive="active"
     routerLink="log">
-    <mat-icon class="opal-s-4 opal-mr-1">list</mat-icon>
+    <mat-icon class="tw-w-4 tw-h-4 tw-mr-1">list</mat-icon>
     {{ 'i18n.Common.log' | translate }}
   </ngx-t3-tab-item>
 </ngx-t3-tabs>
 
-<div class="opal-mt-3 opal-border-b-1 opal-border-grey-200"></div>
+<div class="tw-mt-3 tw-border-b tw-border-neutral-200"></div>
 
-<div class="opal-fx-g-1 opal-overflow-hidden">
+<div class="tw-grow tw-overflow-hidden">
   <router-outlet></router-outlet>
 </div>

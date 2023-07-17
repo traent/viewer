@@ -1,14 +1,14 @@
 <ngx-t3-growing-search-bar
-  class="opal-d-block"
+  class="tw-block"
   placeholder="Search threads"
   [hideSearch]="hideSearch"
-  (inputToggle)="query = ''"
-  [(query)]="query">
-  <div class="opal-w-full opal-fx-row opal-fx-align-center opal-fx-justify-between">
+  [(query)]="query"
+  (inputToggle)="query = ''">
+  <div class="tw-w-full tw-flex tw-flex-row tw-items-center tw-justify-between">
     <ngx-t3-tabs
-      class="opal-text-capitalize"
-      (valueChange)="tabClick.next($event)"
-      [(value)]="tab">
+      class="tw-capitalize"
+      [(value)]="tab"
+      (valueChange)="tabClick.next($event)">
       <ngx-t3-tab-item value="all">
         {{ 'i18n.Common.all' | translate }}
       </ngx-t3-tab-item>
@@ -22,18 +22,18 @@
   </div>
 </ngx-t3-growing-search-bar>
 
-<div class="opal-h-full opal-overflow-hidden">
+<div class="tw-h-full tw-overflow-hidden">
   <ngx-t3-paginator-list
     *ngIf="paginator"
-    class="opal-h-full opal-overflow-y-auto"
-    [class.opal-mt-25]="paginator.total.value === 0 && !paginator.loading.value"
+    class="tw-h-full tw-overflow-y-auto"
+    [class.tw-mt-[6.25rem]]="paginator.total.value === 0 && !paginator.loading.value"
     [paginator]="paginator">
     <ng-container *ngIf="paginator.total.value || paginator.loading.value; else noThreadItems">
       <ng-container *ngFor="let thread of paginator.items.value">
         <ngx-t3-thread-item
-          class="opal-border-b-1 opal-border-grey-200 opal-w-full"
-          [class.opal-pointer]="!!thread"
-          [class.opal-bg-accent-100]="thread?.id === activeThreadId && thread?.name && thread?.createdAt"
+          class="tw-border-b tw-border-neutral-200 tw-w-full"
+          [class.tw-cursor-pointer]="!!thread"
+          [class.tw-bg-accent-100]="thread?.id === activeThreadId && thread?.name && thread?.createdAt"
           [name]="thread?.name"
           [showBorder]="false"
           [lastEditedAt]="(thread?.createdAt || '') | ago | titlecase"
@@ -48,7 +48,7 @@
 </div>
 
 <ng-template #noThreadItems>
-  <div class="opal-body-1 opal-text-grey-400 opal-text-center">
+  <div class="tw-text-base tw-text-neutral-400 tw-text-center">
     <ng-container *ngIf="tab === 'all'; else missingSomeThreadCategories">
       No threads in this {{ labelContext }}
     </ng-container>

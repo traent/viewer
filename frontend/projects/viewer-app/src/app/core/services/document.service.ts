@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
+import { isExported, isExportedAndDefined, isRedacted, isRedactedOrUndefined, Redactable, RedactedMarker } from '@traent/ngx-components';
 import { Page } from '@traent/ngx-paginator';
 import * as mimedb from 'mime-db';
-import { isExported, isExportedAndDefined, isRedacted, Redactable, RedactedMarker } from '@traent/ngx-components';
-import { Observable, defer } from 'rxjs';
+import { defer, Observable } from 'rxjs';
 
-import { LedgerObjectsService, LedgerState } from './ledger-objects.service';
-import { base64ToU8, collectionSort, collectionToPage, transformerFrom } from '../utils';
+import { LedgerAccessorService } from './ledger-accessor.service';
+import { LedgerState } from './ledger-objects.service';
 import { Document, DocumentContentType, DocumentParams } from '../models';
-import { StorageService } from './storage.service';
+import { collectionSort, collectionToPage, Ledger, ResourceParams, transformerFrom, u8ToU8 } from '../utils';
 
 export const DOCUMENT_LABEL = 'DocumentV0';
 
@@ -42,6 +42,9 @@ export const parseDocumentContentType = (mimeType: string): DocumentContentType 
       'video/x-ms-wmv',
       'video/x-msvideo',
     ],
+    [DocumentContentType.View]: [
+      'application/vnd.traent.view+zip',
+    ],
   };
 
   const keys = Object.keys(documentContentTypeMappings);
@@ -72,6 +75,10 @@ export const getContentTypeExtension = (contentType?: Redactable<string>): strin
     return 'form';
   }
 
+  if (contentType === 'application/vnd.traent.view+zip') {
+    return 'view';
+  }
+
   const data = mimedb[contentType.toLowerCase()];
   const exts = data?.extensions;
   return exts?.length ? exts[0] : 'unknown';
@@ -79,21 +86,57 @@ export const getContentTypeExtension = (contentType?: Redactable<string>): strin
 
 export type DocumentSupplier<T> = T & { document$: Observable<Document | undefined> };
 
+const retrieveDocumentContent = async (ledger: Ledger, size: number, offChains: DotNet.InputByteArray[]): Promise<Uint8Array> => {
+  const content = new Uint8Array(size);
+  let offset = 0;
+
+  for (const offchain of offChains) {
+    const offChainAddress = u8ToU8(offchain);
+    const offChainItem = await ledger.getOffchain(offChainAddress);
+    if (!offChainItem) {
+      throw new Error(`Offchain item ${offChainAddress} not found`);
+    }
+
+    const offChainContent = await offChainItem.getDecrypted();
+
+    content.set(offChainContent, offset);
+    offset += offChainContent.length;
+  }
+
+  return content;
+};
+
+export const parseDocument = (document: any): Document => {
+  const isContentReadable = isExportedAndDefined(document.length) && document.length > 0
+    && isExportedAndDefined(document.offChainedBlockHashes) && document.offChainedBlockHashes.length > 0;
+
+  return {
+    ...document,
+    uiType: isExportedAndDefined(document.contentType)
+      ? parseDocumentContentType(document.contentType)
+      : RedactedMarker,
+    extension: getContentTypeExtension(document.contentType),
+    isContentReadable,
+  };
+};
+
+const extractDocumentFromState = (state: LedgerState): Document[] =>
+  transformerFrom(parseDocument)(state[DOCUMENT_LABEL]);
+
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
-  constructor(
-    private readonly ledgerObjectService: LedgerObjectsService,
-    private readonly storageService: StorageService,
-  ) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 
-  async getDocument(id: string, blockIndex?: number): Promise<Document> {
-    const object = await this.ledgerObjectService.getObject(DOCUMENT_LABEL, id, blockIndex);
-    return this.parseDocument(object);
+  async getDocument({ id, blockIndex, ledgerId }: ResourceParams): Promise<Document> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(DOCUMENT_LABEL, id, blockIndex);
+    return parseDocument(object);
   }
 
   async getDocumentCollection(params?: DocumentParams): Promise<Page<Document>> {
-    const currentState = await this.ledgerObjectService.getObjects();
-    let collection = this.extractDocumentFromState(currentState);
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
+    let collection = extractDocumentFromState(currentState);
 
     if (params?.uiType) {
       const uiType = params.uiType;
@@ -114,7 +157,7 @@ export class DocumentService {
     const items: DocumentSupplier<T>[] = collections.map((item) => ({
       ...item,
       document$: defer(() => isExportedAndDefined(item.documentId)
-        ? this.getDocument(item.documentId)
+        ? this.getDocument({ id: item.documentId })
         : Promise.resolve(undefined),
       ),
     }));
@@ -129,46 +172,17 @@ export class DocumentService {
     };
   }
 
-  private extractDocumentFromState(state: LedgerState): Document[] {
-    return transformerFrom(this.parseDocument.bind(this))(state[DOCUMENT_LABEL]);
-  }
-
-  parseDocument(document: any): Document {
-    let content: Promise<Uint8Array | undefined> | undefined;
-    const isContentReadable = isExportedAndDefined(document.length) && document.length > 0
-      && isExportedAndDefined(document.offChainedBlockHashes) && document.offChainedBlockHashes.length > 0;
-
-    return {
-      ...document,
-      getData: () => content ??= isContentReadable
-        ? this.getDocumentContent(document.length, document.offChainedBlockHashes)
-        : Promise.resolve(undefined),
-      uiType: isExportedAndDefined(document.contentType)
-        ? parseDocumentContentType(document.contentType)
-        : RedactedMarker,
-      extension: getContentTypeExtension(document.contentType),
-      isContentReadable,
-    };
-  };
-
-  // Note: this is a temporary solution that needs to be improved in terms of performance
-  private async getDocumentContent(size: number, offChains: string[]): Promise<Uint8Array> {
-    const content = new Uint8Array(size);
-    let offset = 0;
-
-    for (const offchain of offChains) {
-      const offChainAddress = base64ToU8(offchain);
-      const offChainItem = await this.storageService.getLedger().getOffchain(offChainAddress);
-      if (!offChainItem) {
-        throw new Error(`Offchain item ${offChainAddress} not found`);
-      }
-
-      const offChainContent = await offChainItem.getDecrypted();
-
-      content.set(offChainContent, offset);
-      offset += offChainContent.length;
+  /**
+   * `getDocumentContent` is a wrapper method to retrieve the document content starting from the resource itself
+   *
+   * Note: it would be great to have a way not to explicitly pass the `ledgerId`
+   */
+  getDocumentContent(params: { ledgerId?: string; document: Document }): Promise<Uint8Array> {
+    if (isRedactedOrUndefined(params.document.length) || isRedactedOrUndefined(params.document.offChainedBlockHashes)) {
+      throw new Error(`Document ${params.document.id}'s length or offchain addresses are redacted`);
     }
 
-    return content;
+    const ledger = this.ledgerAccessorService.getBlockLedger(params.ledgerId);
+    return retrieveDocumentContent(ledger, params.document.length, params.document.offChainedBlockHashes);
   }
 }

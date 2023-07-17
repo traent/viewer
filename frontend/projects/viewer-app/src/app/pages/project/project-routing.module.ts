@@ -1,17 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ProjectSideLogListComponent } from '@viewer/shared';
 
 import { ProjectPageComponent } from './project-page.component';
-import { ProjectSideInfoComponent } from './project-side-info/project-side-info.component';
-import { ProjectSideWorkflowComponent } from './project-side-workflow/project-side-workflow.component';
-import { ProjectSideLogComponent } from './project-side-log/project-side-log.component';
 import { ProjectSideComponent } from './project-side/project-side.component';
-import { ProjectSideParticipantsComponent } from './project-side-participants/project-side-participants.component';
+import {
+  ProjectSideCrossProjectReferencesComponent,
+} from './project-side-cross-project-references/project-side-cross-project-references.component';
+import { ProjectSideInfoComponent } from './project-side-info/project-side-info.component';
 import { ProjectSideOrganizationsComponent } from './project-side-organizations/project-side-organizations.component';
+import { ProjectSideParticipantsComponent } from './project-side-participants/project-side-participants.component';
+import { ProjectSideWorkflowComponent } from './project-side-workflow/project-side-workflow.component';
+import { LedgerUnloadGuard } from '../../core/guards/ledger-unload.guard';
 
 const routes: Routes = [
   {
     path: '',
+    canDeactivate: [LedgerUnloadGuard],
     component: ProjectPageComponent,
     children: [
       {
@@ -56,7 +61,7 @@ export const projectSideBarRoutes: Routes = [
       },
       {
         path: 'log',
-        component: ProjectSideLogComponent,
+        component: ProjectSideLogListComponent,
       },
       {
         path: 'info/participants',
@@ -66,6 +71,10 @@ export const projectSideBarRoutes: Routes = [
         path: 'info/organizations',
         component: ProjectSideOrganizationsComponent,
       },
+      {
+        path: 'info/linked-projects',
+        component: ProjectSideCrossProjectReferencesComponent,
+      },
     ],
   },
 ];
@@ -74,4 +83,4 @@ export const projectSideBarRoutes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ProjectRoutingModule {}
+export class ProjectRoutingModule { }

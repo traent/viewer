@@ -1,0 +1,303 @@
+<div
+  *ngIf="{
+    ledgerId: ledgerId$ | async,
+    project: project$ | async,
+    createdAt: createdAt$ | async,
+    lastEditAt: lastEditAt$ | async,
+    exportRequest: exportRequest$ | async,
+    archiveSize: archiveSize$ | async,
+    projectParticipants: projectParticipants$ | async,
+    exportDateTime: exportDateTime$ | async,
+    organizations: organizations$ | async,
+    workflow: workflow$ | async,
+    workflowStateLabel: workflowStateLabel$ | async,
+    totalCrossProjectReferences: totalCrossProjectReferences$ | async,
+    totalDocuments: (totalDocuments$ | async) || 0,
+    availableDocuments: (availableDocuments$ | async) || 0,
+    totalStreams: (totalStreams$ | async) || 0,
+    availableStreams: (availableStreams$ | async) || 0,
+    totalThreads: (totalThreads$ | async) || 0,
+    availableThreads: (availableThreads$ | async) || 0
+  } as resolved"
+  class="tw-pb-4 tw-pt-3 tw-overflow-y-auto tw-h-full tw-box-border">
+  <ng-template #redacted>
+    <div class="redacted tw-text-sm">
+      {{ 'i18n.Common.redacted' | translate }}
+    </div>
+  </ng-template>
+  <ng-template #noWorkflow>
+    <div class="tw-text-neutral-400 tw-text-sm tw-px-4 tw-mt-3">
+      {{ 'i18n.ProjectSideOverview.noProjectWorkflow' | translate }}
+    </div>
+  </ng-template>
+
+  <ngx-t3-descriptions>
+    <ngx-t3-description-item [label]="'i18n.Common.projectName' | translate">
+      <div
+        *ngIf="resolved.project && (resolved.project.name | exported); else redacted"
+        class="tw-truncate tw-text-sm">
+        {{ resolved.project.name | noValueLabel }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      [label]="'i18n.Common.description' | translate"
+      [multiline]="true">
+      <div
+        *ngIf="resolved.project && (resolved.project.description | exported); else redacted"
+        class="tw-truncate tw-text-sm">
+        {{ resolved.project.description | noValueLabel }}
+      </div>
+    </ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.Common.created' | translate">
+      <div class="tw-truncate tw-text-sm">
+        {{ resolved.createdAt ? (resolved.createdAt | date: 'dd MMM YYYY, HH:mm') : '-' }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.lastEdit' | translate">
+      <div class="tw-truncate tw-text-sm">
+        {{ resolved.lastEditAt ? (resolved.lastEditAt | date: 'dd MMM YYYY, HH:mm') : '-' }}
+      </div>
+    </ngx-t3-description-item>
+
+    <ngx-t3-description-item [label]="'i18n.Common.exportDate' | translate">
+      <div class="tw-truncate tw-text-sm">
+        {{ resolved.exportDateTime ? (resolved.exportDateTime | date: 'dd MMM YYYY, HH:mm') : '-' }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.size' | translate">
+      <div
+        *ngIf="resolved.archiveSize"
+        class="tw-truncate tw-text-sm">
+        {{ resolved.archiveSize | apply : formatBytesSize }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.organizations' | translate">
+      <ngx-t3-avatar-group
+        size="xxs"
+        [count]="(resolved.organizations?.items || []).length"
+        [limit]="5">
+        <ng-container *ngFor="let organization$ of (resolved.organizations ? resolved.organizations.items : []) | slice : 0 : 5">
+          <ngx-t3-avatar
+            *ngIf="{ value: organization$ | async } as organization"
+            size="xxs"
+            [placeholder]="AvatarPlaceholder.Organization"
+            [src]="organization.value && organization.value.logo"
+            [square]="true"
+            [matTooltip]="organization.value && organization.value.businessName || 'Redacted'"></ngx-t3-avatar>
+        </ng-container>
+      </ngx-t3-avatar-group>
+      <button
+        end
+        mat-icon-button
+        (click)="navigateOrganizations.emit()">
+        <mat-icon class="tw-w-4 tw-h-4 tw-text-neutral-400">arrow_forward</mat-icon>
+      </button>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.totalCrossProjectReferences !== null"
+      [label]="'i18n.Common.linkedProjects' | translate">
+      <div
+        *ngIf="resolved.totalCrossProjectReferences > 0"
+        class="tw-truncate tw-text-sm tw-underline tw-cursor-pointer"
+        (click)="navigateCrossProjectReferences.emit()">
+        {{ 'i18n.ProjectSideOverview.crossProjectsCountLabel' | translate : { count: resolved.totalCrossProjectReferences} }}
+      </div>
+      <div
+        *ngIf="resolved.totalCrossProjectReferences === 0"
+        class="tw-text-sm tw-italic tw-text-grey-400">
+        {{ 'i18n.ProjectSideOverview.noCrossProjectsLabel' | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      class="tw-items-baseline"
+      [label]="'i18n.Common.ledger' | translate"
+      [multiline]="true">
+      <div class="tw-flex tw-flex-col tw-w-full">
+        <div class="tw-flex tw-flex-row tw-items-center">
+          <span
+            class="tw-text-sm tw-underline tw-cursor-pointer"
+            (click)="navigateExplorer.emit()">
+            {{ 'i18n.ProjectSideOverview.inspectLedger' | translate  }}
+          </span>
+          <button
+            end
+            mat-icon-button
+            (click)="navigateExplorer.emit()">
+            <mat-icon class="tw-w-4 tw-h-4 tw-text-neutral-400">open_in_new</mat-icon>
+          </button>
+        </div>
+        <div
+          *ngIf="ledgerService.hasErrors"
+          class="tw-flex tw-flex-row tw-items-center tw-bg-red-100 !tw-rounded tw-pl-3 tw-pr-2 tw-mr-2 tw-cursor-default tw-mb-2">
+          <mat-icon class="tw-text-red tw-w-4 tw-h-4 tw-shrink-0">error</mat-icon>
+          <span class="tw-ml-2 tw-text-sm tw-w-full">
+            {{ 'i18n.ProjectSideOverview.validationErrors' | translate }}
+          </span>
+          <button
+            mat-icon-button
+            class="tw--mr-2"
+            [matTooltip]="'i18n.ProjectSideOverview.Validation.Error.tooltip' | translate"
+            (click)="openValidationErrorsDialog(resolved.ledgerId)">
+            <mat-icon class="tw-w-4 tw-h-4 tw-text-neutral-400">arrow_forward</mat-icon>
+          </button>
+        </div>
+        <div
+          *ngIf="!ledgerService.hasErrors && ledgerService.hasWarnings"
+          class="tw-flex tw-items-center tw-bg-yellow-100 !tw-rounded tw-pl-4 tw-pr-2 tw-mb-2">
+          <div class="tw-flex tw-items-center tw-cursor-none tw-pointer-events-none">
+            <mat-icon class="tw-w-4 tw-h-4 tw-text-orange-500 tw-shrink-0">warning</mat-icon>
+            <span class="!tw-ml-3 tw-text-sm tw-w-full">
+              {{ 'i18n.ProjectSideOverview.validationWarnings' | translate }}
+            </span>
+          </div>
+          <button
+            mat-icon-button
+            class="-tw-mr-2"
+            [matTooltip]="'i18n.ProjectSideOverview.Validation.Warning.tooltip' | translate"
+            (click)="openValidationErrorsDialog(resolved.ledgerId)">
+            <mat-icon class="tw-w-4 tw-h-4 tw-text-neutral-400">arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </ngx-t3-description-item>
+  </ngx-t3-descriptions>
+
+  <span class="tw-h4 tw-block !tw-mt-8 tw-px-4">
+    {{ 'i18n.Common.workflow' | translate }}
+  </span>
+  <ng-container *ngIf="resolved.workflow; else noWorkflow">
+    <ngx-t3-descriptions>
+      <ngx-t3-description-item [label]="'i18n.Common.name' | translate">
+        <div
+          *ngIf="resolved.workflow?.dsl?.definition?.name as name; else redacted"
+          class="tw-truncate tw-text-sm">
+          {{ name }}
+        </div>
+      </ngx-t3-description-item>
+      <ngx-t3-description-item [label]="'i18n.ProjectSideOverview.lastState' | translate">
+        <ngx-t3-tag
+          *ngIf="resolved.workflowStateLabel | exported; else redacted"
+          class="workflow"
+          size="md">
+          {{ resolved.workflowStateLabel || '' | noValueLabel }}
+        </ngx-t3-tag>
+      </ngx-t3-description-item>
+    </ngx-t3-descriptions>
+  </ng-container>
+
+  <span class="tw-h4 tw-block !tw-mt-8 tw-px-4">
+    {{ 'i18n.Common.resources' | translate }}
+  </span>
+  <ngx-t3-descriptions>
+    <ngx-t3-description-item
+      [label]="'i18n.Common.docs' | translate"
+      [multiline]="true">
+      <div class="tw-flex tw-flex-col tw-text-sm tw-truncate">
+        <span>
+          {{ resolved.availableDocuments }} / {{ resolved.totalDocuments }} {{ 'i18n.Common.included' | translate | lowercase}}
+        </span>
+        <ng-container *ngIf="resolved.exportRequest">
+          <span>
+            {{ resolved.exportRequest.documentVersion | apply : getIncludedResourceVersionLabel | translate }}
+          </span>
+          <span>
+            {{ (resolved.exportRequest.deletedDocuments
+              ? 'i18n.ProjectSideOverview.deletedDocumentIncluded'
+              : 'i18n.ProjectSideOverview.deletedDocumentNotIncluded' ) | translate }}
+          </span>
+        </ng-container>
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      label="streams"
+      class="tw-pb-0"
+      [multiline]="true"
+      [hasDivider]="false">
+      <div class="tw-flex tw-flex-col tw-text-sm tw-truncate">
+        <span>
+          {{ resolved.availableStreams }} / {{ resolved.totalStreams }} {{ 'i18n.Common.included' | translate | lowercase}}
+        </span>
+        <ng-container *ngIf="resolved.exportRequest">
+          <span>
+            {{ resolved.exportRequest.streamVersion | apply : getIncludedResourceVersionLabel | translate}}
+          </span>
+          <span>
+            {{ (resolved.exportRequest.deletedStreams
+              ? 'i18n.ProjectSideOverview.deletedStreamIncluded'
+              : 'i18n.ProjectSideOverview.deletedStreamNotIncluded' ) | translate }}
+          </span>
+        </ng-container>
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.refs' | translate">
+      <div class="tw-text-sm tw-truncate">
+        {{ (resolved.exportRequest.streamReferences ? 'i18n.Common.included' : 'i18n.Common.excluded') | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      class="tw-pb-0"
+      [label]="'i18n.Common.threads' | translate"
+      [multiline]="true"
+      [hasDivider]="false">
+      <div class="tw-text-sm tw-truncate">
+        {{ resolved.availableThreads }} / {{ resolved.totalThreads }} {{ 'i18n.Common.included' | translate | lowercase}}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.refs' | translate">
+      <div class="tw-text-sm tw-truncate">
+        {{ (resolved.exportRequest.streamReferences ? 'i18n.Common.included' : 'i18n.Common.excluded') | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item [label]="'i18n.Common.collaborators' | translate">
+      <ngx-t3-avatar-group
+        size="xxs"
+        [count]="(resolved.projectParticipants?.items || []).length"
+        [limit]="5">
+        <ng-container *ngFor="let projectParticipant of resolved.projectParticipants?.items | slice : 0 : 5">
+          <ng-container *ngIf="{
+            agent: projectParticipant.agent$ | async
+          } as resolvedParticipant">
+            <ngx-t3-avatar
+              *ngIf="resolvedParticipant.agent?.agentType !== ViewerAgentType.Thing"
+              size="xxs"
+              [src]="resolvedParticipant.agent && resolvedParticipant.agent.avatar"
+              [matTooltip]="resolvedParticipant.agent && resolvedParticipant.agent.fullName || 'Redacted'"></ngx-t3-avatar>
+
+            <ngx-t3-thing-avatar
+              *ngIf="resolvedParticipant.agent && resolvedParticipant.agent.agentType === ViewerAgentType.Thing"
+              size="xxs"
+              [matTooltip]="resolvedParticipant.agent.name || ''"
+              [thingAvatar]="resolvedParticipant.agent.avatar"
+              [thingInfo]="getThingTypeInfo(resolvedParticipant.agent.type)"></ngx-t3-thing-avatar>
+          </ng-container>
+        </ng-container>
+      </ngx-t3-avatar-group>
+      <button
+        end
+        mat-icon-button
+        (click)="navigateParticipants.emit()">
+        <mat-icon class="tw-w-5 tw-h-5 tw-text-neutral-400">arrow_forward</mat-icon>
+      </button>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.Common.workflow' | translate">
+      <div class="tw-text-sm tw-truncate">
+        {{ resolved.exportRequest.workflowMode | apply : getWorkflowInclusionLabel | translate }}
+      </div>
+    </ngx-t3-description-item>
+    <ngx-t3-description-item
+      *ngIf="resolved.exportRequest"
+      [label]="'i18n.ProjectSideOverview.ledgerKeys' | translate"
+      [hasDivider]="false">
+      <div class="tw-text-sm tw-truncate">
+        {{ resolved.exportRequest.keyMode | apply : getLedgerKeysLabel | translate }}
+      </div>
+    </ngx-t3-description-item>
+  </ngx-t3-descriptions>
+</div>

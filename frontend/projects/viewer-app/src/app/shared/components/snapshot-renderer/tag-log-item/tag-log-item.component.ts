@@ -1,8 +1,8 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { TagV0 } from '@ledger-objects';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { TagSnapshot } from '@viewer/models';
+import { ProjectParticipantService } from '@viewer/services';
 import {
   getTagImage,
   snapshotParticipantLabel,
@@ -13,8 +13,8 @@ import {
   redactedValue,
   snapshotContent,
 } from '@viewer/utils';
-import { TagV0 } from '@ledger-objects';
-import { ProjectParticipantService } from '@viewer/services';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 const getTagUpdateType = (snapshot: TagSnapshot): 'name' | 'description' | 'generic' => {
   const changes = getChanges(snapshot.delta, ['name', 'description']);
@@ -33,14 +33,18 @@ const getTagUpdateType = (snapshot: TagSnapshot): 'name' | 'description' | 'gene
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+
   private readonly snapshot$ = new BehaviorSubject<TagSnapshot | null>(null);
-  @Input() set snapshot(value: TagSnapshot | null){
+  @Input() set snapshot(value: TagSnapshot | null) {
     this.snapshot$.next(value);
   };
   get snapshot() {
     return this.snapshot$.value;
   }
-
 
   readonly itemImage$ = this.snapshot$.pipe(
     isNotNullOrUndefined(),
@@ -50,15 +54,17 @@ export class TagLogItemComponent {
     }),
   );
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    switchMap(async (snapshot) => {
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
       const participantId = getProjectParticipantId(snapshot);
       return participantId
-        ? await this.projectParticipantService.getProjectParticipant(participantId)
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
         : undefined;
     }),
-    switchMap((projectParticipant) => snapshotParticipantLabel(projectParticipant)),
+    switchMap(snapshotParticipantLabel),
   );
 
   readonly props$ = combineLatest([

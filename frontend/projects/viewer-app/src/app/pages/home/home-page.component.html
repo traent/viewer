@@ -1,9 +1,8 @@
 <div
   *ngIf="{ params: params$ | async }"
-  class="opal-s-full opal-overflow-y-auto"
+  class="tw-w-full tw-h-full tw-overflow-y-auto"
   (ngxT3FileDrop)="!process && startLocalFileLoad($event)">
   <app-topbar
-    *ngIf="showHeader"
     logoColor="white"
     [whiteStroked]="true">
   </app-topbar>
@@ -25,13 +24,13 @@
           <div class="interaction-box">
             <div
               *ngIf="!showUrlInput"
-              @buttons
-              class="buttons-container">
+              class="buttons-container"
+              @buttons>
               <button
                 matRipple
                 class="custom-btn upload"
                 (click)="fileInput.click()">
-                {{ 'i18n.Home.upload' | translate }}
+                <span>{{ 'i18n.Home.upload' | translate }}</span>
               </button>
               <input
                 #fileInput
@@ -70,42 +69,59 @@
     class="upload">
     <div class="central-column">
       <ng-container *ngIf="!error">
-        <div class="opal-h3 opal-mb-4">{{ 'i18n.Home.wait' | translate }}</div>
-        <div
+        <svg
+          class="spinner"
+          viewBox="25 25 50 50">
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            r="20"
+            fill="none"
+            stroke-width="3"
+            stroke-miterlimit="10">
+          </circle>
+        </svg>
+        <!-- TODO: FIXME -->
+        <!-- <div
           *ngIf="fancyMessages$ | async as fancyMessages"
           class="main-content">
           {{ fancyMessages | translate }}
+        </div> -->
+        <div class="main-content">
+          <span class="tw-font-brand tw-font-medium">{{ 'i18n.Home.loadingTitle' | translate }}</span>
+          <div class="wait tw-font-normal">{{ 'i18n.Home.wait' | translate }}</div>
         </div>
         <button
           *ngIf="showCancelUpload"
           mat-flat-button
-          class="opal-mt-8 light-button"
+          class="!tw-mt-8 light-button"
           (click)="abortController && abortController.abort()">
           {{ 'i18n.Common.cancel' |  translate }}
         </button>
         <div
           *ngIf="loadingMessage"
           class="details-box">
-          <div class="opal-h3 opal-mb-4">{{ loadingMessage.message | translate }}</div>
+          <div class="tw-h3 tw-mb-4">{{ loadingMessage.message | translate }}</div>
           <small>{{ fileName }}</small>
         </div>
       </ng-container>
       <ng-container *ngIf="error">
-        <div class="title opal-mb-4">{{ 'i18n.Home.damn' | translate}}!</div>
-        <div class="opal-text-600">'{{ fileName }}'</div>
+        <div class="title tw-mb-4">{{ 'i18n.Home.damn' | translate}}</div>
+        <div class="tw-font-semibold">'{{ fileName }}'</div>
         <div
           *ngIf="error === 'generic'"
-          class="opal-text-light">
+          class="tw-light">
           {{ 'i18n.Home.errorFileGeneric' | translate }}
         </div>
         <div
           *ngIf="error === 'validation'"
-          class="opal-text-light">
+          class="tw-light">
           {{ 'i18n.Home.errorFileValidation' | translate }}
         </div>
         <button
           mat-flat-button
-          class="opal-mt-8 light-button"
+          class="!tw-mt-8 light-button"
           (click)="reset()">
           {{ 'i18n.Common.goBack' | translate }}
         </button>
@@ -113,7 +129,7 @@
           *ngIf="error === 'validation'"
           class="details-box">
           <span
-            class="opal-text-underline opal-text-light opal-pointer"
+            class="tw-underline tw-light tw-cursor-pointer"
             (click)="invalidLedgerNavigation()">
             {{ 'i18n.Home.warningFileValidation' | translate }}
           </span>

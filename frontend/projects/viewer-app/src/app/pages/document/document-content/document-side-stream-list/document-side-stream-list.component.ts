@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UIPaginator } from '@traent/ngx-paginator';
 import { StreamEntry } from '@viewer/models';
 import { StreamService } from '@viewer/services';
-import { UIPaginator } from '@traent/ngx-paginator';
 import { map, BehaviorSubject, combineLatest } from 'rxjs';
 
 const STREAM_ITEMS_LIMIT = 15;

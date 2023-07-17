@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TablePaginatorData, tableOffset } from '@traent/ngx-components';
 import { blockEncapsulation, BlockItem } from '@viewer/models';
-import { StorageService } from '@viewer/services';
+import { LedgerAccessorService } from '@viewer/services';
 import { fromPascalCaseToKebabCase, isEncapsulation } from '@viewer/utils';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { shareReplay, switchMap } from 'rxjs/operators';
-import { TablePaginatorData, tableOffset } from '@traent/ngx-components';
 
 const expandBlocks = async (blockItem: BlockItem) => {
   let currentBlock: Ledger.Parser.Block = await blockItem.getParsed();
@@ -28,8 +28,8 @@ const expandBlocks = async (blockItem: BlockItem) => {
 })
 export class BlockTabContentComponent {
 
-  readonly totalBlockItems$ = this.storageService.getLedger().getCompleteBlocksCount();
-  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
+  readonly totalBlockItems$ = this.ledgerAccessorService.getBlockLedger().getCompleteBlocksCount();
+  readonly keyPair$ = this.ledgerAccessorService.getBlockLedger().getKeyPair();
 
   readonly pageEvent$ = new BehaviorSubject<TablePaginatorData>({
     pageIndex: 0,
@@ -43,7 +43,7 @@ export class BlockTabContentComponent {
     switchMap(([pageEvent, totalBlockItems]) => {
       const offset = tableOffset(pageEvent);
       const limit = Math.min(pageEvent.pageSize, totalBlockItems - offset);
-      return this.storageService.getLedger().getBlocks(offset, limit);
+      return this.ledgerAccessorService.getBlockLedger().getBlocks(offset, limit);
     }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -52,7 +52,5 @@ export class BlockTabContentComponent {
   readonly blockEncapsulation = blockEncapsulation;
   readonly fromPascalCaseToKebabCase = fromPascalCaseToKebabCase;
 
-  constructor(
-    private readonly storageService: StorageService,
-  ) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 }

@@ -1,6 +1,6 @@
 <ngx-t3-sidebar-header
-  class="opal-sidebar-header-container"
-  [backToLabel]="'i18n.Project.ProjectPage.backInfoProject' | translate"
+  class="tw-t3-sidebar-header-container"
+  [backToLabel]="'i18n.Common.backProjectInfo' | translate"
   [label]="'i18n.Common.threadDetails' | translate"
   (backTo)="router.navigate(['/project', 'threads'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
@@ -11,7 +11,7 @@
     referencesCount: referencesCount$ | async,
     participantsCount: participantsCount$ | async
   } as resolved"
-  class="opal-overflow-auto opal-h-full"
+  class="tw-overflow-auto tw-h-full"
   [thread]="resolved.thread"
   [referencesCount]="resolved.referencesCount"
   [participantsCount]="resolved.participantsCount"

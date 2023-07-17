@@ -1,5 +1,5 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ThreadParticipantService, ThreadService } from '@viewer/services';
 import { map, shareReplay, switchMap } from 'rxjs';
 
@@ -11,8 +11,7 @@ import { map, shareReplay, switchMap } from 'rxjs';
 export class ThreadSideOverviewComponent {
 
   readonly thread$ = this.route.params.pipe(
-    map((params) => params.id),
-    switchMap((threadId) => this.threadService.getThread(threadId)),
+    switchMap(({ id }) => this.threadService.getThread({ id })),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

@@ -1,0 +1,56 @@
+ngx-json-viewer {
+  --ngx-json-key: var(--tw-accent-500) !important;
+  --ngx-json-value: black;
+  --ngx-json-string: black;
+  --ngx-json-date: black;
+  --ngx-json-number: black;
+  --ngx-json-boolean: black;
+  --ngx-json-object: black;
+  --ngx-json-array: black;
+  --ngx-json-null: black;
+  --ngx-json-null-bg: none;
+  --ngx-json-font-family: monospace, consolas, menlo, monaco, "Ubuntu Mono", source-code-pro;
+  --ngx-json-font-size: 14px;
+
+  .ngx-json-viewer {
+    width: calc(100% - 8px) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: block !important;
+
+    .segment-key {
+      font-weight: 700 !important;
+    }
+
+    .segment-main {
+      display: inline-flex;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 8px) !important;
+      font-weight: 700 !important;
+    }
+
+    .segment-value {
+      max-width: calc(100% - 8px) !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      display: block;
+      width: fit-content;
+      white-space: nowrap !important;
+      padding-left: 8px !important;
+      font-weight: 400 !important;
+    }
+
+    .children:not(:has(>.children)) {
+      &:not(:has(.expandable)) .segment-value {//truncate content unless parent container is expanded
+        white-space: pre-wrap !important;
+      }
+    }
+
+    section:not(:has(.children)):not(:has(.expandable)) {
+      :not(:has(>.children)) .segment-value {//truncate content unless the element has no child
+        white-space: pre-wrap !important;
+      }
+    }
+  }
+}

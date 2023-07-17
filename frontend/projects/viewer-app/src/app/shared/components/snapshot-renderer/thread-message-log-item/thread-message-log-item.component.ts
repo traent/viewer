@@ -1,10 +1,10 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { isExportedAndDefined } from '@traent/ngx-components';
-import { BehaviorSubject, combineLatest, firstValueFrom, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { ThreadMessageV0 } from '@ledger-objects';
+import { isExportedAndDefined } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { LogItemImage, Thread, ThreadMessageSnapshot, WorkflowParticipant } from '@viewer/models';
+import { ProjectParticipantService, ThreadService } from '@viewer/services';
 import {
   getProjectParticipantId,
   redactedClass,
@@ -12,8 +12,8 @@ import {
   snapshotContent,
   snapshotParticipantLabel, workflowSnapshotImage,
 } from '@viewer/utils';
-import { ProjectParticipantService, ThreadService } from '@viewer/services';
-import { ThreadMessageV0 } from '@ledger-objects';
+import { BehaviorSubject, combineLatest, firstValueFrom, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { ThreadLogDialogComponent } from '../../thread-log-dialog/thread-log-dialog.component';
 
@@ -23,6 +23,14 @@ import { ThreadLogDialogComponent } from '../../thread-log-dialog/thread-log-dia
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThreadMessageLogItemComponent {
+  private readonly ledgerId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set ledgerId(value: string | undefined) {
+    this.ledgerId$.next(value);
+  };
+  get ledgerId() {
+    return this.ledgerId$.value;
+  }
+
   private readonly snapshot$ = new BehaviorSubject<ThreadMessageSnapshot | null>(null);
   @Input() set snapshot(value: ThreadMessageSnapshot | null) {
     this.snapshot$.next(value);
@@ -31,13 +39,16 @@ export class ThreadMessageLogItemComponent {
     return this.snapshot$.value;
   }
 
-  readonly projectParticipant$ = this.snapshot$.pipe(
-    isNotNullOrUndefined(),
-    map((snapshot) => getProjectParticipantId(snapshot)),
-    switchMap(async (participantId) => participantId
-      ? await this.projectParticipantService.getProjectParticipant(participantId)
-      : undefined,
-    ),
+  private readonly projectParticipant$ = combineLatest([
+    this.ledgerId$,
+    this.snapshot$.pipe(isNotNullOrUndefined()),
+  ]).pipe(
+    switchMap(async ([ledgerId, snapshot]) => {
+      const participantId = getProjectParticipantId(snapshot);
+      return participantId
+        ? await this.projectParticipantService.getProjectParticipant({ ledgerId, id: participantId })
+        : undefined;
+    }),
   );
 
   readonly itemImage$: Observable<LogItemImage> = this.projectParticipant$.pipe(
@@ -45,10 +56,15 @@ export class ThreadMessageLogItemComponent {
       if (projectParticipant === WorkflowParticipant) {
         return of(workflowSnapshotImage);
       } else if (projectParticipant) {
-        return projectParticipant.member$.pipe(
+        return projectParticipant.agent$.pipe(
           map((m) => ({
             type: 'avatar' as const,
-            src: m?.avatar,
+            src: m?.avatar
+              ?? m?.type
+              ? {
+                custom: 'things',
+              }
+              : undefined,
           })),
         );
       }
@@ -61,14 +77,12 @@ export class ThreadMessageLogItemComponent {
   );
 
   readonly props$ = combineLatest([
+    this.ledgerId$,
     this.snapshot$.pipe(isNotNullOrUndefined()),
-    this.projectParticipant$,
+    this.projectParticipant$.pipe(switchMap(snapshotParticipantLabel)),
   ]).pipe(
-    switchMap(([snapshot, projectParticipant]) => snapshotParticipantLabel(projectParticipant).pipe(
-      map((member) => ({ snapshot, member, projectParticipant })),
-    )),
-    switchMap(async ({ snapshot, member }) => {
-      const thread = await this.getThread(snapshot);
+    switchMap(async ([ledgerId, snapshot, member]) => {
+      const thread = await this.getThread(snapshot, ledgerId);
       const threadName = redactedValue(thread?.name);
       const threadStyle = redactedClass(thread?.name, 'pointer');
 
@@ -87,19 +101,24 @@ export class ThreadMessageLogItemComponent {
     private readonly threadService: ThreadService,
   ) { }
 
-  private async getThread(snapshot: ThreadMessageSnapshot): Promise<Thread | undefined> {
+  private async getThread(snapshot: ThreadMessageSnapshot, ledgerId: string | undefined): Promise<Thread | undefined> {
     const threadId = snapshotContent<ThreadMessageV0>(snapshot).threadId;
-    return isExportedAndDefined(threadId) ? this.threadService.getThread(threadId, snapshot.updatedInBlock.index) : undefined;
+    return isExportedAndDefined(threadId)
+      ? this.threadService.getThread({ ledgerId, id: threadId, blockIndex: snapshot.updatedInBlock.index })
+      : undefined;
   }
 
-  async clickHandler(pointerClasses: string, snapshot: ThreadMessageSnapshot | null): Promise<void> {
+  async clickHandler(pointerClasses: string, snapshot: ThreadMessageSnapshot | null, ledgerId: string | undefined): Promise<void> {
     if (pointerClasses === 'thread' && snapshot) {
-      const data = await this.getThread(snapshot);
-      if (!data) {
+      const thread = await this.getThread(snapshot, ledgerId);
+      if (!thread) {
         return;
       }
 
-      await firstValueFrom(this.dialog.open(ThreadLogDialogComponent, { data, panelClass: 'opal-w-600px' }).afterClosed());
+      await firstValueFrom(this.dialog.open(ThreadLogDialogComponent, {
+        data: { ledgerId, thread },
+        panelClass: 'tw-w-[600px]',
+      }).afterClosed());
     }
   }
 }

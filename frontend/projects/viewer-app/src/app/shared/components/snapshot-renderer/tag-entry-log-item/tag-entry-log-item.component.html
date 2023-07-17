@@ -1,8 +1,8 @@
-<div class="opal-fx-row">
+<div class="tw-flex tw-flex-row">
   <app-image-icon [image]="itemImage$ | async">
   </app-image-icon>
 
-  <div class="log-description opal-w-full opal-ml-3 opal-break-word">
+  <div class="log-description tw-w-full !tw-ml-3 tw-break-word">
     <ng-container *ngIf="props$ | async as props; else skeleton">
       <div
         *ngIf="{
@@ -15,9 +15,9 @@
           tagClass: props.tagStyle
         } as translateParams"
         ngxT3PointerInnerClick
-        class="snapshot-content opal-fx-row opal-fx-align-center"
+        class="snapshot-content tw-flex tw-flex-row tw-items-center"
         [ngSwitch]="props.operation"
-        (innerClick)="clickHandler($event, snapshot)">
+        (innerClick)="clickHandler($event, snapshot, ledgerId)">
         <span
           *ngSwitchCase="'creation'"
           [innerHtml]="(props.tag && props.tag.type === TagType.Participant
@@ -25,7 +25,7 @@
             : 'i18n.SnapshotItem.OperationLabel.TagEntry.creation') | translate : translateParams | safeHtml">
         </span>
         <span
-          *ngSwitchCase="'update'"
+          *ngSwitchCase="'deletion'"
           [innerHtml]="(props.tag && props.tag.type === TagType.Participant
             ? 'i18n.SnapshotItem.OperationLabel.TagEntry.group.removal'
             : 'i18n.SnapshotItem.OperationLabel.TagEntry.removal') | translate : translateParams | safeHtml">
@@ -36,7 +36,7 @@
 </div>
 
 <ng-template #skeleton>
-  <div class="opal-fx-g-1">
-    <ngx-t3-skeleton class="opal-h-4"></ngx-t3-skeleton>
+  <div class="tw-grow">
+    <ngx-t3-skeleton class="tw-h-4"></ngx-t3-skeleton>
   </div>
 </ng-template>

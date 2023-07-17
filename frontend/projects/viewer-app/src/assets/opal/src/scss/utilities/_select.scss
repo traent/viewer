@@ -1,6 +1,0 @@
-// User selection
-@each $value in (none, auto, text) {
-  .opal-select-#{$value} {
-    user-select: $value;
-  }
-}

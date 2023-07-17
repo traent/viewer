@@ -1,6 +1,5 @@
 import { TagV0, TagEntryV0, TagType } from '@ledger-objects';
-import { UIPaginationParams } from '@traent/ngx-paginator';
-import { BlockIndexed, SortableResource } from '@viewer/utils';
+import { ResourceCollectionParams } from '@viewer/utils';
 
 import { LedgerResource, RedactableBox } from './ledger-resource';
 
@@ -11,15 +10,11 @@ export type TagParams = Partial<{
   name: string;
   description: string;
   type: TagType;
-}> & SortableResource<Tag> & UIPaginationParams;
+}> & ResourceCollectionParams<Tag>;
 
-export type TagEntry = RedactableBox<TagEntryV0> & LedgerResource & {
-  tag: () => Promise<Tag | undefined>;
-};
+export type TagEntry = RedactableBox<TagEntryV0> & LedgerResource;
 
 export type TagEntryParams = Partial<{
   tagId: string;
   taggedResourceId: string;
-}> & SortableResource<TagEntry>
-  & UIPaginationParams
-  & BlockIndexed;
+}> & ResourceCollectionParams<TagEntry>;

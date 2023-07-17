@@ -5,8 +5,8 @@
       loading: paginator.loading.value$ | async,
       items: paginator.items.value$ | async
     } as resolved"
-    class="opal-overflow-auto opal-h-full"
-    [class.opal-mt-25]="resolved.total === 0 && !resolved.loading"
+    class="tw-overflow-auto tw-h-full"
+    [class.tw-mt-[6.25rem]]="resolved.total === 0 && !resolved.loading"
     [paginator]="paginator">
     <app-snapshot-renderer
       *ngFor="let snapshot of resolved.items"

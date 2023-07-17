@@ -1,0 +1,39 @@
+<div class="tw-flex tw-flex-row">
+
+  <app-image-icon [image]="itemImage"></app-image-icon>
+
+  <div class="log-description tw-w-full !tw-ml-3 tw-break-word">
+    <ng-container *ngIf="props$ | async as props; else skeleton">
+      <div
+        *ngIf="{
+          member: props.member.name,
+          memberClass: props.member.class,
+          referenceName: props.targetProjectName | escapeHtml,
+          referenceClass: props.targetProjectClass
+        } as translateParams"
+        ngxT3PointerInnerClick
+        class="snapshot-content"
+        [ngSwitch]="props.operation"
+        (innerClick)="clickHandler($event, props.targetLedgerId)">
+        <span
+          *ngSwitchCase="'creation'"
+          [innerHTML]="'i18n.SnapshotItem.OperationLabel.CrossProjectReference.creation' | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'update'"
+          [innerHTML]="'i18n.SnapshotItem.OperationLabel.CrossProjectReference.update' | translate : translateParams | safeHtml">
+        </span>
+        <span
+          *ngSwitchCase="'deletion'"
+          [innerHTML]="'i18n.SnapshotItem.OperationLabel.CrossProjectReference.removal' | translate : translateParams | safeHtml">
+        </span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #skeleton>
+  <div class="tw-grow">
+    <ngx-t3-skeleton class="tw-h-4"></ngx-t3-skeleton>
+  </div>
+</ng-template>

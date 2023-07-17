@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs';
 export class DocumentSidebarComponent {
 
   readonly document$ = this.route.params.pipe(
-    switchMap((params) => this.documentService.getDocument(params.id)),
+    switchMap(({ id }) => this.documentService.getDocument({ id })),
   );
 
   constructor(

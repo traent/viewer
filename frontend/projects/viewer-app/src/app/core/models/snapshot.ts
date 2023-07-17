@@ -1,4 +1,5 @@
 import {
+  CrossProjectReferenceV0,
   DocumentV0,
   ProjectParticipantV0,
   ProjectV0,
@@ -12,7 +13,10 @@ import {
   ThreadV0,
   WorkflowV0,
 } from '@ledger-objects';
+import { MaterialOrCustomIcon } from '@traent/ngx-components';
+import { UIPaginationParams } from '@traent/ngx-paginator';
 import {
+  CROSS_PROJECT_REFERENCE_LABEL,
   DOCUMENT_LABEL,
   PROJECT_LABEL,
   PROJECT_PARTICIPANT_LABEL,
@@ -26,8 +30,6 @@ import {
   THREAD_REFERENCE_LABEL,
   WORKFLOW_LABEL,
 } from '@viewer/services';
-import { MaterialOrCustomIcon } from '@traent/ngx-components';
-import { UIPaginationParams } from '@traent/ngx-paginator';
 import { Observable } from 'rxjs';
 
 import { BlockIdentification } from './block-table';
@@ -60,8 +62,10 @@ export type ThreadMessageSnapshot = Snapshot<ThreadMessageV0, typeof THREAD_MESS
 export type ThreadReferenceSnapshot = Snapshot<ThreadReferenceV0, typeof THREAD_REFERENCE_LABEL>;
 export type ThreadSnapshot = Snapshot<ThreadV0, typeof THREAD_LABEL>;
 export type WorkflowSnapshot = Snapshot<WorkflowV0, typeof WORKFLOW_LABEL>;
+export type CrossProjectReferenceSnapshot = Snapshot<CrossProjectReferenceV0, typeof CROSS_PROJECT_REFERENCE_LABEL>;
 
 export type ResourceSnapshot =
+  | CrossProjectReferenceSnapshot
   | DocumentSnapshot
   | ProjectParticipantSnapshot
   | ProjectSnapshot
@@ -77,6 +81,7 @@ export type ResourceSnapshot =
 
 export type SnapshotParams = Partial<{
   id: string;
+  ledgerId?: string;
   types: ResourceSnapshot['type'][];
   from: number;
   to: number;
@@ -95,7 +100,7 @@ export interface UISnapshotHandler<T extends ResourceSnapshot> {
 }
 
 export type LogItemImage = {
-  src: string | null | undefined;
+  src: string | MaterialOrCustomIcon | null | undefined;
   type: 'avatar';
 } | {
   bgColor: string;
@@ -105,7 +110,15 @@ export type LogItemImage = {
 } | {
   bgColor: string;
   icon: MaterialOrCustomIcon;
-  src: string | null | undefined;
+  src: string | MaterialOrCustomIcon | null | undefined;
   textColor: string;
   type: 'doubleAvatar';
 };
+
+export const isCustomIcon = (
+  src: string | MaterialOrCustomIcon | null | undefined,
+): src is MaterialOrCustomIcon => src != null && typeof src !== 'string';
+
+export const isString = (
+  src: string | MaterialOrCustomIcon | null | undefined,
+): src is string => typeof src === 'string';

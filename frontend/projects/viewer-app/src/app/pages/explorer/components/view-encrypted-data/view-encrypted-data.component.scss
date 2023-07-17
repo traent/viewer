@@ -1,6 +1,6 @@
 :host {
   display: block;
-  background-color: theme("colors.grey.100");
+  background-color: var(--tw-neutral-100);
 
   &.sticky-below-row .header {
     z-index: 3;

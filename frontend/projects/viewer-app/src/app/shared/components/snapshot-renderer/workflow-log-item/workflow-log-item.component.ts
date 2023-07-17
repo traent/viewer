@@ -1,14 +1,11 @@
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
-import { WorkflowSnapshot, Workflow } from '@viewer/models';
-import {
-  getChanges,
-  parseWorkflow,
-} from '@viewer/utils';
 import { WorkflowV0 } from '@ledger-objects';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
+import { WorkflowSnapshot, Workflow } from '@viewer/models';
+import { getChanges, getWorkflowStateLabel, parseWorkflow } from '@viewer/utils';
 import { redactedClass, redactedValue, snapshotContent, workflowSnapshotImage } from '@viewer/utils';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const getWorkflowName = (current: Workflow): string | undefined => current.dsl?.definition?.name;
 
@@ -37,9 +34,9 @@ export class WorkflowLogItemComponent {
       const workflow = parseWorkflow(snapshotContent<WorkflowV0>(snapshot));
       const workflowName = redactedValue(getWorkflowName(workflow));
       const workflowNameClass = redactedClass(getWorkflowName(workflow));
-      const fromState = redactedValue(workflow.getStateLabel(snapshot?.previous?.state));
+      const fromState = redactedValue(getWorkflowStateLabel(snapshot?.previous?.state, workflow.dsl));
       const fromStateStyle = redactedClass(snapshot?.previous?.state);
-      const toState = redactedValue(workflow.getStateLabel(snapshot.delta.state));
+      const toState = redactedValue(getWorkflowStateLabel(snapshot.delta.state, workflow.dsl));
       const toStateStyle = redactedClass(snapshot.delta.state);
       const isWorkflowStateTransition = getIsWorkflowStateTransition(snapshot);
 
@@ -57,5 +54,3 @@ export class WorkflowLogItemComponent {
     }),
   );
 }
-
-

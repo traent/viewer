@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { LedgerProjectParticipant, ProjectParticipant, WorkflowParticipant } from '@viewer/models';
+import { ViewerAgentType } from '@api/models';
 import { AvatarPlaceholder, AvatarSize, WorkflowAvatar } from '@traent/ngx-components';
+import { LedgerProjectParticipant, ProjectParticipant, WorkflowParticipant } from '@viewer/models';
 import { BehaviorSubject, filter, switchMap, of } from 'rxjs';
 
+import { getThingTypeInfo } from '../../../core/models/ui-things';
 
 @Component({
   selector: 'app-participant-avatar-group',
@@ -18,9 +20,9 @@ export class ParticipantAvatarGroupComponent {
     return this.participant$.value;
   }
 
-  readonly member$ = this.participant$.pipe(
+  readonly agent$ = this.participant$.pipe(
     filter((p): p is LedgerProjectParticipant => p !== WorkflowParticipant),
-    switchMap((participant) => participant ? participant.member$ : of(undefined)),
+    switchMap((participant) => participant ? participant.agent$ : of(undefined)),
   );
   readonly organization$ = this.participant$.pipe(
     filter((p): p is LedgerProjectParticipant => p !== WorkflowParticipant),
@@ -32,5 +34,7 @@ export class ParticipantAvatarGroupComponent {
   @Input() workflowTooltip = 'Workflow';
 
   readonly AvatarPlaceholder = AvatarPlaceholder;
+  readonly getThingTypeInfo = getThingTypeInfo;
+  readonly ViewerAgentType = ViewerAgentType;
   readonly WorkflowAvatar = WorkflowAvatar;
 }

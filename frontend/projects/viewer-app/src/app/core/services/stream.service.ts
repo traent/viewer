@@ -1,21 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Page } from '@traent/ngx-paginator';
 import { isExported, isRedacted, RedactedMarker } from '@traent/ngx-components';
+import { Page } from '@traent/ngx-paginator';
 
-import { LedgerObjectsService, LedgerState } from './ledger-objects.service';
+import { LedgerAccessorService } from './ledger-accessor.service';
+import { LedgerState } from './ledger-objects.service';
 import { StreamEntry, StreamEntryType, StreamParams, StreamReference, StreamReferenceParams } from '../models';
-import { collectionSort, collectionToPage, transformerFrom } from '../utils';
-
-export const parseStream = (stream: any): StreamEntry => ({
-  ...stream,
-  uiType: stream.type && !isRedacted(stream.type)
-    ? parseStreamType(stream.type)
-    : RedactedMarker,
-});
+import { collectionSort, collectionToPage, ResourceParams, transformerFrom } from '../utils';
 
 const parseStreamType = (type?: string): StreamEntryType | undefined => {
   switch (type) {
-    case 'approval':
     case 'date':
     case 'number':
     case 'multi-select':
@@ -35,20 +28,34 @@ const parseStreamType = (type?: string): StreamEntryType | undefined => {
 export const STREAM_LABEL = 'StreamEntryV0';
 export const STREAM_REFERENCE_LABEL = 'StreamReferenceV0';
 
+export const parseStream = (stream: any): StreamEntry => ({
+  ...stream,
+  uiType: stream.type && !isRedacted(stream.type)
+    ? parseStreamType(stream.type)
+    : RedactedMarker,
+});
+
 const extractStreamEntriesFromState = (state: LedgerState): StreamEntry[] =>
   transformerFrom(parseStream)(state[STREAM_LABEL]);
 
+const parseStreamReference = (obj: any): StreamReference => obj as StreamReference;
+
+const extractStreamReferencesFromState = (state: LedgerState): StreamReference[] =>
+  transformerFrom(parseStreamReference)(state[STREAM_REFERENCE_LABEL]);
+
 @Injectable({ providedIn: 'root' })
 export class StreamService {
-  constructor(private readonly ledgerObjectService: LedgerObjectsService) { }
+  constructor(private readonly ledgerAccessorService: LedgerAccessorService) { }
 
-  async getStream(id: string, blockIndex?: number): Promise<StreamEntry> {
-    const object = await this.ledgerObjectService.getObject(STREAM_LABEL, id, blockIndex);
+  async getStream({ id, blockIndex, ledgerId }: ResourceParams): Promise<StreamEntry> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(STREAM_LABEL, id, blockIndex);
     return parseStream(object);
   }
 
   async getStreamCollection(params?: StreamParams): Promise<Page<StreamEntry>> {
-    const currentState = await this.ledgerObjectService.getObjects();
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
     let collection = extractStreamEntriesFromState(currentState);
 
     if (params?.uiType) {
@@ -56,7 +63,7 @@ export class StreamService {
     }
 
     if (params?.documentId) {
-      const streamReferences = this.extractStreamReferencesFromState(currentState);
+      const streamReferences = extractStreamReferencesFromState(currentState);
       const streamIds = streamReferences
         .filter((streamReference) => streamReference?.documentId === params.documentId)
         .map((streamReference) => streamReference.streamEntryId);
@@ -70,14 +77,16 @@ export class StreamService {
     );
   }
 
-  async getStreamReference(id: string, blockIndex?: number): Promise<StreamReference> {
-    const object = await this.ledgerObjectService.getObject(STREAM_REFERENCE_LABEL, id, blockIndex);
-    return this.parseStreamReference(object);
+  async getStreamReference({ id, blockIndex, ledgerId }: ResourceParams): Promise<StreamReference> {
+    const ledger = this.ledgerAccessorService.getLedger(ledgerId);
+    const object = await ledger.getObject(STREAM_REFERENCE_LABEL, id, blockIndex);
+    return parseStreamReference(object);
   }
 
   async getStreamReferencesCollection(params?: StreamReferenceParams): Promise<Page<StreamReference>> {
-    const currentState = await this.ledgerObjectService.getObjects();
-    let collection = this.extractStreamReferencesFromState(currentState);
+    const ledger = this.ledgerAccessorService.getLedger(params?.ledgerId);
+    const currentState = await ledger.getObjects(params?.blockIndex);
+    let collection = extractStreamReferencesFromState(currentState);
 
     if (params?.isLocallyReferenced !== undefined) {
       const isLocallyReferenced = params.isLocallyReferenced;
@@ -101,19 +110,5 @@ export class StreamService {
       params?.page,
       params?.limit,
     );
-  }
-
-  parseStreamReference(obj: any): StreamReference {
-    const streamReference = obj as StreamReference;
-    return {
-      ...streamReference,
-      streamEntry: async () => isExported(streamReference.streamEntryId)
-        ? await this.getStream(streamReference.streamEntryId)
-        : undefined,
-    };
-  };
-
-  private extractStreamReferencesFromState(state: LedgerState): StreamReference[] {
-    return transformerFrom(this.parseStreamReference.bind(this))(state[STREAM_REFERENCE_LABEL]);
   }
 }

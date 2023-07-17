@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { StreamEntryV0 } from '@ledger-objects';
+import { AvatarPlaceholder } from '@traent/ngx-components';
+import { isNotNullOrUndefined } from '@traent/ts-utils';
 import { RedactableBox, StreamEntrySnapshot } from '@viewer/models';
 import { ProjectParticipantService } from '@viewer/services';
 import { getProjectParticipantId, snapshotContent } from '@viewer/utils';
-import { AvatarPlaceholder } from '@traent/ngx-components';
 import { BehaviorSubject, switchMap } from 'rxjs';
-import { isNotNullOrUndefined } from '@traent/ts-utils';
 
 const hasMoreChanged = (expanded: boolean, snapshot: StreamEntrySnapshot) => {
   if (!expanded && snapshot.operation === 'update') {
@@ -48,7 +48,7 @@ export class StreamSnapshotDetailComponent {
     isNotNullOrUndefined(),
     switchMap(async (snapshot) => {
       const participantId = getProjectParticipantId(snapshot);
-      return participantId ? this.projectParticipantService.getProjectParticipant(participantId) : undefined;
+      return participantId ? this.projectParticipantService.getProjectParticipant({ id: participantId }) : undefined;
     }),
   );
 

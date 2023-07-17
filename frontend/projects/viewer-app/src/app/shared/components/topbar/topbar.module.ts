@@ -1,14 +1,14 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppSwitcherModule, AvatarModule, IdentityModule } from '@traent/ngx-components';
 
-import { IdentityValidationModule } from '../../identity-validation/identity-validation.module';
 import { TopbarComponent } from './topbar.component';
+import { IdentityValidationModule } from '../../identity-validation/identity-validation.module';
 
 @NgModule({
   declarations: [

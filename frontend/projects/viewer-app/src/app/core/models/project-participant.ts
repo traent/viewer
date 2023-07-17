@@ -1,10 +1,9 @@
 import { ProjectParticipantRole, ProjectParticipantV0 } from '@ledger-objects';
-import { BlockIndexed, SortableResource } from '@viewer/utils';
-import { UIPaginationParams } from '@traent/ngx-paginator';
+import { ResourceCollectionParams } from '@viewer/utils';
 import { Observable } from 'rxjs';
 
+import { Agent } from './agent';
 import { LedgerResource, RedactableBox } from './ledger-resource';
-import { Member } from './member';
 import { Organization } from './organization';
 
 /**
@@ -18,15 +17,11 @@ export type WorkflowParticipantType = typeof WorkflowParticipant;
 
 export type ProjectParticipant = LedgerProjectParticipant | WorkflowParticipantType;
 export type LedgerProjectParticipant = RedactableBox<ProjectParticipantV0> & LedgerResource & {
-  member$: Observable<Member | undefined>;
+  agent$: Observable<Agent | undefined>;
   organization$: Observable<Organization | undefined>;
 };
 
 export type ProjectParticipantParams = Partial<{
   organizationId: string;
   roles: ProjectParticipantRole[];
-}> & SortableResource<ProjectParticipant>
-  & UIPaginationParams
-  & BlockIndexed;
-
-export type OrganizationCollectionParams = UIPaginationParams & BlockIndexed;
+}> & ResourceCollectionParams<ProjectParticipant>;

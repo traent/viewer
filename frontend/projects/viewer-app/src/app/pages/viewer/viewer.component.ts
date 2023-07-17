@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LedgerService } from '@viewer/services';
+import { ActivatedRoute } from '@angular/router';
 import { getHeaderControlFromRoute } from '@viewer/utils';
 
 @Component({
@@ -14,13 +13,5 @@ export class ViewerComponent {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    readonly ledgerService: LedgerService,
-  ) {
-  }
-
-  async closeLedger(): Promise<void> {
-    this.ledgerService.reset();
-    this.router.navigate(['/']);
-  }
+  ) { }
 }

@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { StorageService } from '@viewer/services';
-import { JsonEditorOptions } from 'ang-jsoneditor';
+import { Component } from '@angular/core';
+import { LedgerAccessorService } from '@viewer/services';
 
 @Component({
   selector: 'app-miscellaneous-tab-content',
@@ -10,20 +9,14 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
 })
 export class MiscellaneousTabContentComponent {
 
-  readonly keyPair$ = this.storageService.getLedger().getKeyPair();
-  readonly exportRequest$ = this.storageService.getLedger().getExportRequest();
+  readonly keyPair$ = this.ledgerAccessorService.getBlockLedger().getKeyPair();
+  readonly exportRequest$ = this.ledgerAccessorService.getBlockLedger().getExportRequest();
 
-  readonly editorOptions = new JsonEditorOptions();
 
   constructor(
     private readonly clipboard: Clipboard,
-    private readonly storageService: StorageService,
-  ) {
-    this.editorOptions.enableTransform = false;
-    this.editorOptions.statusBar = false;
-    this.editorOptions.mode = 'view';
-    this.editorOptions.mainMenuBar = false;
-  }
+    private readonly ledgerAccessorService: LedgerAccessorService,
+  ) { }
 
   copy(v: string): void {
     this.clipboard.copy(v);

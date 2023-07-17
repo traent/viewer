@@ -1,5 +1,5 @@
 <ngx-t3-sidebar-header
-  class="opal-sidebar-header-container"
+  class="tw-t3-sidebar-header-container"
   [backToLabel]="'i18n.Project.ProjectPage.backProjectLog' | translate"
   (backTo)="router.navigate(['../../log'],  { relativeTo: route, queryParamsHandling: 'merge' })">
 </ngx-t3-sidebar-header>
@@ -11,7 +11,7 @@
       loading: paginator.loading.value$ | async,
       items: paginator.items.value$ | async
     } as resolved"
-    class="opal-overflow-auto opal-h-full opal-pb-4"
+    class="tw-overflow-auto tw-h-full tw-pb-4"
     [paginator]="paginator">
     <ng-container *ngFor="let snapshot of resolved.items">
       <app-stream-snapshot-detail

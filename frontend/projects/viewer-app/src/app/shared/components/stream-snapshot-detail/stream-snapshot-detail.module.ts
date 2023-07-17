@@ -18,9 +18,9 @@ import {
   ValueChangedModule,
 } from '@traent/ngx-components';
 
+import { StreamSnapshotDetailComponent } from './stream-snapshot-detail.component';
 import { Uint8PipeModule } from '../../uint8/uint8.module';
 import { ParticipantIdentityModule } from '../participant-identity/participant-identity.module';
-import { StreamSnapshotDetailComponent } from './stream-snapshot-detail.component';
 
 @NgModule({
   declarations: [

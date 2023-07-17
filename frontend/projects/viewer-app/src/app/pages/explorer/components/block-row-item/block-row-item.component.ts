@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { formatBytesSize } from '@traent/ts-utils';
 import { blockEncapsulation, BlockItem } from '@viewer/models';
 import { fromPascalCaseToKebabCase } from '@viewer/utils';
-import { formatBytesSize } from '@traent/ts-utils';
 
 @Component({
   selector: 'app-block-row-item',

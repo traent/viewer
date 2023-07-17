@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { projectSideBarRoutes } from '../project-routing.module';
 import { DocumentSideLogComponent } from './document-side-log/document-side-log.component';
 import { DocumentSideOverviewComponent } from './document-side-overview/document-side-overview.component';
 import { DocumentSidebarComponent } from './document-sidebar/document-sidebar.component';
 import { DocumentsPageComponent } from './documents-page.component';
+import { projectSideBarRoutes } from '../project-routing.module';
 
 const routes: Routes = [
   ...projectSideBarRoutes,

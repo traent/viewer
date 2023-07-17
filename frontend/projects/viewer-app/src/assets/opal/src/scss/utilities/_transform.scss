@@ -1,7 +1,0 @@
-// Rotate
-@for $deg from 0 through 360 {
-  // .opal-rotate-90, opal-rotate-180...
-  .opal-rotate-#{$deg} {
-      transform: rotate(#{ $deg }deg);
-  }
-}

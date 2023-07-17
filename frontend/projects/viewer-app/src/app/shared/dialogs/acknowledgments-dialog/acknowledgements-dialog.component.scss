@@ -3,10 +3,10 @@
 }
 
 .block-info-row {
-  &:not(.opal-h-auto) {
+  &:not(.tw-h-auto) {
     height: 20px;
   }
-  label.overline, label.opal-overline {
+  label.overline, label.tw-t3-text-overline {
     min-width: 100px;
     line-height: 20px;
   }

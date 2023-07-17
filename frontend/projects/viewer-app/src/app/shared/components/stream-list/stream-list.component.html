@@ -1,13 +1,13 @@
-<div class="opal-h-full opal-overflow-hidden">
+<div class="tw-h-full tw-overflow-hidden">
   <ngx-t3-paginator-list
     *ngIf="paginator"
-    class="opal-h-full opal-overflow-y-auto opal-border-box opal-py-3"
-    [class.opal-mt-25]="paginator.total.value === 0 && !paginator.loading.value"
+    class="tw-h-full tw-overflow-y-auto tw-box-border tw-py-3"
+    [class.tw-mt-[6.25rem]]="paginator.total.value === 0 && !paginator.loading.value"
     [paginator]="paginator">
     <ng-container *ngIf="paginator.total.value || paginator.loading.value; else noStreamItems">
       <ng-container *ngFor="let stream of paginator.items.value">
         <app-stream-item
-          class="opal-mb-2 opal-mx-3"
+          class="tw-mb-2 tw-mx-3"
           [stream]="stream"
           (click)="stream && itemClick.next(stream)">
         </app-stream-item>
@@ -17,7 +17,7 @@
 </div>
 
 <ng-template #noStreamItems>
-  <div class="opal-body-1 opal-text-grey-400 opal-text-center">
+  <div class="tw-text-base tw-text-neutral-400 tw-text-center">
     {{ 'i18n.Common.noStreams' | translate }}
   </div>
 </ng-template>

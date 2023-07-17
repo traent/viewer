@@ -4,8 +4,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ApplyModule, SkeletonModule, StreamModule } from '@traent/ngx-components';
 import { NgxT3PaginatorModule } from '@traent/ngx-paginator';
 
-import { ResourceReferenceModule } from '../resource-reference/resource-reference.module';
 import { StreamReferencesComponent } from './stream-references.component';
+import { ResourceReferenceModule } from '../resource-reference/resource-reference.module';
 
 @NgModule({
   declarations: [

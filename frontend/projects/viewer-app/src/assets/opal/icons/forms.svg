@@ -1,6 +1,0 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M3 17V15H10V17H3ZM3 13V11H14V13H3ZM3 9V7H21V9H3Z" fill="currentColor"/>
-  <rect x="3" y="3" width="18" height="2" fill="currentColor"/>
-  <path d="M10 20.4384V23H12.5616L18.9507 16.611L16.389 14.0493L10 20.4384Z" fill="currentColor"/>
-  <path d="M17.2329 13.2055L19.7945 15.7671L20.6685 14.8932C20.8895 14.6721 21 14.3909 21 14.0493C21 13.7078 20.8895 13.4265 20.6685 13.2055L19.7945 12.3315C19.5735 12.1105 19.2922 12 18.9507 12C18.6091 12 18.3279 12.1105 18.1068 12.3315L17.2329 13.2055Z" fill="currentColor"/>
-</svg>

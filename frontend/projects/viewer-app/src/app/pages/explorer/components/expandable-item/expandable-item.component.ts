@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { formatBytesSize } from '@traent/ts-utils';
 import { blockEncapsulation } from '@viewer/models';
 import { fromPascalCaseToKebabCase, parsePolicyV1 } from '@viewer/utils';
-import { formatBytesSize } from '@traent/ts-utils';
 
 const decode = (str: string) => decodeURIComponent(atob(str));
 const getBlockTypeDetailsFromBlockTypeCode =  (blockTypeCode: string) => {

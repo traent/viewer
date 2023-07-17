@@ -2,14 +2,14 @@
     threadSelected: threadSelected$ | async,
     threadMessages: threadMessages$ | async
   } as resolved">
-  <div class="opal-h-12 opal-fx-row opal-w-full opal-px-6 opal-py-3 opal-border-box opal-fx-justify-between opal-border-b-1 opal-border-grey-200 opal-fx-align-center">
+  <div class="tw-h-12 tw-flex tw-flex-row tw-w-full tw-px-6 tw-py-3 tw-box-border tw-justify-between tw-border-b tw-border-neutral-200 tw-items-center">
     <div
       *ngIf="resolved.threadSelected && (resolved.threadSelected.name | exported); else redacted"
-      class="opal-h5 opal-ellipsed">
+      class="tw-h5 tw-truncate">
       {{ resolved.threadSelected.name | noValueLabel }}
     </div>
     <ng-template #redacted>
-      <div class="opal-h5 opal-ellipsed redacted">
+      <div class="tw-h5 tw-truncate redacted">
         {{ 'i18n.Common.redacted' | translate }}
       </div>
     </ng-template>

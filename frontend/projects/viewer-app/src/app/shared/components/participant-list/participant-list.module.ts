@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { ApplyModule, IdentityModule, SkeletonModule } from '@traent/ngx-components';
 import { NgxT3PaginatorModule } from '@traent/ngx-paginator';
 
-import { ParticipantIdentityModule } from '../participant-identity/participant-identity.module';
 import { ParticipantListComponent } from './participant-list.component';
+import { ParticipantIdentityModule } from '../participant-identity/participant-identity.module';
 
 @NgModule({
   declarations: [

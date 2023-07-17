@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
+import { isExported } from '@traent/ngx-components';
 import { StreamEntry } from '@viewer/models';
-import { StreamService, RightSidebarManagerService, AcknowledgementService, TagService } from '@viewer/services';
+import { StreamService, RightSidebarManagerService, TagService, LedgerAccessorService } from '@viewer/services';
 import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
 import { SortableColumn } from '@viewer/utils';
+import { getStreamTypeIcon, printableStreamTypes } from '@viewer/utils';
 import {
   map,
   tap,
@@ -17,7 +19,6 @@ import {
   debounceTime,
   defer,
 } from 'rxjs';
-import { getStreamTypeIcon, printableStreamTypes } from '@viewer/utils';
 import { shareReplay } from 'rxjs/operators';
 
 const columnNameToSortBy = (columnName: string): SortableColumn<StreamEntry> => {
@@ -81,11 +82,14 @@ export class StreamsPageComponent {
     switchMap(async (collection) => {
       const items = collection.items.map((stream) => ({
         data: stream,
-        ackInfo$: defer(() => this.acknowledgementService.getAcknowledgementStatus(stream.updatedInBlock.index)),
+        ackInfo$: defer(() => this.ledgerAccessorService.getLedger().getAcknowledgementStatus(stream.updatedInBlock.index)),
         classes$: defer(() => this.tagService.getTagEntryCollection({
           page: 1,
           taggedResourceId: stream.id,
-        }).then((entries) => Promise.all(entries.items.map((entry) => entry.tag())))),
+        }).then((entries) => Promise.all(entries.items.map((te) => te.tagId)
+          .filter(isExported)
+          .map((tagId) => this.tagService.getTag({ id: tagId }))),
+        )),
       }));
 
       return {
@@ -97,14 +101,19 @@ export class StreamsPageComponent {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly streamIdSelected$ = this.route.params.pipe(
+    map(({ id }) => id),
+    distinctUntilChanged(),
+  );
+
   isLoading = false;
 
   readonly getStreamTypeIcon = getStreamTypeIcon;
   readonly printableStreamTypes = printableStreamTypes;
 
   constructor(
-    private readonly acknowledgementService: AcknowledgementService,
     private readonly dialog: MatDialog,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly streamService: StreamService,

@@ -1,0 +1,30 @@
+<h1 class="tw-h2 tw-m-0 tw-font-medium">
+  {{ 'i18n.ValidationErrorsDialog.title' | translate }}
+</h1>
+
+<mat-dialog-content>
+  <p>
+    {{ 'i18n.ValidationErrorsDialog.subtitle' | translate }}
+  </p>
+  <div class="tw-text-sm tw-font-code errors-box">
+    <span
+      *ngFor="let error of data.errors; let last = last"
+      class="tw-block">
+      {{ 'i18n.ValidationErrorsDialog.Badge.error' | translate }} {{ error }}
+    </span>
+    <span
+      *ngFor="let warning of data.warnings; let last = last"
+      class="tw-block">
+      {{ 'i18n.ValidationErrorsDialog.Badge.warning' | translate }} {{ warning }}
+    </span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    color="accent"
+    mat-flat-button
+    mat-dialog-close>
+    {{ 'i18n.Common.close' | translate }}
+  </button>
+</mat-dialog-actions>

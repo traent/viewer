@@ -1,18 +1,18 @@
 <div
   *ngIf="status; else skeleton"
-  class="opal-fx-row opal-fx-center"
+  class="tw-flex tw-flex-row tw-flex tw-items-center tw-justify-center"
   [matTooltip]="'i18n.Common.acknowledgementsDetails' | translate">
   <mat-icon
     *ngIf="status === AcknowledgementStatus.NONE"
-    class="opal-pointer opal-text-red"
+    class="tw-cursor-pointer tw-text-red"
     svgIcon="ack-error"></mat-icon>
   <mat-icon
     *ngIf="status === AcknowledgementStatus.PARTIAL"
-    class="opal-pointer opal-text-orange-500"
+    class="tw-cursor-pointer tw-text-orange-500"
     svgIcon="ack-incomplete"></mat-icon>
   <mat-icon
     *ngIf="status === AcknowledgementStatus.COMPLETE"
-    class="opal-pointer opal-text-green"
+    class="tw-cursor-pointer tw-text-green"
     svgIcon="ack-ok"></mat-icon>
 </div>
 

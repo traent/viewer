@@ -1,9 +1,9 @@
 import { WorkflowFormat } from '@ledger-objects';
+import { RedactedType, isRedacted, RedactedMarker, isExportedAndDefined } from '@traent/ngx-components';
 import { Workflow, WorkflowDSL, WorkflowState } from '@viewer/models';
 import { load } from 'js-yaml';
-import { RedactedType, isRedacted, RedactedMarker, isExportedAndDefined, Redactable } from '@traent/ngx-components';
 
-export const parseWorkflowState = (obj: any): WorkflowState => obj as any;
+export const parseWorkflowState = (obj: any): WorkflowState => obj as WorkflowState;
 
 export const parseWorkflow = (obj: any): Workflow => {
   // FIXME: this should be checked
@@ -19,12 +19,7 @@ export const parseWorkflow = (obj: any): Workflow => {
     // Ignore parsing errors and leave `undefined` as dsl value
   }
 
-  return {
-    ...workflow,
-    dsl,
-    lastState: dsl && getWorkflowStateLabel(workflow.state, dsl),
-    getStateLabel: (stateId?: Redactable<string>) => dsl && stateId && getWorkflowStateLabel(stateId, dsl),
-  };
+  return { ...workflow, dsl };
 };
 
 const parseWorkflowDSL = (workflow: any): WorkflowDSL => {
@@ -50,17 +45,17 @@ const parseWorkflowDSL = (workflow: any): WorkflowDSL => {
   };
 };
 
-const getWorkflowStateLabel = (stateId: RedactedType | string | undefined, dsl: WorkflowDSL): string | undefined | RedactedType => {
-  if (!stateId) {
-    return;
-  }
-
+export const getWorkflowStateLabel = (stateId: RedactedType | string | undefined, dsl: WorkflowDSL | undefined) => {
   if (isRedacted(stateId)) {
     return RedactedMarker;
   }
 
+  if (!stateId || !dsl) {
+    return;
+  }
+
   if (dsl.version === 0) {
-    return dsl.definition.states && dsl.definition.states?.find((state: any) => state.id === stateId)?.name;
+    return dsl.definition.states.find((state) => state.id === stateId)?.name;
   } else {
     return dsl.definition.states[stateId]?.name;
   }

@@ -1,8 +1,12 @@
 
 $default-topbar-height: 60px;
 $default-topbar-border-width: 1px;
-$default-topbar-border-color: theme("colors.grey.200");
-$default-topbar-font-color: theme("colors.black.500");
+$default-topbar-border-color: var(--tw-neutral-200);
+$default-topbar-font-color: var(--tw-black);
+
+::ng-deep ngx-t3-app-switcher.no-menu button {
+  display: none !important;
+}
 
 .topbar {
   height: var(--topbar-height, $default-topbar-height);
@@ -24,7 +28,7 @@ $default-topbar-font-color: theme("colors.black.500");
 
   &.white-stroked {
     background-color: transparent;
-    border: 1px solid theme("colors.white.500");
+    border: 1px solid var(--tw-white);
   }
 }
 

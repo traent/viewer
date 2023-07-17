@@ -10,6 +10,7 @@ import {
   RedactedMarker,
   StreamEntryType,
   isExported,
+  isExportedAndDefined,
   isRedacted,
   maxDate,
   minDate,
@@ -17,7 +18,7 @@ import {
 } from '@traent/ngx-components';
 import { required } from '@traent/ts-utils';
 import { StreamEntry, StreamReference, RedactableBox } from '@viewer/models';
-import { DocumentService } from '@viewer/services';
+import { StreamService } from '@viewer/services';
 
 import {
   UIDocumentFormItem,
@@ -38,13 +39,13 @@ export const getFormStreamValue = (streamEntry: StreamEntry, itemForm: Redactabl
 
 const findUIStreamReference = (refId: string, streamReferences: StreamReference[]): StreamReference | undefined =>
   streamReferences.find((streamReference) => isExported(streamReference)
-    && isExported(streamReference.anchor) && streamReference.anchor.type === 'form' && streamReference.anchor.refId === refId);
+    && isExportedAndDefined(streamReference.anchor) && streamReference.anchor.type === 'form' && streamReference.anchor.refId === refId);
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ViewDocumentFormService {
 
   constructor(
-    private readonly documentService: DocumentService,
+    private readonly streamService: StreamService,
     private readonly formBuilder: FormBuilder,
   ) { }
 
@@ -71,26 +72,24 @@ export class ViewDocumentFormService {
           default: {
             const streamReference = findUIStreamReference(item.id, streamReferences);
             if (streamReference) {
-              try {
-                const streamEntry = await streamReference.streamEntry();
-                if (streamEntry) {
-                  if (isExported(streamEntry)) {
-                    existentItems.push({
-                      kind: 'stream',
-                      value: {
-                        ...item,
-                        streamEntry,
-                        name: streamEntry.name,
-                        description: streamEntry.description,
-                        configuration: streamEntry.configuration,
-                      },
-                    });
-                  } else {
-                    existentItems.push({ kind: 'stream', value: RedactedMarker });
-                  }
+              if (isRedacted(streamReference.streamEntryId)) {
+                existentItems.push({ kind: 'stream', value: RedactedMarker });
+              } else {
+                try {
+                  const streamEntry = await this.streamService.getStream({ id: streamReference.streamEntryId });
+                  existentItems.push({
+                    kind: 'stream',
+                    value: {
+                      ...item,
+                      streamEntry,
+                      name: streamEntry.name,
+                      description: streamEntry.description,
+                      configuration: streamEntry.configuration,
+                    },
+                  });
+                } catch {
+                  deletedItemsId.push(item.id);
                 }
-              } catch {
-                deletedItemsId.push(item.id);
               }
             } else {
               deletedItemsId.push(item.id);
@@ -121,7 +120,11 @@ export class ViewDocumentFormService {
           } else {
             const streamReference = findUIStreamReference(item.value.id, streamReferences);
             required(streamReference);
-            const streamEntry = await streamReference.streamEntry();
+            if (isRedacted(streamReference.streamEntryId)) {
+              throw new Error(`Unexpected redacted streamEntryId for reference ${streamReference.id}`);
+            }
+
+            const streamEntry = await this.streamService.getStream({ id: streamReference.streamEntryId });
             required(streamEntry);
             form.addControl(item.value.id, await this.buildFillControl(item.value, streamEntry));
             items.push(item);

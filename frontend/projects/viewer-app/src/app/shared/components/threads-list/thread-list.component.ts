@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Thread, ThreadCategories } from '@viewer/models';
 import { UIPaginator } from '@traent/ngx-paginator';
+import { Thread, ThreadCategories } from '@viewer/models';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

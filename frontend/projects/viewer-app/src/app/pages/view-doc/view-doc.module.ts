@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ViewDocComponent } from './view-doc.component';
 import { ViewDocRoutingModule } from './view-doc-routing.module';
+import { ViewDocComponent } from './view-doc.component';
 
 @NgModule({
   imports: [

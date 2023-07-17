@@ -1,0 +1,15 @@
+<ngx-t3-paginator-list
+  *ngIf="participants | async as participants"
+  class="tw-overflow-y-auto tw-grow"
+  [paginator]="participants">
+  <div
+    *ngFor="let participant of participants.items.value; let last = last"
+    class="tw-py-2"
+    [ngClass]="{ 'tw-border-b tw-border-neutral-200': !last }">
+    <app-participant-identity
+      class="tw-mx-4"
+      size="sm"
+      validationSize="xs"
+      [participant]="participant"></app-participant-identity>
+  </div>
+</ngx-t3-paginator-list>

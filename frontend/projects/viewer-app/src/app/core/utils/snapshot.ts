@@ -1,18 +1,20 @@
+import { ViewerAgentType } from '@api/models';
+import { isRedacted, isRedactedOrUndefined } from '@traent/ngx-components';
 import { LogItemImage, ProjectParticipant, RedactableBox, ResourceSnapshot, Snapshot, WorkflowParticipant } from '@viewer/models';
 import {
-  STREAM_LABEL,
-  STREAM_REFERENCE_LABEL,
+  CROSS_PROJECT_REFERENCE_LABEL,
+  DOCUMENT_LABEL,
   PROJECT_LABEL,
   PROJECT_PARTICIPANT_LABEL,
-  WORKFLOW_LABEL,
-  DOCUMENT_LABEL,
+  STREAM_LABEL,
+  STREAM_REFERENCE_LABEL,
+  TAG_ENTRY_LABEL,
+  TAG_LABEL,
   THREAD_LABEL,
   THREAD_MESSAGE_LABEL,
   THREAD_REFERENCE_LABEL,
-  TAG_LABEL,
-  TAG_ENTRY_LABEL,
+  WORKFLOW_LABEL,
 } from '@viewer/services';
-import { isRedacted, isRedactedOrUndefined } from '@traent/ngx-components';
 import { map, Observable, of } from 'rxjs';
 
 export const getProjectParticipantId = (snapshot: ResourceSnapshot): string | undefined =>
@@ -44,9 +46,13 @@ export const snapshotParticipantLabel = (value?: ProjectParticipant): Observable
     });
   }
 
-  const source$ = value?.member$ ?? of(undefined);
+  const source$ = value?.agent$ ?? of(undefined);
   return source$.pipe(map((member) => ({
-    name: redactedValue(member?.fullName),
+    name: redactedValue(
+      member?.agentType === ViewerAgentType.Member
+        ? member?.fullName
+        : member?.name,
+    ),
     class: redactedClass(member),
   })));
 };
@@ -54,8 +60,8 @@ export const snapshotParticipantLabel = (value?: ProjectParticipant): Observable
 export const workflowSnapshotImage: LogItemImage = {
   type: 'icon',
   icon: { custom: 'workflow' },
-  bgColor: 'opal-bg-accent-100',
-  textColor: 'opal-text-accent-500',
+  bgColor: 'tw-bg-accent-100',
+  textColor: 'tw-text-accent-500',
 };
 
 export type ProjectLogFilterType = 'all' | 'project' | 'stream' | 'threads' | 'documents';
@@ -67,6 +73,7 @@ export const snapshotTypeFromFilter = (f: ProjectLogFilterType): ResourceSnapsho
       STREAM_REFERENCE_LABEL,
     ];
     case 'project': return [
+      CROSS_PROJECT_REFERENCE_LABEL,
       PROJECT_LABEL,
       PROJECT_PARTICIPANT_LABEL,
       WORKFLOW_LABEL,
@@ -78,17 +85,18 @@ export const snapshotTypeFromFilter = (f: ProjectLogFilterType): ResourceSnapsho
       THREAD_REFERENCE_LABEL,
     ];
     default: return [
-      STREAM_LABEL,
-      STREAM_REFERENCE_LABEL,
+      CROSS_PROJECT_REFERENCE_LABEL,
+      DOCUMENT_LABEL,
       PROJECT_LABEL,
       PROJECT_PARTICIPANT_LABEL,
-      WORKFLOW_LABEL,
-      DOCUMENT_LABEL,
+      STREAM_LABEL,
+      STREAM_REFERENCE_LABEL,
       TAG_ENTRY_LABEL,
       TAG_LABEL,
       THREAD_LABEL,
       THREAD_MESSAGE_LABEL,
       THREAD_REFERENCE_LABEL,
+      WORKFLOW_LABEL,
     ];
   }
 };

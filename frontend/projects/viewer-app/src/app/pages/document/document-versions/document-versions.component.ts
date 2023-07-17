@@ -1,14 +1,22 @@
-import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentV0 } from '@ledger-objects';
-import { Document, DocumentContentType, DocumentSnapshot } from '@viewer/models';
-import { AcknowledgementService, DocumentService, DOCUMENT_LABEL, ProjectParticipantService, SnapshotService } from '@viewer/services';
-import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
-import { downloadDocument, getDocumentProxy, getPlaceholderPath, snapshotContent, u8ToBlob } from '@viewer/utils';
 import { DocumentZoomValue, isRedacted, Redactable } from '@traent/ngx-components';
 import { clamp, formatBytesSize, isNotNullOrUndefined } from '@traent/ts-utils';
+import { Document, DocumentContentType, DocumentSnapshot } from '@viewer/models';
+import {
+  AcknowledgementService,
+  DocumentService,
+  DOCUMENT_LABEL,
+  LedgerAccessorService,
+  parseDocument,
+  ProjectParticipantService,
+  SnapshotService,
+} from '@viewer/services';
+import { bindOpenAcknowledgementsDialog } from '@viewer/shared';
+import { downloadDocument, getDocumentProxy, getPlaceholderPath, snapshotContent, u8ToBlob } from '@viewer/utils';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
@@ -60,28 +68,29 @@ export class DocumentVersionsComponent {
   }
 
   readonly source$ = this.route.params.pipe(
-    map((params) => params.id),
-    switchMap((id) => this.documentService.getDocument(id)),
+    switchMap(({ id }) => this.documentService.getDocument({ id })),
   );
 
   readonly versions$ = this.route.params.pipe(
     map((params) => params.id),
     switchMap((id) => this.snapshotService.getSnapshotCollection({ id, page: 1 })),
-    map(({ items }) => items
-      .filter((item): item is DocumentSnapshot => item.type === DOCUMENT_LABEL)
-      .filter((item) => item.operation !== 'deletion')
-      .map((snapshot) => snapshotContent<DocumentV0>(snapshot))
-      .map((snapshot) => this.documentService.parseDocument(snapshot))
-      .map((document) => ({
-        ...document,
-        ackStatus$: this.acknowledgementService.getAcknowledgementStatus(document.updatedInBlock.index).then(({ status }) => status),
-      })),
-    ),
+    map(({ items }) => {
+      const ledger = this.ledgerAccessorService.getLedger();
+      return items
+        .filter((item): item is DocumentSnapshot => item.type === DOCUMENT_LABEL)
+        .filter((item) => item.operation !== 'deletion')
+        .map((snapshot) => snapshotContent<DocumentV0>(snapshot))
+        .map(parseDocument)
+        .map((document) => ({
+          ...document,
+          ackStatus$: ledger.getAcknowledgementStatus(document.updatedInBlock.index).then(({ status }) => status),
+        }));
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   readonly mainDoc$ = combineLatest([
-    this.vMain$.pipe(distinctUntilChanged()),
+    this.vMain$,
     this.versions$,
   ]).pipe(
     filter((_) => this.startDragY === undefined),
@@ -104,10 +113,12 @@ export class DocumentVersionsComponent {
       }
       return mainDoc;
     }),
+    distinctUntilChanged((prev, curr) => prev?.id !== curr?.id),
   );
 
   readonly mainDocContent$ = this.mainDoc$.pipe(
-    switchMap(async (doc) => doc?.getData()),
+    isNotNullOrUndefined(),
+    switchMap((document) => this.documentService.getDocumentContent({ document })),
   );
 
   readonly mainDocProxy$ = combineLatest([
@@ -122,7 +133,7 @@ export class DocumentVersionsComponent {
   readonly mainDocUpdater$ = this.mainDoc$.pipe(
     isNotNullOrUndefined(),
     switchMap(async ({ updaterId }) => !isRedacted(updaterId)
-      ? this.projectParticipantService.getProjectParticipant(updaterId)
+      ? this.projectParticipantService.getProjectParticipant({ id: updaterId })
       : undefined,
     ),
   );
@@ -152,7 +163,8 @@ export class DocumentVersionsComponent {
   );
 
   readonly compareDocContent$ = this.compareDoc$.pipe(
-    switchMap(async (doc) => doc?.getData()),
+    isNotNullOrUndefined(),
+    switchMap((document) => this.documentService.getDocumentContent({ document })),
   );
 
   readonly compareDocProxy$ = combineLatest([
@@ -167,7 +179,7 @@ export class DocumentVersionsComponent {
   readonly compareDocUpdater$ = this.compareDoc$.pipe(
     isNotNullOrUndefined(),
     switchMap(async ({ updaterId }) => !isRedacted(updaterId)
-      ? this.projectParticipantService.getProjectParticipant(updaterId)
+      ? this.projectParticipantService.getProjectParticipant({ id: updaterId })
       : undefined,
     ),
   );
@@ -197,6 +209,7 @@ export class DocumentVersionsComponent {
     private readonly acknowledgementService: AcknowledgementService,
     private readonly dialog: MatDialog,
     private readonly documentService: DocumentService,
+    private readonly ledgerAccessorService: LedgerAccessorService,
     private readonly projectParticipantService: ProjectParticipantService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,

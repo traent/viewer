@@ -1,61 +1,61 @@
 <ng-container *ngIf="{
   offchainKeys: offchainKeys$ | async,
-  offchainKeysCount: storageService.getLedger().getOffchainKeysCount()
+  offchainKeysCount: ledgerAccessorService.getBlockLedger().getOffchainKeysCount()
 } as resolved">
-  <div class="opal-fx-col opal-h-full opal-radius-8 opal-border-1 opal-border-grey-200">
-    <div class="opal-fx-col opal-overflow-y-auto opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-pos-rel opal-radius-t-8">
-      <div class="table-header opal-pos-sticky opal-z-index-10 opal-bg-white opal-inset-t-0">
-        <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-4">Off-chain (Hash)</div>
-        <div class="opal-fx-g-1 opal-fx-b-0 opal-fx-justify-start opal-pl-5">Key</div>
+  <div class="tw-flex tw-flex-col tw-h-full !tw-rounded-lg tw-border tw-border-neutral-200">
+    <div class="tw-flex tw-flex-col tw-overflow-y-auto tw-grow tw-basis-0 tw-bg-white tw-relative !tw-rounded-t-lg">
+      <div class="table-header tw-sticky tw-z-10 tw-bg-white tw-inset-t-0">
+        <div class="tw-grow tw-basis-0 tw-justify-start tw-pl-4">Off-chain (Hash)</div>
+        <div class="tw-grow tw-basis-0 tw-justify-start tw-pl-5">Key</div>
       </div>
       <div
         *ngFor="let item of resolved.offchainKeys"
-        class="opal-border-b-1 opal-border-grey-100 opal-fx-row opal-py-3 opal-body-2 opal-pos-rel opal-bg-white">
-        <div class="opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-ellipsed">
+        class="tw-border-b tw-border-neutral-100 tw-flex tw-flex-row tw-py-3 tw-text-sm tw-relative tw-bg-white">
+        <div class="tw-flex tw-items-center tw-justify-center tw-grow tw-basis-0 tw-truncate">
           <mat-icon
             *ngIf="!item.hasValidReference()"
-            class="opal-text-orange-500 opal-pos-abs opal-my-auto opal-inset-0"
+            class="tw-text-orange-500 tw-absolute tw-my-auto tw-inset-0"
             matTooltip="Missing resource">
             warning
           </mat-icon>
           <div
             *ngIf="item.hash as hash"
-            class="opal-pl-5 opal-text-lowercase opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+            class="tw-pl-5 tw-lowercase tw-grow tw-basis-0 tw-flex tw-flex-row tw-justify-start tw-items-center tw-truncate">
             <ngx-t3-copy-to-clipboard
-              class="opal-w-full"
+              class="tw-w-full"
               position="left"
               [textToCopy]="hash"
               (click)="$event.stopImmediatePropagation()">
-              <div class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">{{ hash }}</div>
+              <div class="tw-font-mono tw-text-sm tw-truncate tw-mr-1">{{ hash }}</div>
             </ngx-t3-copy-to-clipboard>
           </div>
         </div>
         <div
           *ngIf="item.key | uint8 as key"
-          class="opal-pl-5 opal-fx-g-1 opal-fx-b-0 opal-fx-row opal-fx-justify-start opal-fx-align-center opal-ellipsed">
+          class="tw-pl-5 tw-grow tw-basis-0 tw-flex tw-flex-row tw-justify-start tw-items-center tw-truncate">
           <ngx-t3-copy-to-clipboard
-            class="opal-w-full"
+            class="tw-w-full"
             position="left"
             [textToCopy]="key"
             (click)="$event.stopImmediatePropagation()">
-            <div class="opal-text-mono opal-body-2 opal-ellipsed opal-mr-1">{{ key }}</div>
+            <div class="tw-font-mono tw-text-sm tw-truncate tw-mr-1">{{ key }}</div>
           </ngx-t3-copy-to-clipboard>
         </div>
       </div>
       <div
         *ngIf="!resolved.offchainKeys?.length"
-        class="opal-fx-col opal-fx-center opal-fx-g-1 opal-fx-b-0 opal-bg-white opal-border-b-1 opal-border-grey-200">
+        class="tw-flex tw-flex-col tw-flex tw-items-center tw-justify-center tw-grow tw-basis-0 tw-bg-white tw-border-b tw-border-neutral-200">
         <img
           src="/assets/images/search-items.svg"
           alt="upload file"
-          class="opal-mb-3">
-        <div class="opal-h4">
+          class="tw-mb-3">
+        <div class="tw-h4">
           {{ 'i18n.Explorer.noOffChainKeys' | translate }}
         </div>
       </div>
     </div>
     <ngx-t3-table-paginator
-      class="opal-radius-b-8"
+      class="!tw-rounded-b-lg"
       [pageSize]="offchainKeysPageEvent.pageSize"
       [length]="resolved.offchainKeys?.length || 0"
       [total]="resolved.offchainKeysCount"
